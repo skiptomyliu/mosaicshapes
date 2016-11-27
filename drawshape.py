@@ -15,48 +15,17 @@ class DrawShape():
         self.sub_max_by = 10
         self.alpha = 1000
 
-    def random_pos(self):
-        w,h = self.image.size
-        x = random.uniform(0, w)
-        y = random.uniform(0, h)
-        return (x,y)
-
-
-    def draw_rect(self, size):
-        p0 = self.random_pos()
-        p1 = DrawShape.add_tuple(p0, size)
-        r,g,b = self.og_image.getpixel(p0)
-        self.draw.rectangle([p0, p1], fill=(r,g,b,self.alpha), outline=None)
-
-    def draw_circle(self, size):
-        p0 = self.random_pos()
-        p1 = DrawShape.add_tuple(p0, size)
-        r,g,b = self.og_image.getpixel(p0)
-        self.draw.ellipse([p0, p1], fill=(r,g,b,self.alpha), outline=None)
-
-    def draw_rect_rand_size(self):
-        w = random.uniform(self.min_size, self.max_size)
-        h = random.uniform(self.min_size, self.max_size)
-        size = (w,h)
-        # print w,h
-        self.draw_rect(size)
-
-        sub_0 = random.uniform(1, self.sub_max_by)
-        sub_1 = random.uniform(1, self.sub_max_by)
-        if self.max_size - sub_0 > 0:
-            self.max_size -= sub_0
-        if self.min_size - sub_1 > 0:
-            self.min_size -= sub_1
-
-        print self.max_size, self.min_size
-        # import pdb; pdb.set_trace()
-        # print self.max_size
-        # print self.min_size
-        # self.image.show()
-
     @staticmethod
     def add_tuple(p0, p1):
         return tuple(sum(x) for x in zip(p0, p1))
+
+    @staticmethod
+    def rect_area(rect):
+        pos0 = rect[0]
+        pos1 = rect[1]
+        w = abs(pos0[0] - pos1[0])
+        h = abs(pos0[1] - pos1[1])
+        return w*h
 
     @staticmethod
     def rmsdiff(im1, im2):
@@ -66,3 +35,57 @@ class DrawShape():
         sum_of_squares = sum(sq)
         rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
         return rms
+
+    def random_pos(self):
+        w,h = self.image.size
+        x = int(random.uniform(0, w))
+        y = int(random.uniform(0, h))
+        return (x,y)
+
+    # XXX: Todo: is it possible to generate rects outside the image?
+    def random_rects(self, pos=(100,100), max_size=500, tries=10):
+        rects = []
+        for i in range(tries):
+            w0 = int(random.uniform(-1*max_size/2, max_size/2))
+            h0 = int(random.uniform(-1*max_size/2, max_size/2))
+
+            w1 = int(random.uniform(-1*max_size/2, max_size/2))
+            h1 = int(random.uniform(-1*max_size/2, max_size/2))
+
+            p0 = DrawShape.add_tuple(pos, (w0,h0))
+            p1 = DrawShape.add_tuple(pos, (w1,h1))
+
+            rects.append((p0,p1))
+        return rects
+
+    
+
+
+    def stage_draw(self, rect, color):
+        staged_image = self.image.copy()
+        staged_draw = ImageDraw.Draw(staged_image, 'RGBA')
+        # print rect
+        staged_draw.rectangle(rect, fill=color)
+        return staged_image
+
+    def commit_draw(self, staged_image):
+        self.image = staged_image.copy() # remove copy later
+
+
+    # def draw_rect(self, size, color):
+    #     p0 = self.random_pos()
+    #     p1 = DrawShape.add_tuple(p0, size)
+    #     r,g,b = self.og_image.getpixel(p0)
+    #     self.draw.rectangle([p0, p1], fill=(r,g,b,self.alpha), outline=None)
+
+    def draw_rect_rand(self, size):
+        pass
+
+    def draw_circle(self, size):
+        p0 = self.random_pos()
+        p1 = DrawShape.add_tuple(p0, size)
+        r,g,b = self.og_image.getpixel(p0)
+        self.draw.ellipse([p0, p1], fill=(r,g,b,self.alpha), outline=None)
+
+
+    
