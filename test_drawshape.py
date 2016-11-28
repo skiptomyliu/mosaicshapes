@@ -21,8 +21,44 @@ class TestDrawShape(unittest.TestCase):
         """
         pass
 
+    def test_find_best_alpha(self):
+        diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
+        rect = Rect(self.image.size)
+        r,g,b = average_color(rect, self.ds.og_image)
+        color = (r,g,b,10)
 
-    def test_find_best(self):
+        staged_image = self.ds.stage_draw(rect, color=color)
+        diff0 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
+
+
+        color = self.ds.find_best_alpha(rect, tries=10)
+        print color
+        print "@"*10
+        staged_image = self.ds.stage_draw(rect, color=color)
+        diff1 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
+        
+        print "{d}vs{d1}".format(d=diff1,d1=diff0)
+        print "{d}vs{d1}".format(d=diff1,d1=diff)
+        self.assertTrue(diff1 < diff0)
+
+    def test_find_best_shape(self):
+        diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
+
+        rect = Rect(self.image.size)
+        color = average_color(rect, self.ds.og_image)
+        staged_image = self.ds.stage_draw(rect, color=color)
+        diff0 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
+
+        rect = self.ds.find_best_shape(tries=500)
+        color = average_color(rect, self.ds.og_image)
+        staged_image = self.ds.stage_draw(rect, color=color)
+        diff1 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
+        # print "{d}vs{d1}".format(d=diff1,d1=diff0)
+        # print "{d}vs{d1}".format(d=diff1,d1=diff)
+        # print rect, rect.area()
+        self.assertTrue(diff1 < diff0)
+
+    def test_find_best_mutate(self):
         diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
 
         rect = Rect(self.image.size)
@@ -32,11 +68,11 @@ class TestDrawShape(unittest.TestCase):
 
         # print "base:"
         # print diff0
-        rect, color = self.ds.find_best(rect, tries=500)
+        rect, color = self.ds.find_best_mutate(rect, tries=10)
         staged_image = self.ds.stage_draw(rect, color=color)
         diff1 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
-        print "{d}vs{d1}".format(d=diff1,d1=diff0)
-        print "{d}vs{d1}".format(d=diff1,d1=diff)
+        # print "{d}vs{d1}".format(d=diff1,d1=diff0)
+        # print "{d}vs{d1}".format(d=diff1,d1=diff)
         
         self.assertTrue(diff1 < diff0)
 

@@ -3,6 +3,7 @@ import random
 import math
 from util import *
 from copy import copy, deepcopy
+from rect import Rect
 
 class DrawShape(object):
 
@@ -10,11 +11,16 @@ class DrawShape(object):
         self.og_image = Image.open(imgpath)
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
+        self.alpha = 110
 
-        self.max_size = 1000
-        self.min_size = 1000
-        self.sub_max_by = 10
-        self.alpha = 1000
+
+        w,h = self.image.size
+        t_r = Rect(self.image.size)
+        t_r.x0 = 0
+        t_r.y0 = 0
+        t_r.x1 = w
+        t_r.y1 = h
+        self.draw_shape(t_r, average_color(t_r, self.og_image))
 
     @staticmethod
     def add_tuple(p0, p1):
@@ -30,21 +36,7 @@ class DrawShape(object):
         rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
         return rms
 
-    # XXX: Todo: is it possible to generate rects outside the image?
-    def random_rects(self, pos=(100,100), max_size=500, tries=10):
-        rects = []
-        for i in range(tries):
-            w0 = int(random.uniform(-1*max_size/2, max_size/2))
-            h0 = int(random.uniform(-1*max_size/2, max_size/2))
-
-            w1 = int(random.uniform(-1*max_size/2, max_size/2))
-            h1 = int(random.uniform(-1*max_size/2, max_size/2))
-
-            p0 = DrawShape.add_tuple(pos, (w0,h0))
-            p1 = DrawShape.add_tuple(pos, (w1,h1))
-
-            rects.append((p0,p1))
-        return rects
+  
 
     def stage_draw(self, rect, color):
         staged_image = self.image.copy()
@@ -52,35 +44,70 @@ class DrawShape(object):
         staged_draw.rectangle(rect.coords(), fill=color)
         return staged_image
 
-    def commit_draw(self, staged_image):
-        self.image = staged_image.copy() # remove copy later
+    def draw_shape(self, rect, color):
+        self.draw.rectangle(rect.coords(), fill=color)
 
 
-    def find_best(self, rect, tries=50):
+    def find_best_alpha(self, rect, tries=10):
+        r,g,b = average_color(rect, self.og_image)
+        alpha = 10
+        best_color = (r,g,b,alpha)
+        best_image = self.stage_draw(rect, best_color)
+        staged_image = best_image.copy()
+        best_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+        for i in range(tries):
+            alpha = random.randint(100, 255)
+            color = (r,g,b,alpha)
+
+            staged_image = self.stage_draw(rect, color)
+            cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+            if cur_diff < best_diff:
+                best_diff = cur_diff
+                best_color = color
+
+        return best_color
+
+
+    def find_best_shape(self, tries=100):
+        best_rect = Rect(self.image.size)
+        best_image = self.stage_draw(best_rect, average_color(best_rect, self.og_image))
+        staged_image = best_image.copy()
+        best_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+        for i in range(tries):
+            temp_rect = Rect(self.image.size)
+            staged_image = self.stage_draw(temp_rect, average_color(temp_rect, self.og_image))
+            cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+            if cur_diff < best_diff:
+                best_diff = cur_diff
+                best_rect = copy(temp_rect)
+                print best_rect, best_rect.area()
+
+        return best_rect
+
+    def find_best_mutate(self, rect, tries=50):
         color = average_color(rect, self.og_image)
         best_image = self.stage_draw(rect, color)
         staged_image = best_image.copy()
         best_diff = DrawShape.rmsdiff(self.og_image, staged_image)
         best_rect = copy(rect)
         best_color = color
-        # print "should be same"
-        # print best_diff
-        # import pdb; pdb.set_trace()
 
         for i in range(tries):
             temp_rect = copy(rect)
             temp_rect.mutate()
             color = average_color(temp_rect, self.og_image)
+
             staged_image = self.stage_draw(temp_rect, color)
             cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
             if cur_diff < best_diff:
                 best_diff = cur_diff
                 best_rect = copy(temp_rect)
                 best_color = color
-                
-                # print "best diff"
-                # print best_diff
+                rect = best_rect
+
+                print "best diff"
+                print best_diff
                 # print best_rect
-                # print best_rect.area()
+                print best_rect.area()
 
         return (best_rect, best_color)

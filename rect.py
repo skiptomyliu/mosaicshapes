@@ -15,7 +15,7 @@ class Rect():
         self.random()
 
     def coords(self):
-        return [(self.x0, self.x1), (self.y0, self.y1)]
+        return [(self.x0, self.y0), (self.x1, self.y1)]
 
     def area(self):
         w = abs(self.x0 - self.x1)
@@ -27,43 +27,69 @@ class Rect():
         return w*h
 
     def random(self):
-        w,h = self.bound_size
-        self.x0 = int(random.uniform(0, w))
-        self.y0 = int(random.uniform(0, h))
-        self.x1 = clamp_int(self.x0 + random.uniform(0, 32) + 1, 0, w-1)
-        self.y1 = clamp_int(self.y0 + random.uniform(0, 32) + 1, 0, h-1)
+        while True:
+            w,h = self.bound_size
+            self.x0 = int(random.randint(0, w-1))
+            self.y0 = int(random.randint(0, h-1))
+            self.x1 = clamp_int(self.x0 + random.randint(0, 32) + 1, 0, w-1)
+            self.y1 = clamp_int(self.y0 + random.randint(0, 32) + 1, 0, h-1)
 
+            if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
+                break;
+            else:
+                self.random()
+
+        # print self.area()
+        # print self.x0,self.x1,self.y0,self.y1
 
     def mutate(self):
         w,h = self.bound_size
 
         while True:
+            # if bool(random.getrandbits(1)):
+            #     self.x1 = clamp_int(self.x1+random.randint(0, 16), 0, w-1)
+            # else:
+            #     self.y1 = clamp_int(self.y1+random.randint(0, 16), 0, h-1)
+
             if bool(random.getrandbits(1)):
-                if bool(random.getrandbits(1)):
-                    self.x0 = clamp_int(self.x0+random.uniform(0, 16), 0, w-1)
-                else:
-                    self.x0 = clamp_int(self.x0-random.uniform(0, 16), 0, w-1)
-
-                if bool(random.getrandbits(1)):
-                    self.y0 = clamp_int(self.y0+random.uniform(0, 16), 0, h-1)
-                else:
-                    self.y0 = clamp_int(self.y0-random.uniform(0, 16), 0, h-1)
+                self.x0 = clamp_int(self.x0+random.randint(0, 16), 0, w-1)
+                self.y0 = clamp_int(self.y0+random.randint(0, 16), 0, h-1)
             else:
-                if bool(random.getrandbits(1)):
-                    self.x1 = clamp_int(self.x1+random.uniform(0, 16), 0, w-1)
-                else:
-                    self.x1 = clamp_int(self.x1-random.uniform(0, 16), 0, w-1)
-
-                if bool(random.getrandbits(1)):
-                    self.y1 = clamp_int(self.y1+random.uniform(0, 16), 0, h-1)
-                else:
-                    self.y1 = clamp_int(self.y1-random.uniform(0, 16), 0, h-1)
+                self.x1 = clamp_int(self.x1+random.randint(0, 16), 0, w-1)
+                self.y1 = clamp_int(self.y1+random.randint(0, 16), 0, h-1)
 
 
+            # if bool(random.getrandbits(1)):
+            #     if bool(random.getrandbits(1)):
+            #         self.x0 = clamp_int(self.x0+random.uniform(0, 16), 0, w-1)
+            #     else:
+            #         self.x0 = clamp_int(self.x0-random.uniform(0, 16), 0, w-1)
 
-            # print self
-            if self.x0 != self.x1 and self.y0 != self.y1:
+            #     if bool(random.getrandbits(1)):
+            #         self.y0 = clamp_int(self.y0+random.uniform(0, 16), 0, h-1)
+            #     else:
+            #         self.y0 = clamp_int(self.y0-random.uniform(0, 16), 0, h-1)
+            # else:
+            #     if bool(random.getrandbits(1)):
+            #         self.x1 = clamp_int(self.x1+random.uniform(0, 16), 0, w-1)
+            #     else:
+            #         self.x1 = clamp_int(self.x1-random.uniform(0, 16), 0, w-1)
+
+            #     if bool(random.getrandbits(1)):
+            #         self.y1 = clamp_int(self.y1+random.uniform(0, 16), 0, h-1)
+            #     else:
+            #         self.y1 = clamp_int(self.y1-random.uniform(0, 16), 0, h-1)
+
+
+
+            # # print self
+            if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
+                print self
                 break;
+            else:
+                self.random()
+
+            
 
 
     def __str__(self):
