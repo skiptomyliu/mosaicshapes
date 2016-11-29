@@ -6,14 +6,24 @@ import random
 from util import *
 
 class Rect(Shape):
-    def __init__(self, bound_size):
+    def __init__(self, bound_size, coords=None):
         self.bound_size = bound_size
-        self.x0 = -1
-        self.y0 = -1
-        self.x1 = -1
-        self.y1 = -1
 
-        self.random()
+        if not coords:
+            self.random()
+        else:
+            self.x0 = coords[0][0]
+            self.y0 = coords[0][1]
+            self.x1 = coords[1][0]
+            self.y1 = coords[1][1]
+
+    @classmethod
+    def init_random(cls, bound_size):
+        return cls(bound_size=bound_size)
+
+    @classmethod
+    def init_coords(cls, bound_size, coords):
+        return cls(bound_size=bound_size, coords=coords)
 
     def coords(self):
         return [(self.x0, self.y0), (self.x1, self.y1)]

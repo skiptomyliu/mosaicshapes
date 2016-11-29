@@ -12,15 +12,21 @@ def clamp_int(val, minval, maxval):
 
 
 def average_color(rect, image):
-    rect.x0
-    rect.x1
+    x0,y0 = rect[0]
+    x1,y1 = rect[1]
     r,g,b = 0,0,0
-    for x in range(rect.x0, rect.x1):
-        for y in range(rect.y0, rect.y1):
+
+    w = abs(x0 - x1)
+    h = abs(y0 - y1)
+
+    area = w*h
+
+    for x in range(x0, x1):
+        for y in range(y0, y1):
             cr,cg,cb = image.getpixel((x,y))
             r+=cr
             g+=cg
             b+=cb
 
-    return (r/(rect.area()), g/(rect.area()), b/(rect.area()))
+    return (r/area, g/area, b/area)
 

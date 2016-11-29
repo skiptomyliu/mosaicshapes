@@ -25,12 +25,17 @@ class TestDrawShape(unittest.TestCase):
         rect_coords = ((0,0), (100,100))
         art_img, og_img = self.ds.crop_b4_compare(rect_coords)
         self.assertEqual(art_img.size, og_img.size)
-        
+
+    def test_get_staged_diff(self):
+        rect_coords = [(0,0),(100,100)]
+        rect = Rect.init_coords(rect_coords, rect_coords)
+        diff = self.ds.get_staged_diff(rect, average_color(rect_coords, self.ds.og_image))
+        self.assertEqual(diff, 102.82007830226222)
 
     def test_find_best_alpha(self):
         diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
         rect = Rect(self.image.size)
-        r,g,b = average_color(rect, self.ds.og_image)
+        r,g,b = average_color(rect.coords(), self.ds.og_image)
         color = (r,g,b,10)
 
         staged_image = self.ds.stage_draw(rect, color=color)
@@ -51,12 +56,12 @@ class TestDrawShape(unittest.TestCase):
         diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
 
         rect = Rect(self.image.size)
-        color = average_color(rect, self.ds.og_image)
+        color = average_color(rect.coords(), self.ds.og_image)
         staged_image = self.ds.stage_draw(rect, color=color)
         diff0 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
 
         rect = self.ds.find_best_shape(tries=500)
-        color = average_color(rect, self.ds.og_image)
+        color = average_color(rect.coords(), self.ds.og_image)
         staged_image = self.ds.stage_draw(rect, color=color)
         diff1 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
         # print "{d}vs{d1}".format(d=diff1,d1=diff0)
@@ -68,7 +73,7 @@ class TestDrawShape(unittest.TestCase):
         diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
 
         rect = Rect(self.image.size)
-        color = average_color(rect, self.ds.og_image)
+        color = average_color(rect.coords(), self.ds.og_image)
         staged_image = self.ds.stage_draw(rect, color=color)
         diff0 = DrawShape.rmsdiff(self.ds.og_image, staged_image)
 
@@ -85,7 +90,7 @@ class TestDrawShape(unittest.TestCase):
 
     def test_stage_draw(self):
         rect = Rect(self.image.size)
-        color = average_color(rect, self.ds.og_image)
+        color = average_color(rect.coords(), self.ds.og_image)
         diff0 = DrawShape.rmsdiff(self.image, self.ds.image)
         staged_image = self.ds.stage_draw(rect, color=color)
         diff1 = DrawShape.rmsdiff(staged_image, self.ds.image)

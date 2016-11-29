@@ -8,10 +8,10 @@ from rect import Rect
 import pdb
 import timeit
 
-TOTAL_SHAPES = 500
+TOTAL_SHAPES = 1000
 
 for j in range(1):
-    ds = DrawShape("moi.JPEG")
+    ds = DrawShape("pier.JPG")
     for i in range(TOTAL_SHAPES):
 
         rect = ds.find_best_shape(tries=50)
@@ -35,7 +35,7 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-        if i%50==0:
+        if i%100==0:
             ds.image.show()
         #     # import pdb; pdb.set_trace()
             
