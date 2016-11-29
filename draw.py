@@ -6,19 +6,21 @@ import random
 from drawshape import DrawShape
 from rect import Rect
 import pdb
+import timeit
 
-
-TOTAL_SHAPES = 200
+TOTAL_SHAPES = 500
 
 for j in range(1):
-    ds = DrawShape("boolol.JPEG")
+    ds = DrawShape("moi.JPEG")
     for i in range(TOTAL_SHAPES):
 
         rect = ds.find_best_shape(tries=50)
         print "best starting rect"
         print rect, rect.area()
 
+        # start_time = timeit.default_timer()
         rect, color = ds.find_best_mutate(rect, tries=100)
+        # print(timeit.default_timer() - start_time)
         color = ds.find_best_alpha(rect)
         # print color
 
@@ -33,9 +35,8 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-
-        # if i%25==0:
-        #     ds.image.show()
+        if i%50==0:
+            ds.image.show()
         #     # import pdb; pdb.set_trace()
             
 

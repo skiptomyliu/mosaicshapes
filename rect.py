@@ -1,10 +1,11 @@
 
 
 
+from shape import Shape
 import random
 from util import *
 
-class Rect():
+class Rect(Shape):
     def __init__(self, bound_size):
         self.bound_size = bound_size
         self.x0 = -1

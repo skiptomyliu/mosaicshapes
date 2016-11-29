@@ -21,6 +21,12 @@ class TestDrawShape(unittest.TestCase):
         """
         pass
 
+    def test_crop_b4_compare(self):
+        rect_coords = ((0,0), (100,100))
+        art_img, og_img = self.ds.crop_b4_compare(rect_coords)
+        self.assertEqual(art_img.size, og_img.size)
+        
+
     def test_find_best_alpha(self):
         diff = DrawShape.rmsdiff(self.ds.og_image, self.ds.image)
         rect = Rect(self.image.size)
@@ -84,47 +90,6 @@ class TestDrawShape(unittest.TestCase):
         staged_image = self.ds.stage_draw(rect, color=color)
         diff1 = DrawShape.rmsdiff(staged_image, self.ds.image)
         self.assertTrue(diff0 != diff1)
-
-
-    # def test_commit_draw(self):
-    #     rect = Rect(self.image.size)
-    #     color = average_color(rect, self.ds.og_image)
-
-    #     staged_image = self.ds.stage_draw(rect, color=color)
-    #     diff0 = DrawShape.rmsdiff(staged_image, self.image)
-    #     diff1 = DrawShape.rmsdiff(self.ds.image, self.image)
-    #     if (diff0 < diff1):
-    #         self.ds.commit_draw(staged_image)
-
-    #     diff2 = DrawShape.rmsdiff(self.ds.image , self.image)
-    #     self.assertTrue(diff2 < diff1)
-    #     self.assertTrue(diff0 == diff2)
-        
-
-
-
-
-    # def test_draw_rect(self):
-    #     size = (100, 100)
-    #     diff1 = DrawShape.rmsdiff(self.image, self.ds.image)
-    #     self.ds.draw_rect(size)
-    #     diff2 = DrawShape.rmsdiff(self.image, self.ds.image)
-    #     self.assertTrue(diff2 < diff1)
-
-    # def test_draw_rect_rand_size(self):
-    #     diff1 = DrawShape.rmsdiff(self.image, self.ds.image)
-    #     self.ds.draw_rect_rand_size()
-    #     diff2 = DrawShape.rmsdiff(self.image, self.ds.image)
-    #     self.assertTrue(diff2 < diff1)
-
-
-    def stage_draw(self):
-        pass
-
-    def commit_draw(self):
-        pass
-    # def test_decay(self):
-    #     size = (100, 100)
 
 
 

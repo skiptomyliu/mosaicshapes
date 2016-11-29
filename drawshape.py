@@ -13,7 +13,6 @@ class DrawShape(object):
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
         self.alpha = 110
 
-
         w,h = self.image.size
         t_r = Rect(self.image.size)
         t_r.x0 = 0
