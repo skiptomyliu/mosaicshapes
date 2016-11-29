@@ -31,8 +31,8 @@ class Rect():
             w,h = self.bound_size
             self.x0 = int(random.randint(0, w-1))
             self.y0 = int(random.randint(0, h-1))
-            self.x1 = clamp_int(self.x0 + random.randint(0, 32) + 1, 0, w-1)
-            self.y1 = clamp_int(self.y0 + random.randint(0, 32) + 1, 0, h-1)
+            self.x1 = clamp_int(self.x0 + random.randint(0, 64) + 1, 0, w-1)
+            self.y1 = clamp_int(self.y0 + random.randint(0, 64) + 1, 0, h-1)
 
             if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
                 break;
@@ -46,17 +46,12 @@ class Rect():
         w,h = self.bound_size
 
         while True:
-            # if bool(random.getrandbits(1)):
-            #     self.x1 = clamp_int(self.x1+random.randint(0, 16), 0, w-1)
-            # else:
-            #     self.y1 = clamp_int(self.y1+random.randint(0, 16), 0, h-1)
-
             if bool(random.getrandbits(1)):
-                self.x0 = clamp_int(self.x0+random.randint(0, 16), 0, w-1)
-                self.y0 = clamp_int(self.y0+random.randint(0, 16), 0, h-1)
+                self.x0 = clamp_int(self.x0+random.randint(0, 32), 0, w-1)
+                self.y0 = clamp_int(self.y0+random.randint(0, 32), 0, h-1)
             else:
-                self.x1 = clamp_int(self.x1+random.randint(0, 16), 0, w-1)
-                self.y1 = clamp_int(self.y1+random.randint(0, 16), 0, h-1)
+                self.x1 = clamp_int(self.x1+random.randint(0, 32), 0, w-1)
+                self.y1 = clamp_int(self.y1+random.randint(0, 32), 0, h-1)
 
 
             # if bool(random.getrandbits(1)):
@@ -80,16 +75,12 @@ class Rect():
             #     else:
             #         self.y1 = clamp_int(self.y1-random.uniform(0, 16), 0, h-1)
 
-
-
             # # print self
             if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
                 print self
                 break;
             else:
                 self.random()
-
-            
 
 
     def __str__(self):
