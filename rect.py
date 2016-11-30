@@ -12,10 +12,10 @@ class Rect(Shape):
         if not coords:
             self.random()
         else:
-            self.x0 = coords[0][0]
-            self.y0 = coords[0][1]
-            self.x1 = coords[1][0]
-            self.y1 = coords[1][1]
+            self.x0 = coords[0]
+            self.y0 = coords[1]
+            self.x1 = coords[2]
+            self.y1 = coords[3]
 
     @classmethod
     def init_random(cls, bound_size):
@@ -26,7 +26,7 @@ class Rect(Shape):
         return cls(bound_size=bound_size, coords=coords)
 
     def coords(self):
-        return [(self.x0, self.y0), (self.x1, self.y1)]
+        return [self.x0, self.y0, self.x1, self.y1]
 
     def area(self):
         w = abs(self.x0 - self.x1)
@@ -64,31 +64,8 @@ class Rect(Shape):
                 self.x1 = clamp_int(self.x1+random.randint(0, 32), 0, w-1)
                 self.y1 = clamp_int(self.y1+random.randint(0, 32), 0, h-1)
 
-
-            # if bool(random.getrandbits(1)):
-            #     if bool(random.getrandbits(1)):
-            #         self.x0 = clamp_int(self.x0+random.uniform(0, 16), 0, w-1)
-            #     else:
-            #         self.x0 = clamp_int(self.x0-random.uniform(0, 16), 0, w-1)
-
-            #     if bool(random.getrandbits(1)):
-            #         self.y0 = clamp_int(self.y0+random.uniform(0, 16), 0, h-1)
-            #     else:
-            #         self.y0 = clamp_int(self.y0-random.uniform(0, 16), 0, h-1)
-            # else:
-            #     if bool(random.getrandbits(1)):
-            #         self.x1 = clamp_int(self.x1+random.uniform(0, 16), 0, w-1)
-            #     else:
-            #         self.x1 = clamp_int(self.x1-random.uniform(0, 16), 0, w-1)
-
-            #     if bool(random.getrandbits(1)):
-            #         self.y1 = clamp_int(self.y1+random.uniform(0, 16), 0, h-1)
-            #     else:
-            #         self.y1 = clamp_int(self.y1-random.uniform(0, 16), 0, h-1)
-
-            # # print self
             if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
-                print self
+                # print self
                 break;
             else:
                 self.random()

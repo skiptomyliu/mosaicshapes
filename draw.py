@@ -6,9 +6,8 @@ import random
 from drawshape import DrawShape
 from rect import Rect
 import pdb
-import timeit
 
-TOTAL_SHAPES = 1000
+TOTAL_SHAPES = 2000
 
 for j in range(1):
     ds = DrawShape("pier.JPG")
@@ -18,9 +17,9 @@ for j in range(1):
         print "best starting rect"
         print rect, rect.area()
 
-        # start_time = timeit.default_timer()
+
         rect, color = ds.find_best_mutate(rect, tries=100)
-        # print(timeit.default_timer() - start_time)
+
         color = ds.find_best_alpha(rect)
         # print color
 
@@ -35,7 +34,7 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-        if i%100==0:
+        if i%200==0:
             ds.image.show()
         #     # import pdb; pdb.set_trace()
             

@@ -12,8 +12,8 @@ def clamp_int(val, minval, maxval):
 
 
 def average_color(rect, image):
-    x0,y0 = rect[0]
-    x1,y1 = rect[1]
+    x0,y0,x1,y1 = rect
+    # x1,y1 = rect[1]
     r,g,b = 0,0,0
 
     w = abs(x0 - x1)
