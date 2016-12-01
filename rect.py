@@ -1,6 +1,4 @@
 
-
-
 from shape import Shape
 import random
 from util import *
@@ -50,12 +48,15 @@ class Rect(Shape):
             else:
                 self.random()
 
-        # print self.area()
-        # print self.x0,self.x1,self.y0,self.y1
+    def restrict(self):
+        if self.x0 > self.x1:
+            self.x0, self.x1 = self.x1, self.x0
+
+        if self.y0 > self.y1:
+            self.y0, self.y1 = self.y1, self.y0
 
     def mutate(self):
         w,h = self.bound_size
-
         while True:
             if bool(random.getrandbits(1)):
                 self.x0 = clamp_int(self.x0+random.randint(0, 32), 0, w-1)
@@ -64,8 +65,9 @@ class Rect(Shape):
                 self.x1 = clamp_int(self.x1+random.randint(0, 32), 0, w-1)
                 self.y1 = clamp_int(self.y1+random.randint(0, 32), 0, h-1)
 
+            self.restrict()
+
             if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
-                # print self
                 break;
             else:
                 self.random()

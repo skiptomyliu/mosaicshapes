@@ -1,9 +1,5 @@
 
 
-
-
-
-
 def clamp_int(val, minval, maxval):
     if val < minval: return int(minval)
     if val > maxval: return int(maxval)
@@ -11,14 +7,18 @@ def clamp_int(val, minval, maxval):
     return int(val)
 
 
-def average_color(rect, image):
-    x0,y0,x1,y1 = rect
-    # x1,y1 = rect[1]
+def average_color(image, rect=None):
+    if not rect:            # Use whole image
+        w,h = image.size
+        x0,y0 = (0,0)
+        x1,y1 = (w,h)
+        print image.size
+    else:                   # Use subset rect of image
+        x0,y0,x1,y1 = rect
+        w = abs(x0 - x1)
+        h = abs(y0 - y1)
+
     r,g,b = 0,0,0
-
-    w = abs(x0 - x1)
-    h = abs(y0 - y1)
-
     area = w*h
 
     for x in range(x0, x1):
