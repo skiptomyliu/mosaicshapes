@@ -7,7 +7,7 @@ from drawshape import DrawShape
 from rect import Rect
 import pdb
 
-TOTAL_SHAPES = 2000
+TOTAL_SHAPES = 30000
 
 for j in range(1):
     ds = DrawShape("pier.JPG")
@@ -17,9 +17,7 @@ for j in range(1):
         print "best starting rect"
         print rect, rect.area()
 
-
         rect, color = ds.find_best_mutate(rect, tries=100)
-
         color = ds.find_best_alpha(rect)
         # print color
 
@@ -34,7 +32,7 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-        if i%200==0:
+        if i%5000==0:
             ds.image.show()
         #     # import pdb; pdb.set_trace()
             
