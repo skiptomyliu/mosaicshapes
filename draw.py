@@ -7,7 +7,7 @@ from drawshape import DrawShape
 from rect import Rect
 import pdb
 
-TOTAL_SHAPES = 1000
+TOTAL_SHAPES = 20000
 
 for j in range(1):
     ds = DrawShape("./examples/pier.JPG")
@@ -31,7 +31,10 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-        if i%500==0:
+        if i<200:
+            if i%50 == 0:
+                ds.image.show()
+        if i%1000==0:
             ds.image.show()
         #     # import pdb; pdb.set_trace()
 

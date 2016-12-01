@@ -26,10 +26,10 @@ class TestDrawShape(unittest.TestCase):
         """
         pass
 
-    def test_crop_b4_compare(self):
-        rect_coords = (0,0,100,100)
-        art_img, og_img = self.ds.crop_b4_compare(rect_coords)
-        self.assertEqual(art_img.size, og_img.size)
+    # def test_crop_b4_compare(self):
+    #     rect_coords = (0,0,100,100)
+    #     art_img, og_img = self.ds.crop_b4_compare(rect_coords)
+    #     self.assertEqual(art_img.size, og_img.size)
 
     def test_get_staged_diff(self):
         rect_coords = [0,0,100,100]
