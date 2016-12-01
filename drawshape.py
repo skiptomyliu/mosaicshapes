@@ -15,7 +15,7 @@ class DrawShape(object):
 
         w,h = self.image.size
         t_r = Rect.init_coords(self.image.size,[0,0,w,h])
-        self.draw_shape(t_r, average_color(t_r.coords(), self.og_image))
+        self.draw_shape(t_r, average_color(self.og_image, t_r.coords()))
 
     @staticmethod
     def add_tuple(p0, p1):
@@ -28,14 +28,11 @@ class DrawShape(object):
         sq = (value*((idx%256)**2) for idx, value in enumerate(h))
         sum_of_squares = sum(sq)
         rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
+
         return rms
 
-    def crop_b4_compare(self, rect_coords):
-        og_crop = self.og_image.crop(rect_coords)
-        art_crop = self.image.crop(rect_coords)
-        return og_crop, art_crop
-
-    def get_staged_diff(self, shape, color):
+    def get_staged_diff(self, shape):
+        color = average_color(self.og_image, shape.coords())
         staged_image = self.stage_draw(shape, color)
         return DrawShape.rmsdiff(self.og_image, staged_image)
 
@@ -49,7 +46,7 @@ class DrawShape(object):
         self.draw.rectangle(shape.coords(), fill=color)
 
     def find_best_alpha(self, rect, tries=10):
-        r,g,b = average_color(rect.coords(), self.og_image)
+        r,g,b = average_color(self.og_image, rect.coords())
         alpha = 10
         best_color = (r,g,b,alpha)
         best_image = self.stage_draw(rect, best_color)
@@ -61,6 +58,7 @@ class DrawShape(object):
 
             staged_image = self.stage_draw(rect, color)
             cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+
             if cur_diff < best_diff:
                 best_diff = cur_diff
                 best_color = color
@@ -69,14 +67,13 @@ class DrawShape(object):
 
     def find_best_shape(self, tries=100):
         best_rect = Rect(self.image.size)
-        best_image = self.stage_draw(best_rect, average_color(best_rect.coords(), self.og_image))
-        staged_image = best_image.copy()
-        best_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+        best_diff = self.get_staged_diff(best_rect)
+
         for i in range(tries):
             temp_rect = Rect(self.image.size)
             # staged_image = self.stage_draw(temp_rect, )
             # cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
-            cur_diff = self.get_staged_diff(temp_rect, average_color(temp_rect.coords(), self.og_image))
+            cur_diff = self.get_staged_diff(temp_rect)
             if cur_diff < best_diff:
                 best_diff = cur_diff
                 best_rect = copy(temp_rect)
@@ -84,33 +81,41 @@ class DrawShape(object):
 
         return best_rect
 
-    def find_best_mutate(self, rect, tries=50):
-        # self.crop_b4_compare(rect.coords)
-        # Keep track of color because the average will change after each mutate
-        color = average_color(rect.coords(), self.og_image)
-        # best_image = self.stage_draw(rect, color)
-        # staged_image = best_image.copy()
-        # best_diff = DrawShape.rmsdiff(self.og_image, staged_image)
-        best_diff = self.get_staged_diff(rect, color)
+    def find_best_mutate(self, rect, tries=100):
+        best_diff = self.get_staged_diff(rect)
         best_rect = copy(rect)
-        best_color = color
 
         for i in range(tries):
             temp_rect = copy(rect)
             temp_rect.mutate()
-            color = average_color(temp_rect.coords(), self.og_image)
-            # staged_image = self.stage_draw(temp_rect, color)
-            # cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
-            cur_diff = self.get_staged_diff(temp_rect, color)
+            cur_diff = self.get_staged_diff(temp_rect)
             if cur_diff < best_diff:
                 best_diff = cur_diff
                 best_rect = copy(temp_rect)
-                best_color = color
                 rect = best_rect
-
-                # print "best diff"
+                # print "best rect"
                 # print best_diff
-                # print best_rect
-                # print best_rect.area()
+                # print rect.area()
+        return best_rect
 
-        return (best_rect, best_color)
+    """
+    Unused below
+    """
+    def crop_b4_compare(self, rect_coords):
+        og_crop = self.og_image.crop(rect_coords)
+        art_crop = self.image.crop(rect_coords)
+        return og_crop, art_crop
+
+    def get_staged_diff_crop(self, shape):
+        crop_og = self.og_image.crop(shape.coords())
+        color = average_color(self.og_image, shape.coords())
+
+        crop_staged_art = self.stage_draw_crop(shape, color)
+        return DrawShape.rmsdiff(crop_og, crop_staged_art)
+
+    def stage_draw_crop(self, rect, color):
+        staged_art = self.image.crop(rect.coords())
+        staged_draw = ImageDraw.Draw(staged_art, 'RGBA')
+        w,h = staged_art.size
+        staged_draw.rectangle([0,0,w,h], fill=color)
+        return staged_art

@@ -7,19 +7,18 @@ from drawshape import DrawShape
 from rect import Rect
 import pdb
 
-TOTAL_SHAPES = 30000
+TOTAL_SHAPES = 1000
 
 for j in range(1):
-    ds = DrawShape("pier.JPG")
+    ds = DrawShape("./examples/pier.JPG")
     for i in range(TOTAL_SHAPES):
 
         rect = ds.find_best_shape(tries=50)
         print "best starting rect"
         print rect, rect.area()
 
-        rect, color = ds.find_best_mutate(rect, tries=100)
+        rect = ds.find_best_mutate(rect, tries=100)
         color = ds.find_best_alpha(rect)
-        # print color
 
         diff0 = DrawShape.rmsdiff(ds.og_image, ds.image)
 
@@ -32,13 +31,10 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-        if i%5000==0:
+        if i%500==0:
             ds.image.show()
         #     # import pdb; pdb.set_trace()
-            
 
-
-       
 
     ds.image.show()
     ds.image.save("bloop{j}.JPEG".format(j=j), "JPEG")
