@@ -5,15 +5,16 @@ import math
 import random
 from drawshape import DrawShape
 from rect import Rect
+from circle import Circle
 import pdb
 
-TOTAL_SHAPES = 20000
+TOTAL_SHAPES = 200
 
 for j in range(1):
-    ds = DrawShape("./examples/pier.JPG")
+    ds = DrawShape("./examples/cat.JPG")
     for i in range(TOTAL_SHAPES):
 
-        rect = ds.find_best_shape(tries=50)
+        rect = ds.find_best_shape(ShapeCls=Circle, tries=50)
         print "best starting rect"
         print rect, rect.area()
 
@@ -21,7 +22,6 @@ for j in range(1):
         color = ds.find_best_alpha(rect)
 
         diff0 = DrawShape.rmsdiff(ds.og_image, ds.image)
-
         staged = ds.stage_draw(rect, color)
         diff1 = DrawShape.rmsdiff(ds.og_image, staged)
 
@@ -31,10 +31,10 @@ for j in range(1):
             print rect, rect.area(), color
             ds.draw_shape(rect, color)
 
-        if i<200:
-            if i%50 == 0:
-                ds.image.show()
-        if i%1000==0:
+        # if i<200:
+        #     if i%50 == 0:
+        #         ds.image.show()
+        if i%50==0:
             ds.image.show()
         #     # import pdb; pdb.set_trace()
 

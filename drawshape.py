@@ -43,14 +43,14 @@ class DrawShape(object):
         # staged_draw.rectangle(rect.coords(), fill=color)
     
         staged_draw.ellipse(rect.coords(), fill=color)
-                
+
 
         return staged_image
 
     def draw_shape(self, shape, color):
+        shape.draw(canvas=self.draw, color=color)
         # self.draw.rectangle(shape.coords(), fill=color)
-
-        self.draw.ellipse(shape.coords(), fill=color)
+        # self.draw.ellipse(shape.coords(), fill=color)
 
     def find_best_alpha(self, rect, tries=10):
         r,g,b = average_color(self.og_image, rect.coords())
@@ -72,12 +72,12 @@ class DrawShape(object):
 
         return best_color
 
-    def find_best_shape(self, tries=100):
-        best_rect = Rect(self.image.size)
+    def find_best_shape(self, ShapeCls=Rect, tries=100):
+        best_rect = ShapeCls(self.image.size)
         best_diff = self.get_staged_diff(best_rect)
 
         for i in range(tries):
-            temp_rect = Rect(self.image.size)
+            temp_rect = ShapeCls(self.image.size)
             cur_diff = self.get_staged_diff(temp_rect)
             if cur_diff < best_diff:
                 best_diff = cur_diff
@@ -97,8 +97,8 @@ class DrawShape(object):
                 best_diff = cur_diff
                 best_rect = copy(temp_rect)
                 rect = best_rect
-                # print "best rect"
-                # print best_diff
+                print "best shape"
+                print best_diff
                 # print rect.area()
         return best_rect
 

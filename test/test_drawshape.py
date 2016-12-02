@@ -83,6 +83,12 @@ class TestDrawShape(unittest.TestCase):
     #         DrawShape.rmsdiff(art_img, og_img)
     #     print(timeit.default_timer() - start_time)
 
+    def test_draw_shape(self):
+        pass
+        # c = [0,0,100,100]
+        # rect = Rect.init_coords(self.image.size, c)
+        # self.ds.draw_shape(rect)
+
 
     def test_stage_draw(self):
         rect = Rect(self.image.size)

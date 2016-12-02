@@ -41,7 +41,6 @@ class TestRect(unittest.TestCase):
         self.assertTrue(abs(self.rect.x0-self.rect.x1) <= self.w)
         self.assertTrue(abs(self.rect.y0-self.rect.y1) <= self.h)
 
-
     def test_area_rect(self):
 
         pass

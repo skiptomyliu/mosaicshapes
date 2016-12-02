@@ -43,6 +43,7 @@ class Rect(Shape):
             self.x1 = clamp_int(self.x0 + random.randint(0, 64) + 1, 0, w-1)
             self.y1 = clamp_int(self.y0 + random.randint(0, 64) + 1, 0, h-1)
 
+            self.restrict()
             if int(self.x0) != int(self.x1) and int(self.y0) != int(self.y1):
                 break;
             else:
@@ -58,11 +59,32 @@ class Rect(Shape):
     def mutate(self):
         w,h = self.bound_size
         while True:
+            # if bool(random.getrandbits(1)):
+            #     self.x0 = clamp_int(self.x0+random.randint(0, 32), 0, w-1)
+            #     self.y0 = clamp_int(self.y0+random.randint(0, 32), 0, h-1)
+            # else:
+            #     self.x1 = clamp_int(self.x1+random.randint(0, 32), 0, w-1)
+            #     self.y1 = clamp_int(self.y1+random.randint(0, 32), 0, h-1)
+
+
             if bool(random.getrandbits(1)):
+                self.x0 = clamp_int(self.x0-random.randint(0, 32), 0, w-1)
+            else:
                 self.x0 = clamp_int(self.x0+random.randint(0, 32), 0, w-1)
+
+            if bool(random.getrandbits(1)):
+                self.y0 = clamp_int(self.y0-random.randint(0, 32), 0, h-1)
+            else:
                 self.y0 = clamp_int(self.y0+random.randint(0, 32), 0, h-1)
+
+            if bool(random.getrandbits(1)):
+                self.x1 = clamp_int(self.x1+random.randint(0, 32), 0, w-1)
             else:
                 self.x1 = clamp_int(self.x1+random.randint(0, 32), 0, w-1)
+
+            if bool(random.getrandbits(1)):
+                self.y1 = clamp_int(self.y1-random.randint(0, 32), 0, h-1)
+            else:
                 self.y1 = clamp_int(self.y1+random.randint(0, 32), 0, h-1)
 
             self.restrict()
@@ -72,6 +94,9 @@ class Rect(Shape):
             else:
                 self.random()
 
+    def draw(self, canvas, color):
+        print "rect"
+        canvas.rectangle(self.coords(), fill=color)
 
     def __str__(self):
         return "({x},{y}),({x1},{y1})".format(x=self.x0, y=self.y0, x1=self.x1, y1=self.y1)
