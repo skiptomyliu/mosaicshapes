@@ -89,6 +89,12 @@ class TestDrawShape(unittest.TestCase):
         # rect = Rect.init_coords(self.image.size, c)
         # self.ds.draw_shape(rect)
 
+    def test_find_best_angle(self):
+        rect_coords = [400,400,450,450]
+        rect = Rect.init_coords(rect_coords, rect_coords)
+        self.ds.find_best_angle(rect)
+        pass
+
 
     def test_stage_draw(self):
         rect = Rect(self.image.size)

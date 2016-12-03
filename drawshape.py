@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageChops
+from PIL import Image, ImageDraw, ImageChops, ImageOps
 import random
 import math
 from util import *
@@ -101,6 +101,29 @@ class DrawShape(object):
                 print best_diff
                 # print rect.area()
         return best_rect
+
+    def find_best_angle(self, shape):
+        # f = ImageFont.load_default()
+        color = average_color(self.og_image, shape.coords())
+        txt = Image.new('RGB', (300,50))
+        d = ImageDraw.Draw(txt)
+        # d.text( (0, 0), "Someplace Near Boulder",  font=f, fill=255)
+
+        w = abs(shape.x0 - shape.x1)
+        h = abs(shape.y0 - shape.y1)
+        new_c = [0,0,w,h]
+        d.rectangle(new_c, fill=color)
+        w = txt.rotate(17.5,  expand=1)
+
+
+        # self.image.paste(w, (0,0), w)
+        self.draw.rectangle(shape.coords(), fill=color)
+        self.image.paste(w, (0,0))
+        self.image.show()
+        import pdb ;pdb.set_trace()        
+
+        # self.image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (242,60),  w)
+
 
     """
     Unused below

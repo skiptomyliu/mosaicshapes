@@ -1,5 +1,6 @@
 
 from shape import Shape
+import math
 import random
 from util import *
 
@@ -93,6 +94,7 @@ class Rect(Shape):
                 break;
             else:
                 self.random()
+
 
     def draw(self, canvas, color):
         print "rect"
