@@ -105,20 +105,24 @@ class DrawShape(object):
     def find_best_angle(self, shape):
         # f = ImageFont.load_default()
         color = average_color(self.og_image, shape.coords())
-        txt = Image.new('RGB', (300,50))
+        txt = Image.new('L', (300,50))
         d = ImageDraw.Draw(txt)
         # d.text( (0, 0), "Someplace Near Boulder",  font=f, fill=255)
 
         w = abs(shape.x0 - shape.x1)
         h = abs(shape.y0 - shape.y1)
         new_c = [0,0,w,h]
-        d.rectangle(new_c, fill=color)
+
+        
+        d.rectangle(new_c, fill=255)
+
         w = txt.rotate(17.5,  expand=1)
+        
 
-
-        # self.image.paste(w, (0,0), w)
+        # XXX:  may need to revisit first arg color mapping
+        self.image.paste(ImageOps.colorize(w, (0,0,0), color), (0,0), w)
         self.draw.rectangle(shape.coords(), fill=color)
-        self.image.paste(w, (0,0))
+        # self.image.paste(w, (0,0))
         self.image.show()
         import pdb ;pdb.set_trace()        
 
