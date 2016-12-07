@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
+import util
 
 """
 Get average color of rect.
@@ -41,12 +42,18 @@ class Warped():
         canvas = ImageDraw.Draw(circle_img)
 
         csize = CIRCLE_SIZE/(self.num_circles*2)
-        canvas.ellipse([0, 0, CIRCLE_SIZE,CIRCLE_SIZE], fill=(240))
-        canvas.ellipse([csize, csize, CIRCLE_SIZE-csize, CIRCLE_SIZE-csize], fill=(100,100,200))
-        canvas.ellipse([csize*2, csize*2, CIRCLE_SIZE-csize*2, CIRCLE_SIZE-csize*2], fill=(100,10,200))
-        canvas.ellipse([csize*3, csize*3, CIRCLE_SIZE-csize*3, CIRCLE_SIZE-csize*3], fill=(10,10,250))
-        # if show_image:
-            # circle_img.show()
+
+        color0 = (100,100,200)
+        color1, color2 = util.adjacent_colors(color0)
+
+        import pdb; pdb.set_trace()
+
+        canvas.ellipse([0, 0, CIRCLE_SIZE,CIRCLE_SIZE], fill=color0)
+        canvas.ellipse([csize, csize, CIRCLE_SIZE-csize, CIRCLE_SIZE-csize], fill=color0)
+        canvas.ellipse([csize*2, csize*2, CIRCLE_SIZE-csize*2, CIRCLE_SIZE-csize*2], fill=color0)
+        canvas.ellipse([csize*3, csize*3, CIRCLE_SIZE-csize*3, CIRCLE_SIZE-csize*3], fill=color0)
+        if show_image:
+            circle_img.show()
         image = np.asarray(circle_img)
         # rows, cols = image.shape[0], image.shape[1]
         rows, cols = self.height, self.width
