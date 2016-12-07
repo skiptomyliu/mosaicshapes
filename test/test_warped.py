@@ -23,14 +23,20 @@ class TestWarped(unittest.TestCase):
     #     warped = Warped(size=(200,200), color=(180,0,200))
     #     warped.draw()
 
-    # Test horizontal expansion
+    # # Test horizontal expansion
     # def test_draw(self):
     #     warped = Warped(size=(50,20), color=(180,0,200))
     #     warped.draw()
 
     # Test vertical expansion
     def test_draw(self):
-        warped = Warped(size=(100,200), color=(180,0,200))
+        # warped = Warped(size=(200,100), color=(180,0,200))
+        # warped.draw()
+
+        # warped = Warped(size=(50,20), color=(180,0,200))
+        # warped.draw()
+
+        warped = Warped(size=(200,200), color=(180,0,200))
         warped.draw()
 
 
