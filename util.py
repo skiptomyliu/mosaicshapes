@@ -45,7 +45,7 @@ def adjacent_colors((r, g, b), d=DEG30): # Assumption: r, g, b in [0, 255]
     adjacent[0] = tuple(adjacent[0])
     adjacent[1] = tuple(adjacent[1])
 
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     return adjacent
 
 

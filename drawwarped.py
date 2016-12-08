@@ -32,8 +32,7 @@ class DrawWarped():
                 self.og_image.paste(img, (w*pix,h*pix))
                 
 
-            self.og_image.show()
-
+            self.image.show()
             import pdb; pdb.set_trace()
 
 
