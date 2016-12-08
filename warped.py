@@ -10,7 +10,9 @@ from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
 from random import shuffle
+
 import util
+
 
 """
 Get average color of rect.

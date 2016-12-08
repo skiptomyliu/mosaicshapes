@@ -17,7 +17,7 @@ class DrawWarped():
         width,height = self.image.size
 
         print width,height
-        pix = 48
+        pix = 35
 
         for w in range(width/pix):
             for h in range(height/pix):
@@ -40,8 +40,8 @@ class DrawWarped():
                 # import pdb; pdb.set_trace()
                 print w,h
 
-            # self.og_image.show()
-            # import pdb; pdb.set_trace()
+            if w%10:
+                self.og_image.show()
 
 
         self.og_image.show()
