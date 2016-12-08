@@ -17,12 +17,17 @@ class DrawWarped():
         width,height = self.image.size
 
         print width,height
-        pix = 50
+        pix = 48
 
         for w in range(width/pix):
             for h in range(height/pix):
 
-                warped_rect = Warped(size=(pix,pix))
+                x,y = w*pix,h*pix
+                rect_coords = [x,y,x+pix, y+pix]
+
+                color = util.average_color(self.og_image, rect=rect_coords)
+
+                warped_rect = Warped(size=(pix,pix), color=color)
                 img = warped_rect.draw()
 
 
@@ -30,10 +35,13 @@ class DrawWarped():
                 self.image.paste(img, (w*pix,h*pix))
                 # self.image.show()
                 self.og_image.paste(img, (w*pix,h*pix))
-                
 
-            self.image.show()
-            import pdb; pdb.set_trace()
-
+                # self.og_image.show()
+                # import pdb; pdb.set_trace()
+                print w,h
 
             # self.og_image.show()
+            # import pdb; pdb.set_trace()
+
+
+        self.og_image.show()

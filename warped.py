@@ -3,10 +3,13 @@
 
 from PIL import Image, ImageDraw
 import numpy as np
+# from numpy import random
+import random
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
+from random import shuffle
 import util
 
 """
@@ -21,8 +24,14 @@ class Warped():
         self.height = size[1]
         self.color = color
         self.num_circles = 4
-        self.warp_height = .03
+        self.warp_height = .04*np.random.random()
 
+        self.sincos = np.cos if bool(random.getrandbits(1)) else np.sin
+
+
+
+    def __paint_circles(self):
+        pass
 
     def draw(self):
         show_image = False
@@ -38,18 +47,37 @@ class Warped():
         
         print "circle size", CIRCLE_SIZE
 
-        circle_img=Image.new('RGB', (CIRCLE_SIZE,CIRCLE_SIZE))
+        circle_img = Image.new('RGBA', (CIRCLE_SIZE,CIRCLE_SIZE))
+
         canvas = ImageDraw.Draw(circle_img)
 
         csize = CIRCLE_SIZE/(self.num_circles*2)
 
-        color0 = (100,100,200)
+        color0 = self.color #(100,100,200)
         color1, color2 = util.adjacent_colors(color0)
+        color3, color4 = util.adjacent_colors(color1)
+        color4, color5 = util.adjacent_colors(color2)
+        colors = [color0, color1, color2, color3, color4, color5]
 
-        canvas.ellipse([0, 0, CIRCLE_SIZE,CIRCLE_SIZE], fill=color0)
-        canvas.ellipse([csize, csize, CIRCLE_SIZE-csize, CIRCLE_SIZE-csize], fill=color0)
-        canvas.ellipse([csize*2, csize*2, CIRCLE_SIZE-csize*2, CIRCLE_SIZE-csize*2], fill=color1)
-        canvas.ellipse([csize*3, csize*3, CIRCLE_SIZE-csize*3, CIRCLE_SIZE-csize*3], fill=color2)
+        shuffle(colors)
+        print colors
+
+        paper = Image.new('RGBA', (CIRCLE_SIZE,CIRCLE_SIZE))
+        paper.paste(colors[0], [0,0,self.width,self.height])
+
+        canvas.ellipse([0, 0, CIRCLE_SIZE,CIRCLE_SIZE], fill=colors[1])
+        canvas.ellipse([csize, csize, CIRCLE_SIZE-csize, CIRCLE_SIZE-csize], fill=colors[2])
+        canvas.ellipse([csize*2, csize*2, CIRCLE_SIZE-csize*2, CIRCLE_SIZE-csize*2], fill=colors[3])
+        canvas.ellipse([csize*3, csize*3, CIRCLE_SIZE-csize*3, CIRCLE_SIZE-csize*3], fill=colors[4])
+
+        # paper = Image.new('RGBA', (CIRCLE_SIZE,CIRCLE_SIZE))
+        # paper.paste(color0, [0,0,self.width,self.height])
+        # canvas.ellipse([0, 0, CIRCLE_SIZE,CIRCLE_SIZE], fill=color1)
+        # canvas.ellipse([csize, csize, CIRCLE_SIZE-csize, CIRCLE_SIZE-csize], fill=color2)
+        # canvas.ellipse([csize*2, csize*2, CIRCLE_SIZE-csize*2, CIRCLE_SIZE-csize*2], fill=color3)
+        # canvas.ellipse([csize*3, csize*3, CIRCLE_SIZE-csize*3, CIRCLE_SIZE-csize*3], fill=color4)
+
+
         if show_image:
             circle_img.show()
         image = np.asarray(circle_img)
@@ -65,14 +93,14 @@ class Warped():
         HEIGHT_OSC = CIRCLE_SIZE * self.warp_height
 
         if is_horizontal:
-            dst_rows = src[:, 1] - np.cos(np.linspace(0, 4 * np.pi, src.shape[0])) * HEIGHT_OSC
+            dst_rows = src[:, 1] - self.sincos(np.linspace(0, 4 * np.pi, src.shape[0])) * HEIGHT_OSC
             dst_cols = src[:, 0] 
 
             dst_rows *= (ratio+self.warp_height)
             dst_rows -= ratio * HEIGHT_OSC # subtract y position to account for mutating up
         else:
             dst_rows = src[:, 1] 
-            dst_cols = src[:, 0]  - np.sin(np.linspace(0, 3 * np.pi, src.shape[0])) * HEIGHT_OSC
+            dst_cols = src[:, 0]  - self.sincos(np.linspace(0, 3 * np.pi, src.shape[0])) * HEIGHT_OSC
 
             dst_cols *= (ratio+self.warp_height)
             # dst_cols -= ratio * HEIGHT_OSC # subtract y position to account for mutating up
@@ -99,10 +127,13 @@ class Warped():
 
         converted = scipy.misc.toimage(out)
 
+        # import pdb; pdb.set_trace()
+        # paper.paste(converted, (0,0))
+        paper.paste(converted, (0, 0), converted)
         # if show_image:
         #     converted.show()
 
-        return converted
+        return paper
 
 
 

@@ -17,3 +17,5 @@ class Shape(object):
     @abc.abstractmethod
     def mutate(self):
         return
+
+    
