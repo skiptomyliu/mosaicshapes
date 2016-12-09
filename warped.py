@@ -30,8 +30,6 @@ class Warped():
 
         self.sincos = np.cos if bool(random.getrandbits(1)) else np.sin
 
-
-
     def __paint_circles(self):
         pass
 
