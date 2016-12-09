@@ -8,6 +8,19 @@ def clamp_int(val, minval, maxval):
     return int(val)
 
 
+def average_color_pixels(image, pixels):
+    for pixel in pixels:
+        x,y = pixel
+        cr,cg,cb = image.getpixel((x,y))
+        r+=cr
+        g+=cg
+        b+=cb
+
+    total = len(pixels)
+    return (r/total, g/total, b/total)
+
+
+
 def average_color(image, rect=None):
     if not rect:            # Use whole image
         w,h = image.size
