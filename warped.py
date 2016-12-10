@@ -21,10 +21,12 @@ Distort it (http://stackoverflow.com/questions/21940911/python-image-distortion)
 """
 class Warped():
 
-    def __init__(self, size=(200,200), color=(180,0,200)):
+    def __init__(self, size=(200,200), fg_color=(180,0,200), bg_color=(255,0,255)):
         self.width = size[0]
         self.height = size[1]
-        self.color = color
+        self.color = fg_color
+        self.fg_color = fg_color 
+        self.bg_color = bg_color
         self.num_circles = 4
         self.warp_height = .04*np.random.random()
 
@@ -167,8 +169,7 @@ class Warped():
         shuffle(colors)
         # print colors
 
-        paper = Image.new('RGBA', (CIRCLE_SIZE,CIRCLE_SIZE))
-        paper.paste(colors[0], [0,0,self.width,self.height])
+
 
         canvas.ellipse([0, 0, CIRCLE_SIZE,CIRCLE_SIZE], fill=colors[1])
         canvas.ellipse([csize, csize, CIRCLE_SIZE-csize, CIRCLE_SIZE-csize], fill=colors[2])
@@ -241,8 +242,10 @@ class Warped():
         except Exception as e:
             import pdb; pdb.set_trace()
 
-        # import pdb; pdb.set_trace()
-        # paper.paste(converted, (0,0))
+        # Set up canvas where the circle will be pasted on
+        paper = Image.new('RGBA', (CIRCLE_SIZE,CIRCLE_SIZE))
+        paper.paste(self.bg_color, [0,0,self.width,self.height])
+
         paper.paste(converted, (0, 0), converted)
         if show_image:
             converted.show()

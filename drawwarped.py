@@ -58,8 +58,6 @@ class DrawWarped():
         print width,height
         pix = 35
 
-        # import pdb; pdb.set_trace()
-
         for w in range(width/pix):
             for h in range(height/pix):
 
@@ -73,17 +71,15 @@ class DrawWarped():
 
                 if slope:
                     x,y = np.where(self.img_edges==True)
-                    x,y = np.where(self.img_edges==False)
-
-
                     prim_color = util.average_color_pixels(self.og_image, zip(x,y))
+                    x,y = np.where(self.img_edges==False)
                     bg_color = util.average_color_pixels(self.og_image, zip(x,y))
-                    
-                    warped_rect.draw(slope, prim_color, bg_color)
-                    '''
-                    '''
 
-
+                    warped_rect = Warped(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
+                    img = warped_rect.draw(slope)
+                    self.image.paste(img, (w*pix,h*pix))
+                    self.og_image.paste(img, (w*pix,h*pix))
+                    """
                     print [x,y,x+pix, y+pix]
                     if slope < 0: # uphill
                         color = (200,0,0)
@@ -96,6 +92,7 @@ class DrawWarped():
                     self.og_image.paste(img, (w*pix,h*pix))
 
                     # self.og_image.show()
+                    """
 
 
                 # warped_rect = Warped(size=(pix,pix), color=color)
