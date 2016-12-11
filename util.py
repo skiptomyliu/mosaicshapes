@@ -35,6 +35,8 @@ def average_color(image, rect=None):
 
     r,g,b = 0,0,0
     area = w*h
+    # if area <= 0:
+    #     area = 1
 
     for x in range(x0, x1):
         for y in range(y0, y1):
@@ -42,6 +44,8 @@ def average_color(image, rect=None):
             r+=cr
             g+=cg
             b+=cb
+
+    # if (0,0,0) == (r/area, g/area, b/area):
 
     return (r/area, g/area, b/area)
 

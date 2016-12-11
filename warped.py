@@ -135,7 +135,6 @@ class Warped():
 
             print out_cols, out_rows
             out = warp(image, tform, output_shape=(out_rows, out_cols))
-            # import pdb; pdb.set_trace()
 
             if slope > -10000:
                 slope_percent = 100*slope
@@ -157,7 +156,7 @@ class Warped():
                 import pdb; pdb.set_trace()
 
        
-        paper = Image.new('RGBA', (CIRCLE_SIZE,CIRCLE_SIZE))
+        paper = Image.new('RGBA', (self.width,self.height))
 
         # 1st color
          # Set up canvas where the circle will be pasted on
@@ -189,7 +188,7 @@ class Warped():
         # c,m,_,_ = 0,0,0,0
         
 
-        # m+=2
+        m+=2
         m*=1.5
 
         # k*=1.5
@@ -216,7 +215,7 @@ class Warped():
         c,m,y,k = util.rgb_to_cmyk(r,g,b)
         c+=2
         c*=1.5
-        # m+=2
+        m+=1
         m*=1.5
         r5,g5,b5 = util.cmyk_to_rgb(c,m,y,k)
 
@@ -224,12 +223,12 @@ class Warped():
         # M+Y
         c,m,y,k = util.rgb_to_cmyk(r,g,b)
         y*=1.1
-        # m+=2
+        m+=1
         m*=1.1
         r6,g6,b6 = util.cmyk_to_rgb(c,m,y,k)
 
         width = random.randint(2,4)
-        rand = random.randint(0,3)
+        rand = random.randint(0,4)
         # import pdb; pdb.set_trace()
 
         # colors = [(r1,g1,b1),(r2,g2,b2),(r3,g3,b3),(r4,g4,b4)]
@@ -246,8 +245,8 @@ class Warped():
             paper.paste((r5,g5,b5), [width,width,self.width-width,self.height-width])
             canvas.ellipse([width,width,self.width-width,self.height-width], fill=(r3,g3,b3))
             # paper.paste((r3,g3,b3), [width*2,width*2,self.width-width*2,self.height-width*2])
-            paper.paste((r4,g4,b4), [width*2,width*2,self.width-width*2,self.height-width*2])
-            paper.paste((r6,g6,b6), [width*3,width*3,self.width-width*3,self.height-width*3])
+            paper.paste((r4,g4,b4), [width*4,width*4,self.width-width*4,self.height-width*4])
+            paper.paste((r6,g6,b6), [width*5,width*5,self.width-width*5,self.height-width*5])
         elif rand == 1:
             # paper.paste((r2,g2,b2), [0,0,self.width,self.height])
             paper.paste((r5,g5,b5), [0,0,self.width,self.height])
@@ -257,7 +256,7 @@ class Warped():
             canvas.ellipse([width*2,width*2,self.width-width*2,self.height-width*2], fill=(r6,g6,b6))
             # paper.paste((r3,g3,b3), [width*2,width*2,self.width-width*2,self.height-width*2])
             # paper.paste((r6,g6,b6), [width*3,width*3,self.width-width*3,self.height-width*3])
-            paper.paste((r4,g4,b4), [width*3,width*3,self.width-width*3,self.height-width*3])
+            paper.paste((r4,g4,b4), [width*4,width*4,self.width-width*4,self.height-width*4])
         elif rand == 2:
             paper.paste((r4,g4,b4), [0,0,self.width,self.height])
             # paper.paste((r2,g2,b2), [width,width,self.width-width,self.height-width])
