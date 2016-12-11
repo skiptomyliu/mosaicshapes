@@ -39,6 +39,16 @@ class TestWarped(unittest.TestCase):
         warped = Warped(size=(200,200), color=(180,0,200))
         warped.draw()
 
+    def test_draw_angle(self):
+        # warped = Warped(size=(200,100), color=(180,0,200))
+        # warped.draw()
+
+        # warped = Warped(size=(50,20), color=(180,0,200))
+        # warped.draw()
+
+        warped = Warped(size=(200,200), color=(180,0,200), )
+        warped.draw()
+
 
 if __name__ == '__main__':
     unittest.main()

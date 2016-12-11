@@ -56,29 +56,49 @@ class DrawWarped():
         width,height = self.image.size
 
         print width,height
-        pix = 35
-
+        pix = 25
+        count = 0
         for w in range(width/pix):
             for h in range(height/pix):
-
                 # create rect coords:
                 x,y = w*pix,h*pix
                 rect_coords = [x,y,x+pix, y+pix]
                 img_seg = self.img_edges[y:y+pix,x:x+pix]
-                slope = self.get_slope(img_seg)
-                color = util.average_color(self.og_image, rect=rect_coords)
-
-
+                # slope = self.get_slope(img_seg)
+                slope = None
+                
                 if slope:
-                    x,y = np.where(self.img_edges==True)
-                    prim_color = util.average_color_pixels(self.og_image, zip(x,y))
-                    x,y = np.where(self.img_edges==False)
-                    bg_color = util.average_color_pixels(self.og_image, zip(x,y))
+
+                    x_line,y_line = np.where(img_seg==True)
+                    prim_color = util.average_color_pixels(self.og_image, zip(x_line+x, y_line+y))
+
+                    x_bg,y_bg = np.where(img_seg==False)
+                    bg_color = util.average_color_pixels(self.og_image, zip(x_bg+x,y_bg+y))
 
                     warped_rect = Warped(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
                     img = warped_rect.draw(slope)
                     self.image.paste(img, (w*pix,h*pix))
                     self.og_image.paste(img, (w*pix,h*pix))
+
+                else:
+                    color = util.average_color(self.og_image, rect=rect_coords)
+                    r,g,b = color
+                    prim_color = util.rgb_to_cmyk(r,g,b)
+                    c,m,y,k = prim_color
+                    # import pdb; pdb.set_trace()
+                    # r,g,b = util.cmyk_to_rgb(c,m,y,k)
+                    
+                    warped_rect = Warped(size=(pix,pix), fg_color=color)
+                    img = warped_rect.draw()
+                    self.image.paste(img, (w*pix,h*pix))
+                    self.og_image.paste(img, (w*pix,h*pix))
+
+                # count += 1
+                # if count % 10==0:
+                    # self.og_image.show()
+
+
+                    # import pdb; pdb.set_trace()
                     """
                     print [x,y,x+pix, y+pix]
                     if slope < 0: # uphill

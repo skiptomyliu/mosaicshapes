@@ -13,7 +13,7 @@ class TestDrawWarped(unittest.TestCase):
 
     # Test vertical expansion
     def test_warp(self):
-        dw = DrawWarped("./examples/moi.JPEG")
+        dw = DrawWarped("./examples/bill.JPEG")
         dw.warp()
 
 
