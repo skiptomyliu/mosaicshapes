@@ -9,6 +9,7 @@ from skimage import io, feature
 import matplotlib.pyplot as plt
 import numpy as np
 from enum import Enum
+import random 
 
 class Slope(Enum):
     uphill = 1
@@ -92,42 +93,6 @@ class DrawWarped():
                     img = warped_rect.draw()
                     self.image.paste(img, (w*pix,h*pix))
                     self.og_image.paste(img, (w*pix,h*pix))
-
-                # count += 1
-                # if count % 10==0:
-                    # self.og_image.show()
-
-
-                    # import pdb; pdb.set_trace()
-                    """
-                    print [x,y,x+pix, y+pix]
-                    if slope < 0: # uphill
-                        color = (200,0,0)
-                    if slope >= 0: # downhill
-                        color = (0,255,0)
-
-                    warped_rect = Warped(size=(pix,pix), color=color)
-                    img = warped_rect.draw(slope)
-                    self.image.paste(img, (w*pix,h*pix))
-                    self.og_image.paste(img, (w*pix,h*pix))
-
-                    # self.og_image.show()
-                    """
-
-
-                # warped_rect = Warped(size=(pix,pix), color=color)
-                # img = warped_rect.draw()
-
-                # # self.draw.rectangle(shape.coords(), fill=color)
-                # self.image.paste(img, (w*pix,h*pix))
-                # # self.image.show()
-                # self.og_image.paste(img, (w*pix,h*pix))
-
-                
-                # print w,h
-
-            # if w%10:
-                # self.og_image.show()
 
 
         self.og_image.show()
