@@ -7,7 +7,7 @@ class TestColorPalette(unittest.TestCase):
 
     def setUp(self):
         self.pal = ColorPalette()
-        self.pal.quantize("./examples/bill.JPEG")
+        self.pal.quantize("./examples/bill.JPEG", 64, "./examples/blue.JPEG")
         pass
        
     def tearDown(self):
