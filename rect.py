@@ -16,6 +16,7 @@ class Rect(Shape):
             self.x1 = coords[2]
             self.y1 = coords[3]
 
+    
     @classmethod
     def init_random(cls, bound_size):
         return cls(bound_size=bound_size)
