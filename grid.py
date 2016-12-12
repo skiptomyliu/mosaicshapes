@@ -20,8 +20,7 @@ class Slope(Enum):
     vertical = 4
     
 
-# rename later to grid?  
-class DrawWarped():
+class Grid():
     def __init__(self, imgpath):
 
         self.og_image = Image.open(imgpath)
@@ -31,7 +30,7 @@ class DrawWarped():
         self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 25
+        self.pixels = 15
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
         # plt.imshow(self.img_edges, cmap=plt.cm.gray)
         # plt.show()
@@ -41,7 +40,7 @@ class DrawWarped():
     def occupy(self, x, y, x_total=1, y_total=1):
         for i in range(x_total):
             for j in range(y_total):
-                if  y+j < self.height/self.pixels:
+                if  x+i < self.width/self.pixels and y+j < self.height/self.pixels:
                     self.grid_status[x+i][y+j] = 1
                     # import pdb; pdb.set_trace()
 
@@ -64,28 +63,26 @@ class DrawWarped():
 
     def warp(self):
         width,height = self.image.size
-
         print width,height
         pix = self.pixels
-        count = 0
 
-        cell_h_count = 0
-        cell_w_count = 0
         for w in range(width/pix):
             for h in range(height/pix):
-                if random.randint(0,1):
-                    pix_w, pix_h = (pix, pix*1)
-                else:
-                    pix_w, pix_h = (pix, pix*2)
-
                 if not self.is_occupied(w,h):
+
+                    if random.randint(0,50)==1:
+                        pix_w, pix_h = (pix*2, pix*1)
+                    elif random.randint(0,50)==1:
+                        pix_w, pix_h = (pix, pix*2)
+                    else:
+                        pix_w, pix_h = (pix, pix)
+
                     # create rect coords:
                     x,y = w*pix, h*pix
                     rect_coords = [
                         x, y, 
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
-                    print rect_coords
                     # img_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
                     # slope = self.get_slope(img_seg)
                     slope = None
@@ -127,12 +124,10 @@ class DrawWarped():
 
                         self.occupy(w,h,pix_w/pix,pix_h/pix)
 
-                # cell_h_count += 1
-            # cell_w_count += 1
+            # if w%38 == 0:
+            #     self.og_image.show()
+            #     import pdb; pdb.set_trace()
 
-
-                        
 
 
         self.og_image.show()
-        # self.image.show()

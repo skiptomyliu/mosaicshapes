@@ -188,7 +188,7 @@ class Warped():
         # c,m,_,_ = 0,0,0,0
         
 
-        m+=2
+        m+=3
         m*=1.5
 
         # k*=1.5
@@ -215,7 +215,7 @@ class Warped():
         c,m,y,k = util.rgb_to_cmyk(r,g,b)
         c+=2
         c*=1.5
-        m+=1
+        m+=3
         m*=1.5
         r5,g5,b5 = util.cmyk_to_rgb(c,m,y,k)
 
@@ -227,7 +227,7 @@ class Warped():
         m*=1.1
         r6,g6,b6 = util.cmyk_to_rgb(c,m,y,k)
 
-        width = random.randint(2,4)
+        width = random.randint(2,3)
         rand = random.randint(0,4)
         # import pdb; pdb.set_trace()
 

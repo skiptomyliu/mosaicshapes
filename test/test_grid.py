@@ -1,13 +1,13 @@
 
 
 import unittest
-from drawwarped import DrawWarped
+from grid import Grid
 
 
-class TestDrawWarped(unittest.TestCase):
+class TestGrid(unittest.TestCase):
 
     def setUp(self):
-        self.dw = DrawWarped("./examples/bill.JPEG")
+        self.grid = Grid("./examples/bill.JPEG")
         pass
        
     def tearDown(self):
@@ -15,21 +15,22 @@ class TestDrawWarped(unittest.TestCase):
 
     # Test vertical expansion
     def test_warp(self):
-        self.dw.warp()
+        self.grid.warp()
+
 
     def test_occupy(self):
         x,y = (10,20)
-        self.dw.occupy(x,y)
-        result = self.dw.is_occupied(x,y)
+        self.grid.occupy(x,y)
+        result = self.grid.is_occupied(x,y)
         self.assertTrue(result)
 
     # Test vertical expansion
     def test_is_occupied(self):
         x,y = (10,20)
-        result = self.dw.is_occupied(x,y)
+        result = self.grid.is_occupied(x,y)
         self.assertFalse(result)
-        self.dw.occupy(x,y)
-        result = self.dw.is_occupied(x,y)
+        self.grid.occupy(x,y)
+        result = self.grid.is_occupied(x,y)
         self.assertTrue(result)
 
 
