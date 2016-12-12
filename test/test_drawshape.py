@@ -26,10 +26,10 @@ class TestDrawShape(unittest.TestCase):
         """
         pass
 
-    def test_crop_b4_compare(self):
-        rect_coords = (0,0,100,100)
-        art_img, og_img = self.ds.crop_b4_compare(rect_coords)
-        self.assertEqual(art_img.size, og_img.size)
+    # def test_crop_b4_compare(self):
+    #     rect_coords = (0,0,100,100)
+    #     art_img, og_img = self.ds.crop_b4_compare(rect_coords)
+    #     self.assertEqual(art_img.size, og_img.size)
 
     def test_get_staged_diff(self):
         rect_coords = [0,0,100,100]
@@ -82,6 +82,18 @@ class TestDrawShape(unittest.TestCase):
     #         art_img, og_img = self.ds.crop_b4_compare(rect_coords)
     #         DrawShape.rmsdiff(art_img, og_img)
     #     print(timeit.default_timer() - start_time)
+
+    def test_draw_shape(self):
+        pass
+        # c = [0,0,100,100]
+        # rect = Rect.init_coords(self.image.size, c)
+        # self.ds.draw_shape(rect)
+
+    def test_find_best_angle(self):
+        rect_coords = [400,400,450,450]
+        rect = Rect.init_coords(rect_coords, rect_coords)
+        self.ds.find_best_angle(rect)
+        pass
 
 
     def test_stage_draw(self):

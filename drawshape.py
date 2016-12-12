@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageChops
+from PIL import Image, ImageDraw, ImageChops, ImageOps
 import random
 import math
 from util import *
@@ -39,11 +39,18 @@ class DrawShape(object):
     def stage_draw(self, rect, color):
         staged_image = self.image.copy()
         staged_draw = ImageDraw.Draw(staged_image, 'RGBA')
-        staged_draw.rectangle(rect.coords(), fill=color)
+
+        # staged_draw.rectangle(rect.coords(), fill=color)
+    
+        staged_draw.ellipse(rect.coords(), fill=color)
+
+
         return staged_image
 
     def draw_shape(self, shape, color):
-        self.draw.rectangle(shape.coords(), fill=color)
+        shape.draw(canvas=self.draw, color=color)
+        # self.draw.rectangle(shape.coords(), fill=color)
+        # self.draw.ellipse(shape.coords(), fill=color)
 
     def find_best_alpha(self, rect, tries=10):
         r,g,b = average_color(self.og_image, rect.coords())
@@ -65,19 +72,16 @@ class DrawShape(object):
 
         return best_color
 
-    def find_best_shape(self, tries=100):
-        best_rect = Rect(self.image.size)
+    def find_best_shape(self, ShapeCls=Rect, tries=100):
+        best_rect = ShapeCls(self.image.size)
         best_diff = self.get_staged_diff(best_rect)
 
         for i in range(tries):
-            temp_rect = Rect(self.image.size)
-            # staged_image = self.stage_draw(temp_rect, )
-            # cur_diff = DrawShape.rmsdiff(self.og_image, staged_image)
+            temp_rect = ShapeCls(self.image.size)
             cur_diff = self.get_staged_diff(temp_rect)
             if cur_diff < best_diff:
                 best_diff = cur_diff
                 best_rect = copy(temp_rect)
-                print best_rect, best_rect.area()
 
         return best_rect
 
@@ -93,29 +97,56 @@ class DrawShape(object):
                 best_diff = cur_diff
                 best_rect = copy(temp_rect)
                 rect = best_rect
-                # print "best rect"
-                # print best_diff
+                print "best shape"
+                print best_diff
                 # print rect.area()
         return best_rect
+
+    def find_best_angle(self, shape):
+        # f = ImageFont.load_default()
+        color = average_color(self.og_image, shape.coords())
+        txt = Image.new('L', (300,50))
+        d = ImageDraw.Draw(txt)
+        # d.text( (0, 0), "Someplace Near Boulder",  font=f, fill=255)
+
+        w = abs(shape.x0 - shape.x1)
+        h = abs(shape.y0 - shape.y1)
+        new_c = [0,0,w,h]
+
+        
+        d.rectangle(new_c, fill=255)
+
+        w = txt.rotate(17.5,  expand=1)
+        
+
+        # XXX:  may need to revisit first arg color mapping
+        self.image.paste(ImageOps.colorize(w, (0,0,0), color), (0,0), w)
+        self.draw.rectangle(shape.coords(), fill=color)
+        # self.image.paste(w, (0,0))
+        self.image.show()
+        import pdb ;pdb.set_trace()        
+
+        # self.image.paste(ImageOps.colorize(w, (0,0,0), (255,255,84)), (242,60),  w)
+
 
     """
     Unused below
     """
-    def crop_b4_compare(self, rect_coords):
-        og_crop = self.og_image.crop(rect_coords)
-        art_crop = self.image.crop(rect_coords)
-        return og_crop, art_crop
+    # def crop_b4_compare(self, rect_coords):
+    #     og_crop = self.og_image.crop(rect_coords)
+    #     art_crop = self.image.crop(rect_coords)
+    #     return og_crop, art_crop
 
-    def get_staged_diff_crop(self, shape):
-        crop_og = self.og_image.crop(shape.coords())
-        color = average_color(self.og_image, shape.coords())
+    # def get_staged_diff_crop(self, shape):
+    #     crop_og = self.og_image.crop(shape.coords())
+    #     color = average_color(self.og_image, shape.coords())
 
-        crop_staged_art = self.stage_draw_crop(shape, color)
-        return DrawShape.rmsdiff(crop_og, crop_staged_art)
+    #     crop_staged_art = self.stage_draw_crop(shape, color)
+    #     return DrawShape.rmsdiff(crop_og, crop_staged_art)
 
-    def stage_draw_crop(self, rect, color):
-        staged_art = self.image.crop(rect.coords())
-        staged_draw = ImageDraw.Draw(staged_art, 'RGBA')
-        w,h = staged_art.size
-        staged_draw.rectangle([0,0,w,h], fill=color)
-        return staged_art
+    # def stage_draw_crop(self, rect, color):
+    #     staged_art = self.image.crop(rect.coords())
+    #     staged_draw = ImageDraw.Draw(staged_art, 'RGBA')
+    #     w,h = staged_art.size
+    #     staged_draw.rectangle([0,0,w,h], fill=color)
+    #     return staged_art
