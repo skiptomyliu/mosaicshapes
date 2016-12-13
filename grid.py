@@ -10,6 +10,7 @@ from skimage import io, feature
 import matplotlib.pyplot as plt
 import numpy as np
 from enum import Enum
+from colorpalette import ColorPalette
 import random 
 
 # remove later?
@@ -32,6 +33,7 @@ class Grid():
         self.width,self.height = self.image.size
         self.pixels = 15
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
+        self.color_palette = ColorPalette("./examples/pink.JPEG", 32)
         # plt.imshow(self.img_edges, cmap=plt.cm.gray)
         # plt.show()
 
@@ -42,7 +44,7 @@ class Grid():
             for j in range(y_total):
                 if  x+i < self.width/self.pixels and y+j < self.height/self.pixels:
                     self.grid_status[x+i][y+j] = 1
-                    # import pdb; pdb.set_trace()
+
 
     # Test vertical expansion
     def is_occupied(self, x, y):
@@ -106,12 +108,11 @@ class Grid():
 
                     else:
                         color = util.average_color(self.og_image, rect=rect_coords)
-                        # print rect_coords
-                        # print color
+                        color = self.color_palette.translate_color(color)
+
                         r,g,b = color
                         prim_color = util.rgb_to_cmyk(r,g,b)
                         c,m,y,k = prim_color
-                        # import pdb; pdb.set_trace()
                         # r,g,b = util.cmyk_to_rgb(c,m,y,k)
                         
                         warped_rect = Warped(size=(pix_w, pix_h), fg_color=color)

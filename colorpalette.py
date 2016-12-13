@@ -12,15 +12,16 @@ from time import time
 
 class ColorPalette():
     
-    def __init__(self):
+    def __init__(self, image_path="", n_colors=64):
         self.colorbook = None
         self.kmeans = None
         self.labels = None
-        pass
+
+        if image_path:
+            self.quantize(image_path, n_colors=n_colors)
 
 
-
-    def quantize(self, image_path, n_colors=64, testing_image_path=""):
+    def apply_palette_to_image(self, image):
 
         def recreate_image(codebook, labels, w, h):
             """Recreate the (compressed) image from the code book & labels"""
@@ -34,6 +35,33 @@ class ColorPalette():
             return image
 
 
+        moi_image = image
+        moi_image = moi_image / float(255)
+        w2, h2, d2 = original_shape = tuple(moi_image.shape)
+        assert d2 == 3
+        moi_array = np.reshape(moi_image, (w2 * h2, d2))
+        labels = self.kmeans.predict(moi_array)
+
+         # import pdb; pdb.set_trace()
+        
+        # Display all results, alongside original image
+        plt.figure(1)
+        plt.clf()
+        ax = plt.axes([0, 0, 1, 1])
+        plt.axis('off')
+        plt.title('Original image (96,615 colors)')
+        plt.imshow(moi_image)
+
+        plt.figure(2)
+        plt.clf()
+        ax = plt.axes([0, 0, 1, 1])
+        plt.axis('off')
+        plt.title('Quantized image (64 colors, K-Means)')
+        plt.imshow(recreate_image(self.kmeans.cluster_centers_, labels, w2, h2))
+
+        plt.show()
+
+    def quantize(self, image_path, n_colors=64):
         sample_image = io.imread(image_path) 
 
         # Convert to floats instead of the default 8 bits integer coding. Dividing by
@@ -46,7 +74,7 @@ class ColorPalette():
         image_array = np.reshape(sample_image, (w*h, d))
 
         # xxx:  use percentage of total pixs instead?
-        image_array_sample = shuffle(image_array, random_state=0)[:2000] 
+        image_array_sample = shuffle(image_array, random_state=0)[:3000] 
         self.kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
         self.colorbook = self.kmeans.cluster_centers_
 
@@ -55,80 +83,6 @@ class ColorPalette():
 
 
 
-        """
-        testing
-        """
-        n_colors = 64
-        # Load the Summer Palace photo
-        china = load_sample_image("china.jpg")
-
-        # Convert to floats instead of the default 8 bits integer coding. Dividing by
-        # 255 is important so that plt.imshow behaves works well on float data (need to
-        # be in the range [0-1])
-        china = np.array(china, dtype=np.float64) / 255
-
-        # Load Image and transform to a 2D numpy array.
-        w, h, d = original_shape = tuple(china.shape)
-        assert d == 3
-        image_array = np.reshape(china, (w * h, d))
-
-        
-        moi_image = io.imread(testing_image_path) 
-        moi_image = moi_image / float(255)
-        w2, h2, d2 = original_shape = tuple(moi_image.shape)
-        assert d2 == 3
-        moi_array = np.reshape(moi_image, (w2 * h2, d2))
-
-        print("Fitting model on a small sub-sample of the data")
-        t0 = time()
-        moi_array_sample = shuffle(moi_array, random_state=0)[:1000]
-        kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(moi_array_sample)
-        print("done in %0.3fs." % (time() - t0))
-
-        # Get labels for all points
-        print("Predicting color indices on the full image (k-means)")
-        t0 = time()
-        labels = kmeans.predict(image_array)
-        print("done in %0.3fs." % (time() - t0))
-
-        # myself: shuffle our image, then sample 64 of the random colors.  Calculate closest distance
-        # distance between each r,g,b value with original image_array.  
-        # codebook_random = shuffle(image_array, random_state=0)[:n_colors + 1]
-        # #image_array[:n_colors+1] 
-        # print("Predicting color indices on the full image (random)")
-        # t0 = time()
-        # labels_random = pairwise_distances_argmin(codebook_random,
-        #   image_array,
-        #   axis=0)
-        # print("done in %0.3fs." % (time() - t0))
-
-
-
-        # import pdb; pdb.set_trace()
-        
-        # Display all results, alongside original image
-        plt.figure(1)
-        plt.clf()
-        ax = plt.axes([0, 0, 1, 1])
-        plt.axis('off')
-        plt.title('Original image (96,615 colors)')
-        plt.imshow(china)
-
-        plt.figure(2)
-        plt.clf()
-        ax = plt.axes([0, 0, 1, 1])
-        plt.axis('off')
-        plt.title('Quantized image (64 colors, K-Means)')
-        plt.imshow(recreate_image(kmeans.cluster_centers_, labels, w, h))
-
-        # plt.figure(3)
-        # plt.clf()
-        # ax = plt.axes([0, 0, 1, 1])
-        # plt.axis('off')
-        # plt.title('Quantized image (64 colors, Random)')
-        # plt.imshow(recreate_image(codebook_random, labels_random, w, h))
-        plt.show()
-
 
     # Takes in tuple color, converts to array.
     def translate_color(self, color):
@@ -136,10 +90,7 @@ class ColorPalette():
         color = color.reshape(1,-1)
 
         label = self.kmeans.predict(np.asarray(color))
-        print label
-        # import pdb; pdb.set_trace()
-        self.colorbook[label]
-
-        pass
+        rgbs = self.colorbook[label]*255
+        return tuple(rgbs[0])
 
 

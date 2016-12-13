@@ -1,13 +1,14 @@
 
 import unittest
 from colorpalette import ColorPalette
-
+from sklearn.datasets import load_sample_image
+from skimage import io
 
 class TestColorPalette(unittest.TestCase):
 
     def setUp(self):
         self.pal = ColorPalette()
-        self.pal.quantize("./examples/bill.JPEG", 64, "./examples/blue.JPEG")
+        self.pal.quantize("./examples/bill.JPEG", 64)
         pass
        
     def tearDown(self):
@@ -15,9 +16,13 @@ class TestColorPalette(unittest.TestCase):
 
     def test_translate_color(self):
     	r,g,b = (100,0,0)
-    	
     	self.pal.translate_color(color=(r,g,b))
-    	pass
+
+    def test_apply_palette_to_image(self):
+    	china = load_sample_image("china.jpg")
+    	self.pal.quantize("./examples/blue.JPEG", 32)
+    	# self.pal.apply_palette_to_image(china)
+    	self.pal.apply_palette_to_image(io.imread("./examples/bill.JPEG"))
 
 
 if __name__ == '__main__':
