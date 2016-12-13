@@ -16,49 +16,52 @@ import util
 
 
 """
-
-
 map shades to different color palettes  
-
-
 """
-class CompColor():
 
-    def __init__(self, size=(200,200), fg_color=(180,0,200), bg_color=(255,0,255)):
+
+class CompColor():
+    def __init__(self, size=(200,200), label=0):
         self.width = size[0]
         self.height = size[1]
-        self.color = fg_color
-        self.fg_color = fg_color 
-        self.bg_color = bg_color
-        self.num_circles = 4
-        self.warp_height = .04*np.random.random()
+        self.colors = [None]*4
 
-        self.sincos = np.cos if bool(random.getrandbits(1)) else np.sin
-
-    def __paint_circles(self):
-        pass
+        if label%3 == 0:
+            self.colors = [(54, 9, 9), (54, 29, 9), (5, 32, 32), (7, 43, 7)]
+            shuffle(self.colors)
+            # self.colors[0] = (54, 9, 9)
+            # self.colors[1] = (54, 29, 9)
+            # self.colors[2] = (5, 32, 32)
+            # self.colors[3] = (7, 43, 7)
+        elif label%3 == 1:
+            self.colors = [(24, 32, 63), (51, 20, 62), (17, 54, 57)]
+            shuffle(self.colors)
+        elif label%3 == 2:
+            self.colors[0] = (20,0,20)
+            self.colors[1] = (0,20,20)
+            self.colors[2] = (20,20,0)
+            self.colors[3] = (0,0,20)
+            shuffle(self.colors)
+        elif label%16 == 3:
+            self.colors[0] = (100,0,0)
+            self.colors[1] = (0,100,0)
+            self.colors[2] = (0,0,100)
+            self.colors[3] = (100,100,0)
+        else:
+            self.colors[0] = (55,55,55)
+            self.colors[1] = (55,55,55)
+            self.colors[2] = (55,55,55)
+            self.colors[3] = (55,55,55)
 
 
     def draw(self, slope=-10000):
-        show_image = True
-        CIRCLE_SIZE = max(self.width, self.height)
-       
         paper = Image.new('RGBA', (self.width,self.height))
 
-        # 1st color
-         # Set up canvas where the circle will be pasted on
-        r,g,b = self.fg_color
-        c,m,y,k = util.rgb_to_cmyk(r,g,b)
-
-
         canvas = ImageDraw.Draw(paper)
-        
+        width = 2
+        for idx, color  in enumerate(self.colors):
+            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
 
-        r,g,b = int(r), int(g), int(b)
-        cr, cg, cb = util.complement(r,g,b)
-
-        # paper.paste((r,g,b), [0,0,self.width,self.height])
-        # paper.paste((cr,cg,cb), [0,0,self.width,self.height])
         # paper.show()
         # import pdb; pdb.set_trace()
 

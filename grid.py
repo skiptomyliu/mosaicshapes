@@ -5,7 +5,6 @@ import util
 from PIL import Image, ImageDraw
 from warped import Warped
 from comp import CompColor
-from trianglerect import TriangleRect
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
@@ -35,9 +34,10 @@ class Grid():
         self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 25
+        self.pixels = 10
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
-        self.color_palette = ColorPalette("./examples/pink.JPEG", 32)
+        # self.color_palette = ColorPalette("./examples/pink.JPEG", 2)
+        self.color_palette = ColorPalette(imgpath, 3)
         # plt.imshow(self.img_edges, cmap=plt.cm.gray)
         # plt.show()
 
@@ -112,17 +112,18 @@ class Grid():
 
                     else:
                         color = util.average_color(self.og_image, rect=rect_coords)
-                        color = self.color_palette.translate_color(color)
+                        # color = self.color_palette.translate_color(color)
+                        color = np.asarray(color)/float(255)
+                        color = color.reshape(1,-1)
+                        label = self.color_palette.kmeans.predict(color)
+                        # import pdb; pdb.set_trace()
+                            
 
-                        r,g,b = color
-                        prim_color = util.rgb_to_cmyk(r,g,b)
-                        c,m,y,k = prim_color
-                        # r,g,b = util.cmyk_to_rgb(c,m,y,k)
-                        
-                        warped_rect = CompColor(size=(pix_w, pix_h), fg_color=color)
+                        warped_rect = CompColor(size=(pix_w, pix_h), label=label)
                         img = warped_rect.draw()
                         # self.image.paste(img,    (w*pix, h*pix))
                         self.og_image.paste(img, (w*pix, h*pix))
+
                         # if h%10 == 0:
                         #     import pdb; pdb.set_trace()
                         #     self.og_image.show()

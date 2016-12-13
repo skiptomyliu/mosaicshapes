@@ -22,7 +22,7 @@ class TestColorPalette(unittest.TestCase):
     	# china = load_sample_image("china.jpg")
     	self.pal.quantize("./examples/bwrange.JPEG", 3)
     	# self.pal.apply_palette_to_image(china)
-    	self.pal.apply_palette_to_image(io.imread("./examples/portrait.JPEG"))
+    	self.pal.apply_palette_to_image(io.imread("./examples/bill.JPEG"))
 
     # def test_quantize(self):
 

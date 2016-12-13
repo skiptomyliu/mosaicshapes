@@ -15,7 +15,6 @@ class ColorPalette():
     def __init__(self, image_path="", n_colors=64):
         self.colorbook = None
         self.kmeans = None
-        self.labels = None
 
         if image_path:
             self.quantize(image_path, n_colors=n_colors)
@@ -79,9 +78,7 @@ class ColorPalette():
         self.colorbook = self.kmeans.cluster_centers_
 
         # Get labels for all points in the image
-        labels = self.kmeans.predict(image_array)
-
-
+        # self.labels = self.kmeans.predict(image_array)
 
 
     # Takes in tuple color, converts to array.
