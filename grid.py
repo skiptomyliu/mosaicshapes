@@ -4,6 +4,7 @@ import util
 
 from PIL import Image, ImageDraw
 from warped import Warped
+from comp import CompColor
 from trianglerect import TriangleRect
 from skimage.color import rgb2grey
 from skimage import io, feature
@@ -21,6 +22,9 @@ class Slope(Enum):
     vertical = 4
     
 
+"""
+Sample color palette multiple times?
+"""
 class Grid():
     def __init__(self, imgpath):
 
@@ -31,7 +35,7 @@ class Grid():
         self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 15
+        self.pixels = 25
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
         self.color_palette = ColorPalette("./examples/pink.JPEG", 32)
         # plt.imshow(self.img_edges, cmap=plt.cm.gray)
@@ -115,7 +119,7 @@ class Grid():
                         c,m,y,k = prim_color
                         # r,g,b = util.cmyk_to_rgb(c,m,y,k)
                         
-                        warped_rect = Warped(size=(pix_w, pix_h), fg_color=color)
+                        warped_rect = CompColor(size=(pix_w, pix_h), fg_color=color)
                         img = warped_rect.draw()
                         # self.image.paste(img,    (w*pix, h*pix))
                         self.og_image.paste(img, (w*pix, h*pix))
