@@ -14,9 +14,12 @@ class TestGrid(unittest.TestCase):
         pass
 
     # Test vertical expansion
-    def test_warp(self):
-        self.grid.warp()
+    # def test_warp(self):
+    #     self.grid.warp()
 
+    def test_n_pass(self):
+        n=1
+        self.grid.n_pass(n)
 
     def test_occupy(self):
         x,y = (10,20)

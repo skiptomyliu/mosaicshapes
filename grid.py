@@ -34,12 +34,13 @@ class Grid():
         self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 15
+        self.pixels = 30
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
-        # self.color_palette = ColorPalette("./examples/pink.JPEG", 2)
-        self.color_palette = ColorPalette(imgpath, 3)
-        # plt.imshow(self.img_edges, cmap=plt.cm.gray)
-        # plt.show()
+
+        self.color_palette = ColorPalette(imgpath, 4)
+
+        self.cols = (self.width/self.pixels)
+        self.rows = (self.height/self.pixels)
 
     # By default we occupy one cell at a time.  x_total is number of additional horizontal
     # cells to occupy.  Vertical is number of additional vertical cells
@@ -65,6 +66,38 @@ class Grid():
                 return None
 
             return slope
+
+
+    def n_pass(self, n_total=1):
+        width,height = self.image.size
+        pix = self.pixels
+        grid_colors = [[CompColor(size=(pix, pix)) for j in range(self.cols)] for i in range(self.rows)]
+
+        for n in range(n_total):
+
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    pix_w, pix_h = (pix, pix)
+
+                    # create rect coords:
+                    x,y = col*pix, row*pix
+                    rect_coords = [
+                        x, y, 
+                        util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
+                    ]
+
+                    og_color = util.average_color(self.og_image, rect=rect_coords)
+                    ccolor = grid_colors[row][col]
+                    ccolor.correct(og_color)
+                    ccolor.correct(og_color)
+                    ccolor.correct(og_color)
+                    img = ccolor.draw()
+                    self.og_image.paste(img, (x,y))
+
+        self.og_image.show()
+
+
+
 
 
     def warp(self):
@@ -116,7 +149,6 @@ class Grid():
                         color = np.asarray(color)/float(255)
                         color = color.reshape(1,-1)
                         label = self.color_palette.kmeans.predict(color)
-                        # import pdb; pdb.set_trace()
                             
 
                         warped_rect = CompColor(size=(pix_w, pix_h), label=label)

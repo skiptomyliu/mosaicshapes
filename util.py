@@ -1,5 +1,6 @@
 
 import colorsys
+import math
 
 def clamp_int(val, minval, maxval):
     if val < minval: return int(minval)
@@ -113,5 +114,35 @@ def complement(r, g, b):
     k = hilo(r, g, b)
     return tuple(k - u for u in (r, g, b))
 
+# http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+# third option half way page down
+def luminance(r,g,b):
+    return math.sqrt(0.299 * math.pow(r,2) + 0.587 * math.pow(g,2) + 0.114 * math.pow(b,2))
 
+def tint_to_lum(color, lum):
+    r,g,b = color
+    nR,nG,nB = r,g,b
+    while True:
+        tint_factor = .005
+
+        nR = nR + (255 - nR) * tint_factor
+        nG = nG + (255 - nG) * tint_factor
+        nB = nB + (255 - nB) * tint_factor
+        if luminance(nR,nG,nB)>=lum:
+            break
+    return int(nR), int(nG), int(nB)
+
+# naive.... need to refactor
+def shade_to_lum(color, lum):
+    r,g,b = color
+    nR,nG,nB = r,g,b
+    while True:
+        shade_factor = .005
+        nR = nR * (1 - shade_factor)
+        nG = nG * (1 - shade_factor)
+        nB = nB * (1 - shade_factor)
+        
+        if luminance(nR,nG,nB)<=lum:
+            break
+    return int(nR), int(nG), int(nB)
 
