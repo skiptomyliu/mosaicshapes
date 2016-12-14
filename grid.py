@@ -34,7 +34,7 @@ class Grid():
         self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 10
+        self.pixels = 15
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
         # self.color_palette = ColorPalette("./examples/pink.JPEG", 2)
         self.color_palette = ColorPalette(imgpath, 3)

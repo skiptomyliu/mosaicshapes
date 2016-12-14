@@ -27,31 +27,38 @@ class CompColor():
         self.colors = [None]*4
 
         if label%3 == 0:
+                            # blue            green            red             orange
+            self.colors = [(194,194,200), (202,218, 183), (223, 179, 181), (252, 195, 162)]
+            shuffle(self.colors)
+
+       
+        elif label%3 == 1:
+            # self.colors = [(24, 32, 63), (51, 20, 62), (17, 54, 57)]
             self.colors = [(54, 9, 9), (54, 29, 9), (5, 32, 32), (7, 43, 7)]
             shuffle(self.colors)
-            # self.colors[0] = (54, 9, 9)
-            # self.colors[1] = (54, 29, 9)
-            # self.colors[2] = (5, 32, 32)
-            # self.colors[3] = (7, 43, 7)
-        elif label%3 == 1:
-            self.colors = [(24, 32, 63), (51, 20, 62), (17, 54, 57)]
-            shuffle(self.colors)
-        elif label%3 == 2:
-            self.colors[0] = (20,0,20)
-            self.colors[1] = (0,20,20)
-            self.colors[2] = (20,20,0)
-            self.colors[3] = (0,0,20)
-            shuffle(self.colors)
-        elif label%16 == 3:
-            self.colors[0] = (100,0,0)
-            self.colors[1] = (0,100,0)
-            self.colors[2] = (0,0,100)
-            self.colors[3] = (100,100,0)
+
+
+            
+        # elif label%5 == 1:
+        #     #light 1
+        #     self.colors = [(251, 62, 135), (255, 179, 114), (248, 110, 132), (255, 161, 114)]
+        #     shuffle(self.colors)
+        # elif label%5 == 2:
+        #     #dark 2
+        #     # self.colors = [(24, 32, 63), (51, 20, 62), (17, 54, 57)]
+        #     self.colors = [(54, 9, 9), (54, 29, 9), (5, 32, 32), (7, 43, 7)]
+        #     shuffle(self.colors)
+            
+        # elif label%5 == 3:
+        #     # highlight
+        #     self.colors = [(248, 120, 192),(255, 233, 175),(255, 203, 175),(175, 225, 249)] 
+        #     shuffle(self.colors)
+        #     # import pdb; pdb.set_trace()
+
         else:
-            self.colors[0] = (55,55,55)
-            self.colors[1] = (55,55,55)
-            self.colors[2] = (55,55,55)
-            self.colors[3] = (55,55,55)
+            self.colors = [(255, 122, 69),(240, 143, 211), (252, 173, 218),(97, 172, 216)]
+            shuffle(self.colors)
+
 
 
     def draw(self, slope=-10000):
@@ -59,8 +66,12 @@ class CompColor():
 
         canvas = ImageDraw.Draw(paper)
         width = 2
-        for idx, color  in enumerate(self.colors):
+        count = 0
+        for idx, color in enumerate(self.colors):
             paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
+            count += 1
+            # if count>0:
+                # break;
 
         # paper.show()
         # import pdb; pdb.set_trace()
