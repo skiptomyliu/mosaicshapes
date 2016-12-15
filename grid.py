@@ -25,8 +25,8 @@ class Slope(Enum):
 Sample color palette multiple times?
 """
 class Grid():
-    def __init__(self, imgpath):
-        self.pixels = 15
+    def __init__(self, imgpath, pix):
+        self.pixels = pix
         self.og_image = Image.open(imgpath)
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
@@ -86,9 +86,13 @@ class Grid():
 
                     og_color = util.average_color(self.og_image, rect=rect_coords)
                     ccolor = grid_colors[row][col]
-                    ccolor.correct(og_color)
-                    ccolor.correct(og_color)
-                    ccolor.correct(og_color)
+                    # ccolor.correct(og_color)
+                    # ccolor.correct(og_color)
+                    # ccolor.correct(og_color)
+
+
+                    colors = CompColor.gen_colors(og_color, n=4)
+                    ccolor.colors = colors
                     img = ccolor.draw()
                     self.og_image.paste(img, (x,y))
 

@@ -26,18 +26,39 @@ class CompColor():
         self.height = size[1]
         self.base_color = base_color
         self.colors = []
-
         self.random_colors = self.__random_color()
 
         # Initial base colors to initialize with:
-
-
 
         # if label%4 == 1:
         #                     # blue            green            red             orange
         #     self.colors = [(194,194,200), (202,218, 183), (223, 179, 181), (252, 195, 162)]
         #     shuffle(self.colors)
 
+    @staticmethod
+    def gen_colors(base_color, n):
+        deg = 30/360.0
+        colors = []
+        if n==1:
+            colors.append(base_color)
+        else:   
+            # minimum distance of twenty values
+            distance = 40
+            colors = []
+
+            r,g,b = base_color
+            quad = 1 if util.luminance(r,g,b) > 100 else 0
+            print util.luminance(r,g,b)
+            for i in range(-n/2+quad, n/2+quad):
+                color = np.asarray(base_color) + (i)*distance/float(n)
+                color[0] = util.clamp_int(color[0], 0, 255)
+                color[1] = util.clamp_int(color[1], 0, 255)
+                color[2] = util.clamp_int(color[2], 0, 255)
+                color = tuple(color)
+                colors.append(color)
+
+
+        return colors
 
     def __random_color(self):
         g0 = (220, 220, 220)
@@ -100,17 +121,25 @@ class CompColor():
 
             pass
 
-    def draw(self, slope=-10000):
+    def draw(self):
         paper = Image.new('RGBA', (self.width, self.height))
-
         canvas = ImageDraw.Draw(paper)
-        width = 3
-        count = 0
-        for idx, color in enumerate(self.colors):
-            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
-            # if count>0:
-                # break;
 
+        width = (self.width/len(self.colors))/2
+        print self.colors
+
+        # self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+
+        # if random.randrange(2)
+        if random.randrange(2):
+            self.colors = list(reversed(self.colors))
+
+        self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        for idx, color in enumerate(self.colors):
+            color = int(color[0]),int(color[1]),int(color[2])
+            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
+        # paper.show()
+        # import pdb; pdb.set_trace()
         return paper
 
 
