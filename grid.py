@@ -26,7 +26,7 @@ Sample color palette multiple times?
 """
 class Grid():
     def __init__(self, imgpath):
-
+        self.pixels = 15
         self.og_image = Image.open(imgpath)
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
@@ -34,9 +34,7 @@ class Grid():
         self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 30
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
-
         self.color_palette = ColorPalette(imgpath, 4)
 
         self.cols = (self.width/self.pixels)

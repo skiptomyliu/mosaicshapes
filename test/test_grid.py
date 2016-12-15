@@ -22,14 +22,14 @@ class TestGrid(unittest.TestCase):
         self.grid.n_pass(n)
 
     def test_occupy(self):
-        x,y = (10,20)
+        x,y = (10,10)
         self.grid.occupy(x,y)
         result = self.grid.is_occupied(x,y)
         self.assertTrue(result)
 
     # Test vertical expansion
     def test_is_occupied(self):
-        x,y = (10,20)
+        x,y = (10,10)
         result = self.grid.is_occupied(x,y)
         self.assertFalse(result)
         self.grid.occupy(x,y)

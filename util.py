@@ -119,6 +119,7 @@ def complement(r, g, b):
 def luminance(r,g,b):
     return math.sqrt(0.299 * math.pow(r,2) + 0.587 * math.pow(g,2) + 0.114 * math.pow(b,2))
 
+
 def tint_to_lum(color, lum):
     r,g,b = color
     nR,nG,nB = r,g,b
@@ -131,6 +132,27 @@ def tint_to_lum(color, lum):
         if luminance(nR,nG,nB)>=lum:
             break
     return int(nR), int(nG), int(nB)
+
+
+# factor in all other lums in color
+def tint_to_lums(color, base_colors, lum):
+    r,g,b = color 
+    nR,nG,nB = r,g,b
+    lum_total = 0
+    for col in base_colors:
+        lum_total += luminance(col[0], col[1], col[2])
+
+
+    while True:
+        tint_factor = .005
+        nR = nR + (255 - nR) * tint_factor
+        nG = nG + (255 - nG) * tint_factor
+        nB = nB + (255 - nB) * tint_factor
+        if (luminance(nR,nG,nB) + lum_total)/(len(base_colors)+1)>=lum or (luminance(nR,nG,nB) >= 254):
+            break
+
+    return int(nR), int(nG), int(nB)
+
 
 # naive.... need to refactor
 def shade_to_lum(color, lum):
