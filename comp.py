@@ -16,7 +16,12 @@ import util
 
 
 """
-map shades to different color palettes  
+
+- triangle
+- pie slice
+- multiple boxes for grid again
+- choosing between triangle and pie slice should measure against "closeness" to og_image.
+
 """
 
 
