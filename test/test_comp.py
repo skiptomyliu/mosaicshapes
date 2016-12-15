@@ -41,7 +41,7 @@ class TestCompColor(unittest.TestCase):
         base_color = (100,100,100)
         colors = CompColor.gen_colors(base_color, n=4)
         self.assertEqual(len(colors), 4)
-        self.assertEqual(colors, [(90.0, 90.0, 90.0), (100.0, 100.0, 100.0), (110.0, 110.0, 110.0), (120.0, 120.0, 120.0)])
+        self.assertEqual(colors, [(80.0, 80.0, 80.0), (90.0, 90.0, 90.0), (100.0, 100.0, 100.0), (110.0, 110.0, 110.0)])
 
         # base_color = (5,5,5)
         # colors = CompColor.gen_colors(base_color, n=4)
