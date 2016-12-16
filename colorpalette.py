@@ -19,20 +19,19 @@ class ColorPalette():
         if image_path:
             self.quantize(image_path, n_colors=n_colors)
 
+    @staticmethod
+    def recreate_image(codebook, labels, w, h):
+        """Recreate the (compressed) image from the code book & labels"""
+        d = codebook.shape[1]
+        image = np.zeros((w, h, d))
+        label_idx = 0
+        for i in range(w):
+            for j in range(h):
+                image[i][j] = codebook[labels[label_idx]]
+                label_idx += 1
+        return image
 
     def apply_palette_to_image(self, image):
-
-        def recreate_image(codebook, labels, w, h):
-            """Recreate the (compressed) image from the code book & labels"""
-            d = codebook.shape[1]
-            image = np.zeros((w, h, d))
-            label_idx = 0
-            for i in range(w):
-                for j in range(h):
-                    image[i][j] = codebook[labels[label_idx]]
-                    label_idx += 1
-            return image
-
 
         moi_image = image
         moi_image = moi_image / float(255)
@@ -56,9 +55,43 @@ class ColorPalette():
         ax = plt.axes([0, 0, 1, 1])
         plt.axis('off')
         plt.title('Quantized image (64 colors, K-Means)')
-        plt.imshow(recreate_image(self.kmeans.cluster_centers_, labels, w2, h2))
+        plt.imshow(ColorPalette.recreate_image(self.kmeans.cluster_centers_, labels, w2, h2))
 
         plt.show()
+
+
+    @staticmethod
+    def average_colors(img, n_colors=2):
+        sample_image = np.array(img, dtype=np.float64)/255
+        w, h, d = original_shape = tuple(sample_image.shape)
+        assert d == 3
+        image_array = np.reshape(sample_image, (w*h, d))
+
+        # xxx:  use percentage of total pixs instead?
+        image_array_sample = shuffle(image_array, random_state=0)[:1000] 
+        kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
+        colorbook = kmeans.cluster_centers_
+        return colorbook
+
+    # should be able to take just io.imread images too:
+    @staticmethod
+    def quantize_pil_image(img, n_colors=2):
+        sample_image = np.array(img, dtype=np.float64)/255
+        w, h, d = original_shape = tuple(sample_image.shape)
+        assert d == 3
+        image_array = np.reshape(sample_image, (w*h, d))
+
+        # xxx:  use percentage of total pixs instead?
+        image_array_sample = shuffle(image_array, random_state=0)[:1000] 
+        kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
+        colorbook = kmeans.cluster_centers_
+
+        labels = kmeans.predict(image_array)
+
+        recreated_img = ColorPalette.recreate_image(kmeans.cluster_centers_, labels, w, h)
+        # plt.imshow(recreated_img)
+        # plt.show()
+        return recreated_img, colorbook
 
     def quantize(self, image_path, n_colors=64):
         sample_image = io.imread(image_path) 

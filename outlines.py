@@ -91,6 +91,7 @@ edges2 = feature.canny(img, sigma=3)
 
 # display results
 fig, (ax1, ax2, ax3) = plt.subplots(nrows=1, ncols=3, figsize=(8, 3), sharex=True, sharey=True)
+# fig, ax2 = plt.subplots(nrows=1, ncols=1, figsize=(8, 3), sharex=True, sharey=True)
 
 ax1.imshow(img, cmap=plt.cm.jet)
 ax1.axis('off')
@@ -110,4 +111,3 @@ ax3.xaxis.label.set_color('red')
 #                     bottom=0.02, left=0.02, right=0.98)
 
 plt.show()
-import pdb; pdb.set_trace()

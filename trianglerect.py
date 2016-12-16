@@ -32,11 +32,14 @@ class Quadrant(Enum):
 
 
 class TriangleRect():
-    def __init__(self, size=(200,200), base_color=(0,0,0), quadrant=Quadrant.top_left):
+    def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1,
+        quadrant=Quadrant.top_left):
+
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
-        self.colors = []
+        self.colors = TriangleRect.gen_colors(base_color, n)
+        self.colors_secondary = TriangleRect.gen_colors(second_color,sn)
         self.quadrant = quadrant
 
 
@@ -64,56 +67,95 @@ class TriangleRect():
 
             r,g,b = base_color
             quad = 1 if util.luminance(r,g,b) > 100 else 0
-            print util.luminance(r,g,b)
+            # print util.luminance(r,g,b)
             for i in range(-n/2+quad, n/2+quad):
                 color = np.asarray(base_color) + (i)*distance/float(n)
                 color[0] = util.clamp_int(color[0], 0, 255)
                 color[1] = util.clamp_int(color[1], 0, 255)
                 color[2] = util.clamp_int(color[2], 0, 255)
-                color = tuple(color)
+                color = tuple(color.astype(int))
                 colors.append(color)
-
 
         return colors
 
 
+    @staticmethod
+    # def find_best(img):
+    def find_best(img, base_color, second_color, n=2, sn=2):
+        w,h=img.size
+        quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
+
+        best_trect = None
+        best_score = 10000
+        for quad in quads:
+            trect = TriangleRect(size=(w,h), base_color=base_color, second_color=second_color, n=n, sn=sn,
+                quadrant=quad)
+            timg = trect.draw()
+
+            score = util.rmsdiff(img, timg)
+            if score <= best_score:
+                best_trect = trect
+                best_score = score
+
+        return best_trect
+
+
     # return the perceived hue / luminance for now
     
-
     def draw(self):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)
 
-        pw = 12#(self.width/len(self.colors))/2
-        print self.colors
+        pw = 2#(self.width/len(self.colors))/2
 
-        # if random.randrange(2)
+        if random.randrange(2):
+            self.colors_secondary = list(reversed(self.colors_secondary))
+
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 
-        if len(self.colors)>=4:
+        if len(self.colors)>=3:
             self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
+        """
+        draw border square
+        """
+        width = pw
+        for idx, color in enumerate(self.colors_secondary):
+            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
+            # import pdb; pdb.set_trace()
+
+
+        """
+        draw triangles
+        """
+        x_offset = pw*(len(self.colors_secondary))
+        y_offset = pw*(len(self.colors_secondary))
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             width,height = self.width-pw*idx, self.height-pw*idx
-            sx,sy = pw*idx,pw*idx
+            sx,sy = (pw*idx),(pw*idx + y_offset)
 
             if self.quadrant == Quadrant.top_right:
-                # coord = [(0, 0), (width, 0), (width, height)]
-                coord = [(sx*2, sy), (width, sy), (width, height-sy)]
+                width-=x_offset
+                sx+=x_offset
+                coord = [(sx+(idx*pw), sy), (width, sy), (width, height-sy)]
             elif self.quadrant ==  Quadrant.top_left:
-                # coord = [(0, 0), (width, 0), (0, height)]
+                sx+=x_offset
                 coord = [(sx, sy), (width-sx, sy), (sx, height-sy)]
             elif self.quadrant ==  Quadrant.bottom_right:
-                # coord = [(0, height), (width, 0), (width, height)]
-                coord = [(sx*2, height), (width, sy*2), (width, height)]
+                sx+=x_offset
+                width-=x_offset
+                height-=y_offset
+                coord = [(sx+(idx*pw), height), (width, sy+(idx*pw)), (width, height)]
             elif self.quadrant ==  Quadrant.bottom_left:
-                coord = [(sx, sy*2), (width-sx, height), (sx, height)]
+                sx+=x_offset
+                height-=y_offset
+                coord = [(sx, sy+(idx*pw)), (width-sx, height), (sx, height)]
 
-            canvas.polygon(coord, fill = color)
-        paper.show()
-        # import pdb; pdb.set_trace()
+            canvas.polygon(coord, fill=color)
+
+        # paper.show()
         return paper
 
 

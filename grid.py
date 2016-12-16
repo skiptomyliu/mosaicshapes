@@ -5,6 +5,8 @@ import util
 from PIL import Image, ImageDraw
 from warped import Warped
 from comp import CompColor
+from trianglerect import TriangleRect
+from trianglerect import Quadrant
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
@@ -31,7 +33,9 @@ class Grid():
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
 
-        self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
+
+        self.image_array = io.imread(imgpath)
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=3)
 
         self.width,self.height = self.image.size
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
@@ -69,7 +73,7 @@ class Grid():
     def n_pass(self, n_total=1):
         width,height = self.image.size
         pix = self.pixels
-        grid_colors = [[CompColor(size=(pix, pix)) for j in range(self.cols)] for i in range(self.rows)]
+        # grid_colors = [[CompColor(size=(pix, pix)) for j in range(self.cols)] for i in range(self.rows)]
 
         for n in range(n_total):
 
@@ -83,23 +87,32 @@ class Grid():
                         x, y, 
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
-
                     og_color = util.average_color(self.og_image, rect=rect_coords)
-                    ccolor = grid_colors[row][col]
-                    # ccolor.correct(og_color)
-                    # ccolor.correct(og_color)
-                    # ccolor.correct(og_color)
+                    img_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
+
+                    if np.any(img_seg) and len(np.where(img_seg)[1]) > 5:
+                        x_line,y_line = np.where(img_seg==True)
+                        prim_color = util.average_color_pixels(self.og_image, zip(x_line+x, y_line+y))
+
+                        x_bg,y_bg = np.where(img_seg==False)
+                        bg_color = util.average_color_pixels(self.og_image, zip(x_bg+x,y_bg+y))
+
+                        trect = TriangleRect.find_best(base_color=bg_color, second_color=prim_color, n=2, sn=2)
+                        trect = TriangleRect(size=(pix,pix), base_color=bg_color, 
+                            second_color=prim_color, n=2, sn=2, quadrant=Quadrant.top_right)
+                        img = trect.draw()
+                    else:
+                        # ccolor = grid_colors[row][col]
+                        ccolor = CompColor(size=(pix, pix), base_color=og_color, n=4)
+                        img = ccolor.draw()
 
 
-                    colors = CompColor.gen_colors(og_color, n=4)
-                    ccolor.colors = colors
-                    img = ccolor.draw()
+                    # trect = TriangleRect(size=(pix,pix), base_color=og_color, 
+                            # second_color=(200,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
+                    # img = trect.draw()
                     self.og_image.paste(img, (x,y))
 
         self.og_image.show()
-
-
-
 
 
     def warp(self):

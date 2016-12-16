@@ -19,18 +19,19 @@ import util
 
 - triangle
 - pie slice
-- multiple boxes for grid again
+- multiple boxes for grid again (2x1,3x2, etc.)
 - choosing between triangle and pie slice should measure against "closeness" to og_image.
 
 """
 
 
 class CompColor():
-    def __init__(self, size=(200,200), base_color=(0,0,0)):
+    def __init__(self, size=(200,200), base_color=(0,0,0), n=4):
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
         self.colors = []
+        self.colors = CompColor.gen_colors(base_color, n)
         self.random_colors = self.__random_color()
 
         # Initial base colors to initialize with:
