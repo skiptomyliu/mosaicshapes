@@ -5,8 +5,8 @@ import util
 from PIL import Image, ImageDraw
 from warped import Warped
 from comp import CompColor
-from trianglerect import TriangleRect
-from trianglerect import Quadrant
+from trianglecell import TriangleCell
+from trianglecell import Quadrant
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
@@ -86,15 +86,16 @@ class Grid():
                         x, y, 
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
-                    #XXX: move colorpalette to trianglerect.. same with shrink calc
+                    #XXX: move colorpalette to TriangleCell.. same with shrink calc
                     og_color = util.average_color(self.og_image, rect=rect_coords)
                     edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
                     if np.any(edges_seg) and len(np.where(edges_seg)[1]) > 5:
                         cropped_img = self.og_image.crop(rect_coords)
-                        fg,bg = ColorPalette.average_colors(cropped_img,2)
-                        fg = (fg*255).astype(int)
-                        bg = (bg*255).astype(int)
-                        trect = TriangleRect.find_best(cropped_img, bg, fg, n=2, sn=1)
+
+
+                        # trect = CircleCell.find_best(cropped_img, n=2, sn=1)
+
+                        trect = TriangleCell.find_best(cropped_img, n=2, sn=1)
                         area = edges_seg.shape[0]*edges_seg.shape[1]
                         percent = (len(np.where(edges_seg)[1])*2)/float(area)
                         print percent
@@ -106,13 +107,12 @@ class Grid():
                         img = trect.draw()
                     else:
                         # ccolor = grid_colors[row][col]
+
                         ccolor = CompColor(size=(pix, pix), base_color=og_color, n=4)
                         img = ccolor.draw()
 
 
-                    # trect = TriangleRect(size=(pix,pix), base_color=og_color, 
-                            # second_color=(200,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
-                    # img = trect.draw()
+
                     self.og_image.paste(img, (x,y))
 
         self.og_image.show()
@@ -155,7 +155,7 @@ class Grid():
                         # warped_rect = Warped(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
                         # img = warped_rect.draw(slope)
 
-                        # # t_rect = TriangleRect(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
+                        # # t_rect = TriangleCell(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
                         # # img = t_rect.draw(slope)
 
                         # self.image.paste(img, (w*pix,h*pix))

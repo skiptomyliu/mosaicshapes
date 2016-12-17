@@ -146,7 +146,6 @@ class CompColor():
             color = int(color[0]),int(color[1]),int(color[2])
             paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
         # paper.show()
-        # import pdb; pdb.set_trace()
         return paper
 
 
