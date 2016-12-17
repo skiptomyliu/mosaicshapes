@@ -23,16 +23,16 @@ class TestCircleCell(unittest.TestCase):
         # Test lower left jaw
         cropped = og_image.crop((125,370,150,395))
 
-        trect = CircleCell.find_best(cropped, n=2, sn=2)
+        trect = CircleCell.find_best(cropped, n=3, sn=2)
         # self.assertEqual(trect.quadrant, Quadrant.top_right)
 
         # Test upper right ear
         crop_right_ear = og_image.crop((340-25,270-25,340+25,270+25))       
-        trect = CircleCell.find_best(crop_right_ear, n=2, sn=3)
+        trect = CircleCell.find_best(crop_right_ear, n=3, sn=3)
         # self.assertEqual(trect.quadrant, Quadrant.bottom_right)
 
         crop_top_right_ear = og_image.crop((360-25,180-25, 360+25, 180+25))
-        trect = CircleCell.find_best(crop_top_right_ear, n=2, sn=3)
+        trect = CircleCell.find_best(crop_top_right_ear, n=3, sn=3)
         # self.assertTrue(trect.quadrant == Quadrant.bottom_left or trect.quadrant == Quadrant.top_right)
 
     def test_draw(self):

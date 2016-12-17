@@ -24,7 +24,7 @@ class CircleCell(Cell):
 
     @staticmethod
     def find_best(img, n=2, sn=2):
-        fg,bg = ColorPalette.average_colors(img,n)
+        fg,bg = ColorPalette.average_colors(img,2)
         second_color = (fg*255).astype(int)
         base_color = (bg*255).astype(int)
 
@@ -32,19 +32,19 @@ class CircleCell(Cell):
         best_ccell = None
         best_score = 10000
 
-        # for quad in quads:
-        for w in range(40, width):
-            for h in range(40, height):
-
-                ccell = CircleCell(size=(width,height), csize=(w,h), base_color=base_color, second_color=second_color, n=n, sn=sn)
-                timg = ccell.draw()
-                timg.show()
+        #XXX:  hardcoded at 4 at moment...  pw*2 is the minimum csize
+        for w in range(5, width):
+            # for h in range(4, height):
+            h = w
+            ccell = CircleCell(size=(width,height), csize=(w,h), base_color=base_color, second_color=second_color, n=n, sn=sn)
+            cimg = ccell.draw()
+            score = util.rmsdiff(img, cimg)
+            # print quad, score
+            if score <= best_score:
+                best_ccell = ccell
+                best_score = score
+                # best_ccell.draw().show()
                 # import pdb; pdb.set_trace()
-                score = util.rmsdiff(img, timg)
-                # print quad, score
-                if score <= best_score:
-                    best_ccell = ccell
-                    best_score = score
 
         return best_ccell
 
@@ -74,7 +74,7 @@ class CircleCell(Cell):
 
             sx = (self.width-self.cwidth)/2
             sy = (self.height-self.cheight)/2
-            print [sx + (pw*idx),sy+(pw*idx), sx+(self.cwidth-pw*idx), sy+(self.cheight-pw*idx)]
+            # print [sx + (pw*idx),sy+(pw*idx), sx+(self.cwidth-pw*idx), sy+(self.cheight-pw*idx)]
             canvas.ellipse([sx + (pw*idx), sy+(pw*idx), sx+(self.cwidth-pw*idx), sy+(self.cheight-pw*idx)], fill=color)
 
         return paper

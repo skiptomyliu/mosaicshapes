@@ -7,6 +7,7 @@ from warped import Warped
 from comp import CompColor
 from trianglecell import TriangleCell
 from trianglecell import Quadrant
+from circlecell import CircleCell
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
@@ -93,18 +94,24 @@ class Grid():
                         cropped_img = self.og_image.crop(rect_coords)
 
 
-                        # trect = CircleCell.find_best(cropped_img, n=2, sn=1)
+                        circle = CircleCell.find_best(cropped_img, n=3, sn=1)
+                        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1)
 
-                        trect = TriangleCell.find_best(cropped_img, n=2, sn=1)
-                        area = edges_seg.shape[0]*edges_seg.shape[1]
-                        percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                        print percent
-                        if percent <= .2:
-                            trect.shrink = 1
-                        if percent <= .1:
-                            trect.shrink = 2
-                            # import pdb; pdb.set_trace()
-                        img = trect.draw()
+                        circle_rms = util.rmsdiff(cropped_img, circle.draw())
+                        triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
+
+                        if triangle_rms < circle_rms:
+                            shape = triangle
+                            area = edges_seg.shape[0]*edges_seg.shape[1]
+                            percent = (len(np.where(edges_seg)[1])*2)/float(area)
+                            if percent <= .2:
+                                shape.shrink = 1
+                            if percent <= .1:
+                                shape.shrink = 2
+                        else:
+                            shape = circle
+
+                        img = shape.draw()
                     else:
                         # ccolor = grid_colors[row][col]
 

@@ -56,7 +56,7 @@ class TriangleCell(Cell):
 
     @staticmethod
     def find_best(img, n=2, sn=2):
-        fg,bg = ColorPalette.average_colors(img,n)
+        fg,bg = ColorPalette.average_colors(img,2)
         second_color = (fg*255).astype(int)
         base_color = (bg*255).astype(int)
 

@@ -56,7 +56,7 @@ class TestTriangleCell(unittest.TestCase):
         # fg = (fg*255).astype(int)
         # bg = (bg*255).astype(int)
 
-        trect = TriangleCell.find_best(cropped, n=2, sn=2)
+        trect = TriangleCell.find_best(cropped, n=3, sn=2)
         self.assertEqual(trect.quadrant, Quadrant.top_right)
 
         # Test upper right ear
