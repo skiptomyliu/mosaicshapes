@@ -17,10 +17,12 @@ import util
 
 """
 
-- triangle
+- triangle *
 - pie slice
-- multiple boxes for grid again (2x1,3x2, etc.)
+- multiple boxes for grid again (2x1,3x2, etc.)  Apply for edges.   Random for others?  Or only edges
 - choosing between triangle and pie slice should measure against "closeness" to og_image.
+- create a slimmer circle.  Done by using a smaller rect inside a rect
+- need fg,bg rect for edges... or just use the elongated circles
 
 """
 
@@ -54,7 +56,6 @@ class CompColor():
 
             r,g,b = base_color
             quad = 1 if util.luminance(r,g,b) > 100 else 0
-            print util.luminance(r,g,b)
             for i in range(-n/2+quad, n/2+quad):
                 color = np.asarray(base_color) + (i)*distance/float(n)
                 color[0] = util.clamp_int(color[0], 0, 255)
@@ -132,13 +133,13 @@ class CompColor():
         canvas = ImageDraw.Draw(paper)
 
         width = (self.width/len(self.colors))/2
-        print self.colors
+        # print self.colors
 
         # self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         # if random.randrange(2)
-        if random.randrange(2):
-            self.colors = list(reversed(self.colors))
+        # if random.randrange(2):
+        self.colors = list(reversed(self.colors))
 
         self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
         for idx, color in enumerate(self.colors):

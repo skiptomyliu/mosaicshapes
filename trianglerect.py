@@ -31,15 +31,17 @@ class Quadrant(Enum):
     bottom_left = 4
 
 class TriangleRect():
-    def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1,
-        quadrant=Quadrant.top_left):
+    def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), 
+        shrink=0, n=4, sn=1, quadrant=Quadrant.top_left):
 
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
+
         self.colors = TriangleRect.gen_colors(base_color, n)
         self.colors_secondary = TriangleRect.gen_colors(second_color,sn)
         self.quadrant = quadrant
+        self.shrink = shrink
 
     @staticmethod
     def __avg_lum(colors):
@@ -57,6 +59,8 @@ class TriangleRect():
         deg = 30/360.0
         colors = []
         if n==1:
+            if isinstance(base_color, (np.ndarray, np.generic)):
+                base_color = tuple(base_color.astype(int))
             colors.append(base_color)
         else:   
             # maximum distance between all colors combined
@@ -65,7 +69,6 @@ class TriangleRect():
 
             r,g,b = base_color
             quad = 1 if util.luminance(r,g,b) > 100 else 0
-            # print util.luminance(r,g,b)
             for i in range(-n/2+quad, n/2+quad):
                 color = np.asarray(base_color) + (i)*distance/float(n)
                 color[0] = util.clamp_int(color[0], 0, 255)
@@ -86,12 +89,12 @@ class TriangleRect():
         best_trect = None
         best_score = 10000
         for quad in quads:
-            trect = TriangleRect(size=(w,h), base_color=base_color, second_color=second_color, n=n, sn=sn,
-                quadrant=quad)
+            trect = TriangleRect(size=(w,h), base_color=base_color, second_color=second_color, 
+                shrink=0, n=n, sn=sn, quadrant=quad)
             timg = trect.draw()
 
             score = util.rmsdiff(img, timg)
-            print quad, score
+            # print quad, score
             if score <= best_score:
                 best_trect = trect
                 best_score = score
@@ -105,8 +108,8 @@ class TriangleRect():
 
         pw = 2 #(self.width/len(self.colors))/2
 
-        if random.randrange(2):
-            self.colors_secondary = list(reversed(self.colors_secondary))
+        # if random.randrange(2):
+            # self.colors_secondary = list(reversed(self.colors_secondary))
 
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
@@ -120,14 +123,13 @@ class TriangleRect():
         width = pw
         for idx, color in enumerate(self.colors_secondary):
             paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
-            # import pdb; pdb.set_trace()
 
 
         """
         draw triangles
         """
-        x_offset = pw*(len(self.colors_secondary))
-        y_offset = pw*(len(self.colors_secondary))
+        x_offset = pw*(len(self.colors_secondary))+self.shrink
+        y_offset = pw*(len(self.colors_secondary))+self.shrink
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             width,height = self.width-pw*idx, self.height-pw*idx

@@ -20,7 +20,7 @@ class TestCompColor(unittest.TestCase):
 
     def test_avg_lum(self):
         triangle = TriangleRect(size=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=4, sn=1, quadrant=Quadrant.top_right)
+            second_color=(200,200,200), shrink=0, n=4, sn=1, quadrant=Quadrant.top_right)
         self.assertEqual(triangle.avg_lum(), 95)
 
     # def test_gen_colors(self):
@@ -56,8 +56,9 @@ class TestCompColor(unittest.TestCase):
         fg,bg = ColorPalette.average_colors(cropped,2)
         fg = (fg*255).astype(int)
         bg = (bg*255).astype(int)
-
-        trect = TriangleRect.find_best(cropped, bg, fg, n=2, sn=2)
+        
+        trect = TriangleRect.find_best(cropped, bg, fg, n=2, sn=1)
+        # trect.draw().show()
         self.assertEqual(trect.quadrant, Quadrant.top_right)
 
         # Test upper right ear
@@ -68,17 +69,22 @@ class TestCompColor(unittest.TestCase):
         trect = TriangleRect.find_best(crop_right_ear, fg, bg, n=2, sn=3)
         self.assertEqual(trect.quadrant, Quadrant.top_left)
 
+        # test upper left ear
         crop_left_ear = og_image.crop((50-25,200-25, 50+25, 200+25))
         fg,bg = ColorPalette.average_colors(crop_left_ear,2)
         fg = (fg*255).astype(int)
         bg = (bg*255).astype(int)
-        crop_left_ear.show()
         trect = TriangleRect.find_best(crop_left_ear, bg, fg, n=2, sn=3)
-        trect.draw().show()
-        import pdb; pdb.set_trace()
+        # trect.draw().show()
         self.assertEqual(trect.quadrant, Quadrant.bottom_right)
 
         
+        crop_top_right_ear = og_image.crop((360-25,180-25, 360+25, 180+25))
+        fg,bg = ColorPalette.average_colors(crop_top_right_ear, 2)
+        fg = (fg*255).astype(int)
+        bg = (bg*255).astype(int)
+        trect = TriangleRect.find_best(crop_top_right_ear, bg, fg, n=2, sn=3)
+        self.assertEqual(trect.quadrant, Quadrant.bottom_left)
 
     def test_draw(self):
         # colors = TriangleRect.gen_colors(base_color, n=4)

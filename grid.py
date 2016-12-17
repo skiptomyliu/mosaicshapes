@@ -76,7 +76,6 @@ class Grid():
         # grid_colors = [[CompColor(size=(pix, pix)) for j in range(self.cols)] for i in range(self.rows)]
 
         for n in range(n_total):
-
             for row in range(self.rows):
                 for col in range(self.cols):
                     pix_w, pix_h = (pix, pix)
@@ -87,19 +86,23 @@ class Grid():
                         x, y, 
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
+                    #XXX: move colorpalette to trianglerect.. same with shrink calc
                     og_color = util.average_color(self.og_image, rect=rect_coords)
-                    img_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
-
-                    if np.any(img_seg) and len(np.where(img_seg)[1]) > 5:
-                        x_line,y_line = np.where(img_seg==True)
-                        prim_color = util.average_color_pixels(self.og_image, zip(x_line+x, y_line+y))
-
-                        x_bg,y_bg = np.where(img_seg==False)
-                        bg_color = util.average_color_pixels(self.og_image, zip(x_bg+x,y_bg+y))
-
-                        trect = TriangleRect.find_best(base_color=bg_color, second_color=prim_color, n=2, sn=2)
-                        trect = TriangleRect(size=(pix,pix), base_color=bg_color, 
-                            second_color=prim_color, n=2, sn=2, quadrant=Quadrant.top_right)
+                    edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
+                    if np.any(edges_seg) and len(np.where(edges_seg)[1]) > 5:
+                        cropped_img = self.og_image.crop(rect_coords)
+                        fg,bg = ColorPalette.average_colors(cropped_img,2)
+                        fg = (fg*255).astype(int)
+                        bg = (bg*255).astype(int)
+                        trect = TriangleRect.find_best(cropped_img, bg, fg, n=2, sn=1)
+                        area = edges_seg.shape[0]*edges_seg.shape[1]
+                        percent = (len(np.where(edges_seg)[1])*2)/float(area)
+                        print percent
+                        if percent <= .2:
+                            trect.shrink = 1
+                        if percent <= .1:
+                            trect.shrink = 2
+                            # import pdb; pdb.set_trace()
                         img = trect.draw()
                     else:
                         # ccolor = grid_colors[row][col]
@@ -117,7 +120,7 @@ class Grid():
 
     def warp(self):
         width,height = self.image.size
-        print width,height
+        # print width,height
         pix = self.pixels
 
         for w in range(width/pix):

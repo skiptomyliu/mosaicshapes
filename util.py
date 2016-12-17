@@ -40,7 +40,6 @@ def average_color(image, rect=None):
         w,h = image.size
         x0,y0 = (0,0)
         x1,y1 = (w,h)
-        print image.size
     else:                   # Use subset rect of image
         x0,y0,x1,y1 = rect
         w = abs(x0 - x1)
