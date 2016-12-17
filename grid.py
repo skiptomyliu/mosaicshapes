@@ -4,12 +4,15 @@ import util
 
 from PIL import Image, ImageDraw
 from warped import Warped
+from comp import CompColor
 from trianglerect import TriangleRect
+from trianglerect import Quadrant
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
 import numpy as np
 from enum import Enum
+from colorpalette import ColorPalette
 import random 
 
 # remove later?
@@ -20,20 +23,26 @@ class Slope(Enum):
     vertical = 4
     
 
+"""
+Sample color palette multiple times?
+"""
 class Grid():
-    def __init__(self, imgpath):
-
+    def __init__(self, imgpath, pix):
+        self.pixels = pix
         self.og_image = Image.open(imgpath)
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
 
-        self.img_edges = feature.canny(rgb2grey(io.imread(imgpath)), sigma=3)
+
+        self.image_array = io.imread(imgpath)
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=3)
 
         self.width,self.height = self.image.size
-        self.pixels = 15
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
-        # plt.imshow(self.img_edges, cmap=plt.cm.gray)
-        # plt.show()
+        self.color_palette = ColorPalette(imgpath, 4)
+
+        self.cols = (self.width/self.pixels)
+        self.rows = (self.height/self.pixels)
 
     # By default we occupy one cell at a time.  x_total is number of additional horizontal
     # cells to occupy.  Vertical is number of additional vertical cells
@@ -42,7 +51,7 @@ class Grid():
             for j in range(y_total):
                 if  x+i < self.width/self.pixels and y+j < self.height/self.pixels:
                     self.grid_status[x+i][y+j] = 1
-                    # import pdb; pdb.set_trace()
+
 
     # Test vertical expansion
     def is_occupied(self, x, y):
@@ -61,9 +70,57 @@ class Grid():
             return slope
 
 
+    def n_pass(self, n_total=1):
+        width,height = self.image.size
+        pix = self.pixels
+        # grid_colors = [[CompColor(size=(pix, pix)) for j in range(self.cols)] for i in range(self.rows)]
+
+        for n in range(n_total):
+            for row in range(self.rows):
+                for col in range(self.cols):
+                    pix_w, pix_h = (pix, pix)
+
+                    # create rect coords:
+                    x,y = col*pix, row*pix
+                    rect_coords = [
+                        x, y, 
+                        util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
+                    ]
+                    #XXX: move colorpalette to trianglerect.. same with shrink calc
+                    og_color = util.average_color(self.og_image, rect=rect_coords)
+                    edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
+                    if np.any(edges_seg) and len(np.where(edges_seg)[1]) > 5:
+                        cropped_img = self.og_image.crop(rect_coords)
+                        fg,bg = ColorPalette.average_colors(cropped_img,2)
+                        fg = (fg*255).astype(int)
+                        bg = (bg*255).astype(int)
+                        trect = TriangleRect.find_best(cropped_img, bg, fg, n=2, sn=1)
+                        area = edges_seg.shape[0]*edges_seg.shape[1]
+                        percent = (len(np.where(edges_seg)[1])*2)/float(area)
+                        print percent
+                        if percent <= .2:
+                            trect.shrink = 1
+                        if percent <= .1:
+                            trect.shrink = 2
+                            # import pdb; pdb.set_trace()
+                        img = trect.draw()
+                    else:
+                        # ccolor = grid_colors[row][col]
+                        ccolor = CompColor(size=(pix, pix), base_color=og_color, n=4)
+                        img = ccolor.draw()
+
+
+                    # trect = TriangleRect(size=(pix,pix), base_color=og_color, 
+                            # second_color=(200,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
+                    # img = trect.draw()
+                    self.og_image.paste(img, (x,y))
+
+        self.og_image.show()
+
+
     def warp(self):
         width,height = self.image.size
-        print width,height
+        # print width,height
         pix = self.pixels
 
         for w in range(width/pix):
@@ -106,18 +163,17 @@ class Grid():
 
                     else:
                         color = util.average_color(self.og_image, rect=rect_coords)
-                        # print rect_coords
-                        # print color
-                        r,g,b = color
-                        prim_color = util.rgb_to_cmyk(r,g,b)
-                        c,m,y,k = prim_color
-                        # import pdb; pdb.set_trace()
-                        # r,g,b = util.cmyk_to_rgb(c,m,y,k)
-                        
-                        warped_rect = Warped(size=(pix_w, pix_h), fg_color=color)
+                        # color = self.color_palette.translate_color(color)
+                        color = np.asarray(color)/float(255)
+                        color = color.reshape(1,-1)
+                        label = self.color_palette.kmeans.predict(color)
+                            
+
+                        warped_rect = CompColor(size=(pix_w, pix_h), label=label)
                         img = warped_rect.draw()
                         # self.image.paste(img,    (w*pix, h*pix))
                         self.og_image.paste(img, (w*pix, h*pix))
+
                         # if h%10 == 0:
                         #     import pdb; pdb.set_trace()
                         #     self.og_image.show()

@@ -1,5 +1,18 @@
 
 import colorsys
+import math
+from PIL import ImageChops
+
+def rmsdiff(im1, im2):
+    im1 = im1.convert("RGBA")
+    im2 = im2.convert("RGBA")
+    diff = ImageChops.difference(im1, im2)
+    h = diff.histogram()
+    sq = (value*((idx%256)**2) for idx, value in enumerate(h))
+    sum_of_squares = sum(sq)
+    rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
+
+    return rms
 
 def clamp_int(val, minval, maxval):
     if val < minval: return int(minval)
@@ -27,7 +40,6 @@ def average_color(image, rect=None):
         w,h = image.size
         x0,y0 = (0,0)
         x1,y1 = (w,h)
-        print image.size
     else:                   # Use subset rect of image
         x0,y0,x1,y1 = rect
         w = abs(x0 - x1)
@@ -103,5 +115,67 @@ def cmyk_to_rgb(c,m,y,k):
 
 
 
+def hilo(a, b, c):
+    if c < b: b, c = c, b
+    if b < a: a, b = b, a
+    if c < b: b, c = c, b
+    return a + c
 
+def complement(r, g, b):
+    k = hilo(r, g, b)
+    return tuple(k - u for u in (r, g, b))
+
+# http://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
+# third option half way page down
+def luminance(r,g,b):
+    return math.sqrt(0.299 * math.pow(r,2) + 0.587 * math.pow(g,2) + 0.114 * math.pow(b,2))
+
+
+def tint_to_lum(color, lum):
+    r,g,b = color
+    nR,nG,nB = r,g,b
+    while True:
+        tint_factor = .005
+
+        nR = nR + (255 - nR) * tint_factor
+        nG = nG + (255 - nG) * tint_factor
+        nB = nB + (255 - nB) * tint_factor
+        if luminance(nR,nG,nB)>=lum:
+            break
+    return int(nR), int(nG), int(nB)
+
+
+# factor in all other lums in color
+def tint_to_lums(color, base_colors, lum):
+    r,g,b = color 
+    nR,nG,nB = r,g,b
+    lum_total = 0
+    for col in base_colors:
+        lum_total += luminance(col[0], col[1], col[2])
+
+
+    while True:
+        tint_factor = .005
+        nR = nR + (255 - nR) * tint_factor
+        nG = nG + (255 - nG) * tint_factor
+        nB = nB + (255 - nB) * tint_factor
+        if (luminance(nR,nG,nB) + lum_total)/(len(base_colors)+1)>=lum or (luminance(nR,nG,nB) >= 254):
+            break
+
+    return int(nR), int(nG), int(nB)
+
+
+# naive.... need to refactor
+def shade_to_lum(color, lum):
+    r,g,b = color
+    nR,nG,nB = r,g,b
+    while True:
+        shade_factor = .005
+        nR = nR * (1 - shade_factor)
+        nG = nG * (1 - shade_factor)
+        nB = nB * (1 - shade_factor)
+        
+        if luminance(nR,nG,nB)<=lum:
+            break
+    return int(nR), int(nG), int(nB)
 
