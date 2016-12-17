@@ -30,7 +30,6 @@ class Quadrant(Enum):
     bottom_right = 3
     bottom_left = 4
 
-
 class TriangleRect():
     def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1,
         quadrant=Quadrant.top_left):
@@ -41,7 +40,6 @@ class TriangleRect():
         self.colors = TriangleRect.gen_colors(base_color, n)
         self.colors_secondary = TriangleRect.gen_colors(second_color,sn)
         self.quadrant = quadrant
-
 
     @staticmethod
     def __avg_lum(colors):
@@ -93,20 +91,19 @@ class TriangleRect():
             timg = trect.draw()
 
             score = util.rmsdiff(img, timg)
+            print quad, score
             if score <= best_score:
                 best_trect = trect
                 best_score = score
 
         return best_trect
 
-
     # return the perceived hue / luminance for now
-    
     def draw(self):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)
 
-        pw = 2#(self.width/len(self.colors))/2
+        pw = 2 #(self.width/len(self.colors))/2
 
         if random.randrange(2):
             self.colors_secondary = list(reversed(self.colors_secondary))

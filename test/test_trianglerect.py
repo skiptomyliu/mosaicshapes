@@ -50,29 +50,35 @@ class TestCompColor(unittest.TestCase):
 
     def test_find_best(self):
         og_image = Image.open("./examples/test.JPEG")
+
+        # Test lower left jaw
         cropped = og_image.crop((125,370,150,395))
-        cropped_array = np.array(cropped)
-
-        img_edges = feature.canny(rgb2grey(cropped_array), sigma=3)
-
-        # quantized_array = ColorPalette.quantize_pil_image(cropped, 2)
         fg,bg = ColorPalette.average_colors(cropped,2)
+        fg = (fg*255).astype(int)
+        bg = (bg*255).astype(int)
+
+        trect = TriangleRect.find_best(cropped, bg, fg, n=2, sn=2)
+        self.assertEqual(trect.quadrant, Quadrant.top_right)
+
+        # Test upper right ear
+        crop_right_ear = og_image.crop((340-25,270-25,340+25,270+25))       
+        fg,bg = ColorPalette.average_colors(crop_right_ear,2)
+        fg = (fg*255).astype(int)
+        bg = (bg*255).astype(int)
+        trect = TriangleRect.find_best(crop_right_ear, fg, bg, n=2, sn=3)
+        self.assertEqual(trect.quadrant, Quadrant.top_left)
+
+        crop_left_ear = og_image.crop((50-25,200-25, 50+25, 200+25))
+        fg,bg = ColorPalette.average_colors(crop_left_ear,2)
+        fg = (fg*255).astype(int)
+        bg = (bg*255).astype(int)
+        crop_left_ear.show()
+        trect = TriangleRect.find_best(crop_left_ear, bg, fg, n=2, sn=3)
+        trect.draw().show()
+        import pdb; pdb.set_trace()
+        self.assertEqual(trect.quadrant, Quadrant.bottom_right)
+
         
-        import pdb; pdb.set_trace()
-
-        # def edge_colors(img_edges):
-
-        x_line,y_line = np.where(img_edges==True)
-        prim_color = util.average_color_pixels(cropped, zip(x_line, y_line))
-        x_bg,y_bg = np.where(img_edges==False)
-        bg_color = util.average_color_pixels(cropped, zip(x_bg,y_bg))
-
-
-
-        trect = TriangleRect.find_best(cropped, bg_color, prim_color, n=2, sn=2)
-        import pdb; pdb.set_trace()
-        self.assertTrue(trect.quadrant, Quadrant.top_right)
-
 
     def test_draw(self):
         # colors = TriangleRect.gen_colors(base_color, n=4)
