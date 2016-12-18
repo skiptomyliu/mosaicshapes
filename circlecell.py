@@ -78,7 +78,7 @@ class CircleCell(Cell):
             canvas.ellipse([(sx + (pw*idx))*N, (sy+(pw*idx))*N, (sx+(self.cwidth-pw*idx))*N, (sy+(self.cheight-pw*idx))*N], fill=color)
 
         del canvas
-        paper.thumbnail((self.width, self.height)) # using user3479125's correction
+        paper.thumbnail((self.width, self.height)) 
 
         return paper
 

@@ -1,8 +1,16 @@
 
 import util
 import numpy as np
-
+from enum import Enum
 import abc
+
+
+class Quadrant(Enum):
+    top_left = 1
+    top_right = 2
+    bottom_right = 3
+    bottom_left = 4
+
 class Cell(object):
     __metaclass__ = abc.ABCMeta
 

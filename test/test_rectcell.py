@@ -26,8 +26,8 @@ class TestRectCell(unittest.TestCase):
         fg,bg = ColorPalette.quantize_img(cropped, 2)
         csize_w, csize_h = cropped.size[0]-9,cropped.size[1]-9
         trect = RectCell(size=cropped.size, csize=(csize_w, csize_h), base_color=bg, second_color=fg, n=4, sn=1)
-        trect.draw().show()
-        import pdb; pdb.set_trace()
+        # trect.draw().show()
+
         # self.assertEqual(trect.quadrant, Quadrant.top_right)
 
         # Test upper right ear

@@ -10,10 +10,8 @@ from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
 from random import shuffle
-import colorsys
-from enum import Enum
 import util
-from cell import Cell
+from cell import Cell, Quadrant
 
 """
 
@@ -23,12 +21,6 @@ from cell import Cell
 - choosing between triangle and pie slice should measure against "closeness" to og_image.
 
 """
-
-class Quadrant(Enum):
-    top_left = 1
-    top_right = 2
-    bottom_right = 3
-    bottom_left = 4
 
 class TriangleCell(Cell):
     def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), 

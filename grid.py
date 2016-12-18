@@ -6,7 +6,6 @@ from PIL import Image, ImageDraw
 from warped import Warped
 from comp import CompColor
 from trianglecell import TriangleCell
-from trianglecell import Quadrant
 from circlecell import CircleCell
 from rectcell import RectCell
 from skimage.color import rgb2grey
@@ -94,7 +93,6 @@ class Grid():
                     edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
                     if np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
-
 
                         circle = CircleCell.find_best(cropped_img, n=3, sn=2)
                         # circle = RectCell.find_best(cropped_img, n=3, sn=2)

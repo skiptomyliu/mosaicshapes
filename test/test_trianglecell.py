@@ -6,7 +6,7 @@ import util
 import numpy as np
 from skimage import io, feature
 from trianglecell import TriangleCell
-from trianglecell import Quadrant
+from cell import Quadrant
 from colorpalette import ColorPalette
 
 class TestTriangleCell(unittest.TestCase):
