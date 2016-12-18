@@ -7,15 +7,11 @@ from grid import Grid
 class TestGrid(unittest.TestCase):
 
     def setUp(self):
-        self.grid = Grid("./examples/test.JPEG", pix=15)
+        self.grid = Grid("./examples/test.JPEG", pix=18)
         pass
        
     def tearDown(self):
         pass
-
-    # Test vertical expansion
-    # def test_warp(self):
-    #     self.grid.warp()
 
     def test_n_pass(self):
         n=1

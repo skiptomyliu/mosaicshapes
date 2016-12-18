@@ -3,7 +3,6 @@
 
 from PIL import Image, ImageDraw
 import numpy as np
-# from numpy import random
 import random
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
@@ -137,9 +136,9 @@ class CompColor():
 
         # self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
-        # if random.randrange(2)
-        # if random.randrange(2):
-        self.colors = list(reversed(self.colors))
+
+        if random.randrange(2):
+            self.colors = list(reversed(self.colors))
 
         self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
         for idx, color in enumerate(self.colors):

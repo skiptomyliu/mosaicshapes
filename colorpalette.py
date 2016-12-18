@@ -61,6 +61,10 @@ class ColorPalette():
 
 
     @staticmethod
+    def quantize_img(img, n):
+        return (ColorPalette.average_colors(img,n)*255).astype(int)
+
+    @staticmethod
     def average_colors(img, n_colors=2):
         sample_image = np.array(img, dtype=np.float64)/255
         w, h, d = original_shape = tuple(sample_image.shape)

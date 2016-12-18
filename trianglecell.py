@@ -54,6 +54,37 @@ class TriangleCell(Cell):
     def avg_lum(self):
         return TriangleCell.__avg_lum(self.colors)
 
+
+    # Should we use this??
+    @staticmethod
+    def find_best_xy(draw_img, cropped_img, (x,y), n=2, sn=1):
+        fg,bg = ColorPalette.average_colors(cropped_img,2)
+        second_color = (fg*255).astype(int)
+        base_color = (bg*255).astype(int)
+
+        quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
+
+        w,h=cropped_img.size
+        best_trect = None
+        best_score = 10000
+        for quad in quads:
+            trect = TriangleCell(size=(w,h), base_color=base_color, second_color=second_color, 
+                shrink=0, n=n, sn=sn, quadrant=quad)
+
+            timg = trect.draw()
+            staged_image = draw_img.copy()
+            # staged_draw = ImageDraw.Draw(staged_image, 'RGBA')
+            staged_image.paste(timg, (x,y))
+            # import pdb; pdb.set_trace()            
+
+            score = util.rmsdiff(draw_img, staged_image)
+            print quad, score
+            if score <= best_score:
+                best_trect = trect
+                best_score = score
+
+        return best_trect
+
     @staticmethod
     def find_best(img, n=2, sn=2):
         fg,bg = ColorPalette.average_colors(img,2)

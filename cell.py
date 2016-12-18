@@ -31,6 +31,18 @@ class Cell(object):
 
         return colors
 
+    # @staticmethod 
+    # def supersample(image, target_size, scale=4):
+
+    #     scale=4
+    #     width,height = target_size
+    #     image = Image.new("RGBA", (width*scale, height*scale), "#DDD")
+    #     draw = ImageDraw.Draw(image, image.mode)
+
+    #     draw.pieslice((0*scale, 0*scale , 64*scale, 64*scale), 180, 270, fill="white")
+    #     del draw
+    #     image = image.resize((width,height)) # using user3479125's correction
+    #     image.save("file2.png", "PNG")
 
     @abc.abstractmethod
     def find_best(self):

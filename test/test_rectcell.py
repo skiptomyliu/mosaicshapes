@@ -6,10 +6,10 @@ import util
 import numpy as np
 from skimage import io, feature
 from skimage.color import rgb2grey
-from circlecell import CircleCell
+from rectcell import RectCell
 from colorpalette import ColorPalette
 
-class TestCircleCell(unittest.TestCase):
+class TestRectCell(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -21,34 +21,36 @@ class TestCircleCell(unittest.TestCase):
         og_image = Image.open("./examples/test.JPEG")
 
         # Test lower left jaw
-        cropped = og_image.crop((125,370,150,395))
-
-        ccell = CircleCell.find_best(cropped, n=3, sn=2)
-        ccell.draw().show()
+        cropped = og_image.crop((330-23,290,330,290+50))
+        cropped.show()
+        fg,bg = ColorPalette.quantize_img(cropped, 2)
+        csize_w, csize_h = cropped.size[0]-9,cropped.size[1]-9
+        trect = RectCell(size=cropped.size, csize=(csize_w, csize_h), base_color=bg, second_color=fg, n=4, sn=1)
+        trect.draw().show()
         import pdb; pdb.set_trace()
         # self.assertEqual(trect.quadrant, Quadrant.top_right)
 
         # Test upper right ear
         crop_right_ear = og_image.crop((340-25,270-25,340+25,270+25))       
-        ccell = CircleCell.find_best(crop_right_ear, n=3, sn=3)
+        trect = RectCell.find_best(crop_right_ear, n=3, sn=3)
         # self.assertEqual(trect.quadrant, Quadrant.bottom_right)
 
         crop_top_right_ear = og_image.crop((360-25,180-25, 360+25, 180+25))
-        ccell = CircleCell.find_best(crop_top_right_ear, n=3, sn=3)
+        trect = RectCell.find_best(crop_top_right_ear, n=3, sn=3)
         # self.assertTrue(trect.quadrant == Quadrant.bottom_left or trect.quadrant == Quadrant.top_right)
 
     def test_draw(self):
-        # colors = CircleCell.gen_colors(base_color, n=4)
-        ccell = CircleCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
+        # colors = RectCell.gen_colors(base_color, n=4)
+        ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)
         ccell.draw()
-        ccell = CircleCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
+        ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)
         ccell.draw()
-        ccell = CircleCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
+        ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)
         ccell.draw()
-        ccell = CircleCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
+        ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)
         ccell.draw()
 

@@ -8,6 +8,7 @@ from comp import CompColor
 from trianglecell import TriangleCell
 from trianglecell import Quadrant
 from circlecell import CircleCell
+from rectcell import RectCell
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
@@ -25,7 +26,7 @@ class Slope(Enum):
     
 
 """
-Sample color palette multiple times?
+- pie slice for edge ... should work for eyes?
 """
 class Grid():
     def __init__(self, imgpath, pix):
@@ -36,14 +37,15 @@ class Grid():
 
 
         self.image_array = io.imread(imgpath)
-        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=3)
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=4)
 
         self.width,self.height = self.image.size
-        self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
+        
         self.color_palette = ColorPalette(imgpath, 4)
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
+        self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
 
     # By default we occupy one cell at a time.  x_total is number of additional horizontal
     # cells to occupy.  Vertical is number of additional vertical cells
@@ -74,11 +76,11 @@ class Grid():
     def n_pass(self, n_total=1):
         width,height = self.image.size
         pix = self.pixels
-        # grid_colors = [[CompColor(size=(pix, pix)) for j in range(self.cols)] for i in range(self.rows)]
 
-        for n in range(n_total):
-            for row in range(self.rows):
-                for col in range(self.cols):
+
+        for row in range(self.rows):
+            for col in range(self.cols):
+                if not self.is_occupied(col,row):
                     pix_w, pix_h = (pix, pix)
 
                     # create rect coords:
@@ -90,12 +92,14 @@ class Grid():
                     #XXX: move colorpalette to TriangleCell.. same with shrink calc
                     og_color = util.average_color(self.og_image, rect=rect_coords)
                     edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
-                    if np.any(edges_seg) and len(np.where(edges_seg)[1]) > 5:
+                    if np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
 
 
-                        circle = CircleCell.find_best(cropped_img, n=3, sn=1)
+                        circle = CircleCell.find_best(cropped_img, n=3, sn=2)
+                        # circle = RectCell.find_best(cropped_img, n=3, sn=2)
                         triangle = TriangleCell.find_best(cropped_img, n=2, sn=1)
+                        # triangle = TriangleCell.find_best_xy(self.og_image, cropped_img, (x,y), n=2, sn=1)
 
                         circle_rms = util.rmsdiff(cropped_img, circle.draw())
                         triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
@@ -112,6 +116,20 @@ class Grid():
                             shape = circle
 
                         img = shape.draw()
+
+                        rect_coords2 = rect_coords[:]
+                        rect_coords2[1] = rect_coords2[1] + pix
+                        rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
+                        cropped_img2 = self.og_image.crop(rect_coords2)
+                        rms_v = util.rmsdiff(cropped_img, cropped_img2)
+                        if rms_v < 20:
+                            bg,fg = ColorPalette.quantize_img(cropped_img, 2)
+                            csize_w, csize_h = (pix-7,2*pix-7)
+                            pix_h*=2
+                            shape = RectCell(size=(pix,pix_h), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=4, sn=2)
+                            img=shape.draw()
+
+
                     else:
                         # ccolor = grid_colors[row][col]
 
@@ -121,6 +139,7 @@ class Grid():
 
 
                     self.og_image.paste(img, (x,y))
+                    self.occupy(col,row,pix_w/pix,pix_h/pix)
 
         self.og_image.show()
 
