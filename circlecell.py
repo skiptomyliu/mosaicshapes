@@ -24,27 +24,24 @@ class CircleCell(Cell):
 
     @staticmethod
     def find_best(img, n=2, sn=2):
-        fg,bg = ColorPalette.average_colors(img,2)
-        second_color = (fg*255).astype(int)
-        base_color = (bg*255).astype(int)
+        second_color,base_color = ColorPalette.quantize_img(img,2)
+        color_combos = [[second_color,base_color], [base_color, second_color]]
 
         width,height = img.size
         best_ccell = None
         best_score = 10000
 
         #XXX:  hardcoded at 4 at moment...  pw*2 is the minimum csize
-        for w in range(5, width):
+        for w in range(width-2, width):
             # for h in range(4, height):
             h = w
-            ccell = CircleCell(size=(width,height), csize=(w,h), base_color=base_color, second_color=second_color, n=n, sn=sn)
-            cimg = ccell.draw()
-            score = util.rmsdiff(img, cimg)
-            # print quad, score
-            if score <= best_score:
-                best_ccell = ccell
-                best_score = score
-                # best_ccell.draw().show()
-                # import pdb; pdb.set_trace()
+            for color_combo in color_combos:
+                ccell = CircleCell(size=(width,height), csize=(w,h), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
+                cimg = ccell.draw()
+                score = util.rmsdiff(img, cimg)
+                if score <= best_score:
+                    best_ccell = ccell
+                    best_score = score
 
         return best_ccell
 

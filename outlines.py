@@ -9,7 +9,7 @@ from skimage.color import rgb2grey
 
 
 
-moi = io.imread("./examples/test.JPEG")
+moi = io.imread("./examples/moi.JPEG")
 
 
 # Construct some test data

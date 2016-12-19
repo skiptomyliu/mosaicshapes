@@ -65,9 +65,7 @@ class TriangleCell(Cell):
 
             timg = trect.draw()
             staged_image = draw_img.copy()
-            # staged_draw = ImageDraw.Draw(staged_image, 'RGBA')
-            staged_image.paste(timg, (x,y))
-            # import pdb; pdb.set_trace()            
+            staged_image.paste(timg, (x,y))           
 
             score = util.rmsdiff(draw_img, staged_image)
             print quad, score
@@ -79,9 +77,9 @@ class TriangleCell(Cell):
 
     @staticmethod
     def find_best(img, n=2, sn=2):
-        fg,bg = ColorPalette.average_colors(img,2)
-        second_color = (fg*255).astype(int)
-        base_color = (bg*255).astype(int)
+        second_color,base_color = ColorPalette.quantize_img(img,2)
+        
+        color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
@@ -89,15 +87,17 @@ class TriangleCell(Cell):
         best_trect = None
         best_score = 10000
         for quad in quads:
-            trect = TriangleCell(size=(w,h), base_color=base_color, second_color=second_color, 
-                shrink=0, n=n, sn=sn, quadrant=quad)
+            for color_combo in color_combos:
+                trect = TriangleCell(size=(w,h), 
+                    base_color=color_combo[0], second_color=color_combo[1], 
+                    shrink=0, n=n, sn=sn, quadrant=quad)
 
-            timg = trect.draw()
-            score = util.rmsdiff(img, timg)
-            # print quad, score
-            if score <= best_score:
-                best_trect = trect
-                best_score = score
+                timg = trect.draw()
+                score = util.rmsdiff(img, timg)
+                # print quad, score
+                if score <= best_score:
+                    best_trect = trect
+                    best_score = score
 
         return best_trect
 
@@ -110,9 +110,6 @@ class TriangleCell(Cell):
 
         # if random.randrange(2):
             # self.colors_secondary = list(reversed(self.colors_secondary))
-
-        if random.randrange(2):
-            self.colors = list(reversed(self.colors))
 
         if len(self.colors)>=3:
             self.colors[1], self.colors[2] = self.colors[2], self.colors[1]

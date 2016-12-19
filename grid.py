@@ -8,6 +8,7 @@ from comp import CompColor
 from trianglecell import TriangleCell
 from circlecell import CircleCell
 from rectcell import RectCell
+from pieslicecell import PieSliceCell
 from skimage.color import rgb2grey
 from skimage import io, feature
 import matplotlib.pyplot as plt
@@ -33,7 +34,6 @@ class Grid():
         self.og_image = Image.open(imgpath)
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
-
 
         self.image_array = io.imread(imgpath)
         self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=4)
@@ -95,43 +95,102 @@ class Grid():
                         cropped_img = self.og_image.crop(rect_coords)
 
                         circle = CircleCell.find_best(cropped_img, n=3, sn=2)
-                        # circle = RectCell.find_best(cropped_img, n=3, sn=2)
-                        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1)
-                        # triangle = TriangleCell.find_best_xy(self.og_image, cropped_img, (x,y), n=2, sn=1)
+                        rect = RectCell.find_best(cropped_img, n=3, sn=2)
+                        triangle = TriangleCell.find_best(cropped_img, n=1, sn=1)
+                        pie = PieSliceCell.find_best(cropped_img, n=2, sn=2)
 
                         circle_rms = util.rmsdiff(cropped_img, circle.draw())
+                        rect_rms = util.rmsdiff(cropped_img, rect.draw())
                         triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
+                        pie_rms = util.rmsdiff(cropped_img, pie.draw())+.1
+                        shapes = [circle, rect, triangle, pie]
+                        rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms]
+                        shape = shapes[rms_list.index(min(rms_list))]
+                        best_shape = type(shape)
 
-                        if triangle_rms < circle_rms:
-                            shape = triangle
-                            area = edges_seg.shape[0]*edges_seg.shape[1]
-                            percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                            if percent <= .2:
-                                shape.shrink = 1
-                            if percent <= .1:
-                                shape.shrink = 2
+                        # for idx,color in enumerate(rect.colors):
+                        #     color = int(color[0]+255),int(color[1]),int(color[2])
+                        #     rect.colors[idx] = color
+
+
+                        # if triangle_rms < circle_rms:
+                        #     shape = triangle
+                        #     area = edges_seg.shape[0]*edges_seg.shape[1]
+                        #     percent = (len(np.where(edges_seg)[1])*2)/float(area)
+                        #     if percent <= .2:
+                        #         shape.shrink = 1
+                        #     if percent <= .1:
+                        #         shape.shrink = 2
+                        # else:
+                        #     shape = circle
+
+                        if random.randint(0,1):
+
+                            """
+                            vertical 
+                            """
+                            img = shape.draw()
+                            rect_coords2 = rect_coords[:]
+                            rect_coords2[1] = rect_coords2[1] + pix
+                            rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
+                            cropped_img2 = self.og_image.crop(rect_coords2)
+                            rms_v = util.rmsdiff(cropped_img, cropped_img2)
+                            if rms_v < 40:
+                                bg,fg = ColorPalette.quantize_img(cropped_img, 2)
+                                csize_w, csize_h = (pix-7,2*pix-7)
+                                pix_h*=2
+                                shape = RectCell(size=(pix,pix_h), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=1, sn=2)
+                                img=shape.draw()
                         else:
-                            shape = circle
+                            """
+                            horizontal 
+                            """
+                            pix_w,pix_h=pix,pix
+                            img = shape.draw()
+                            rect_coords2 = rect_coords[:]
+                            rect_coords2[0] = rect_coords2[0] + pix
+                            rect_coords2[2] = util.clamp_int(rect_coords2[2] + pix, 0, width)
+                            cropped_img2 = self.og_image.crop(rect_coords2)
+                            rms_v = util.rmsdiff(cropped_img, cropped_img2)
+                            if rms_v < 40:
+                                bg,fg = ColorPalette.quantize_img(cropped_img, 2)
+                                csize_w, csize_h = (2*pix-7, pix-7)
+                                pix_w*=2
+                                shape = RectCell(size=(pix_w,pix), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=2, sn=2)
+                                img=shape.draw()
 
-                        img = shape.draw()
 
-                        rect_coords2 = rect_coords[:]
-                        rect_coords2[1] = rect_coords2[1] + pix
-                        rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
-                        cropped_img2 = self.og_image.crop(rect_coords2)
-                        rms_v = util.rmsdiff(cropped_img, cropped_img2)
-                        if rms_v < 20:
-                            bg,fg = ColorPalette.quantize_img(cropped_img, 2)
-                            csize_w, csize_h = (pix-7,2*pix-7)
-                            pix_h*=2
-                            shape = RectCell(size=(pix,pix_h), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=4, sn=2)
-                            img=shape.draw()
 
+                        # """
+                        # big triangle
+                        # """
+                        # if best_shape == TriangleCell:
+                        #     # import pdb; pdb.set_trace()
+                        #     pix_w,pix_h=pix,pix
+                        #     img = shape.draw()
+                        #     rect_coords2 = rect_coords[:]
+                        #     rect_coords2[0] = rect_coords2[0] + pix #sx
+                        #     rect_coords2[1] = rect_coords2[1] + pix #sy
+                        #     rect_coords2[2] = util.clamp_int(rect_coords2[2] + pix, 0, width)
+                        #     rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
+                        #     cropped_img2 = self.og_image.crop(rect_coords2)
+
+                        #     rms_v = util.rmsdiff(cropped_img, cropped_img2)
+
+                        #     rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
+                        #     big_crop_img = self.og_image.crop(rect_coords3)
+                        #     if rms_v < 80:
+                        #         bg,fg = ColorPalette.quantize_img(big_crop_img, 2)
+                        #         csize_w, csize_h = (2*pix-7, 2*pix-7)
+                        #         pix_w*=2
+                        #         pix_h*=2
+                        #         shape = TriangleCell.find_best(big_crop_img, n=1, sn=1)
+                        #         img=shape.draw()
+
+                                # import pdb; pdb.set_trace()
 
                     else:
-                        # ccolor = grid_colors[row][col]
-
-                        ccolor = CompColor(size=(pix, pix), base_color=og_color, n=4)
+                        ccolor = CompColor(size=(pix, pix), base_color=og_color, n=3)
                         img = ccolor.draw()
 
 

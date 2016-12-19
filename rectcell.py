@@ -25,23 +25,32 @@ class RectCell(Cell):
     @staticmethod
     def find_best(img, n=2, sn=2):
         second_color,base_color = ColorPalette.quantize_img(img, 2)
+
+        color_combos = [[base_color, second_color], [second_color, base_color]]
+
         width,height = img.size
         best_rcell = None
         best_score = 10000
 
         #XXX:  hardcoded at 4 at moment...  pw*2 is the minimum csize
-        for w in range(15, width):
+        for w in range(20, width):
             # for h in range(4, height):
-            h = w
-            rcell = RectCell(size=(width,height), csize=(w,h), base_color=base_color, second_color=second_color, n=n, sn=sn)
-            cimg = rcell.draw()
-            score = util.rmsdiff(img, cimg)
-            # print quad, score
-            if score <= best_score:
-                best_rcell = rcell
-                best_score = score
-                # best_ccell.draw().show()
-                # import pdb; pdb.set_trace()
+            for color_combo in color_combos:
+                for i in range(2):
+                    h = w
+                    rcell = RectCell(size=(width,height), csize=(w,h), 
+                        base_color=color_combo[0], second_color=color_combo[1], 
+                        n=n, sn=sn)
+                    # if i:
+                    #     rcell.colors = list(reversed(rcell.colors))
+                    cimg = rcell.draw()
+                    score = util.rmsdiff(img, cimg)
+                    # print quad, score
+                    if score <= best_score:
+                        best_rcell = rcell
+                        best_score = score
+                        # best_rcell.draw().show()
+                        # import pdb; pdb.set_trace()
 
         return best_rcell
 

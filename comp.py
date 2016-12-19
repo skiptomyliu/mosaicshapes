@@ -132,15 +132,13 @@ class CompColor():
         canvas = ImageDraw.Draw(paper)
 
         width = (self.width/len(self.colors))/2
-        # print self.colors
-
-        # self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
 
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 
-        self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        if len(self.colors)>=3:
+            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
