@@ -3,17 +3,15 @@
 
 from PIL import Image, ImageDraw
 import numpy as np
-# from numpy import random
+from colorpalette import ColorPalette
 import random
 import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
 from random import shuffle
-import colorsys
-from enum import Enum
 import util
-
+from cell import Cell, Quadrant
 
 """
 
@@ -24,13 +22,7 @@ import util
 
 """
 
-class Quadrant(Enum):
-    top_left = 1
-    top_right = 2
-    bottom_right = 3
-    bottom_left = 4
-
-class TriangleRect():
+class TriangleCell(Cell):
     def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), 
         shrink=0, n=4, sn=1, quadrant=Quadrant.top_left):
 
@@ -38,8 +30,8 @@ class TriangleRect():
         self.height = size[1]
         self.base_color = base_color
 
-        self.colors = TriangleRect.gen_colors(base_color, n)
-        self.colors_secondary = TriangleRect.gen_colors(second_color,sn)
+        self.colors = Cell.gen_colors(base_color, n)
+        self.colors_secondary = Cell.gen_colors(second_color,sn)
         self.quadrant = quadrant
         self.shrink = shrink
 
@@ -52,52 +44,60 @@ class TriangleRect():
         return round(cur_lum / len(colors), 2)
 
     def avg_lum(self):
-        return TriangleRect.__avg_lum(self.colors)
+        return TriangleCell.__avg_lum(self.colors)
 
+
+    # Should we use this??
     @staticmethod
-    def gen_colors(base_color, n):
-        deg = 30/360.0
-        colors = []
-        if n==1:
-            if isinstance(base_color, (np.ndarray, np.generic)):
-                base_color = tuple(base_color.astype(int))
-            colors.append(base_color)
-        else:   
-            # maximum distance between all colors combined
-            distance = 40
-            colors = []
+    def find_best_xy(draw_img, cropped_img, (x,y), n=2, sn=1):
+        fg,bg = ColorPalette.average_colors(cropped_img,2)
+        second_color = (fg*255).astype(int)
+        base_color = (bg*255).astype(int)
 
-            r,g,b = base_color
-            quad = 1 if util.luminance(r,g,b) > 100 else 0
-            for i in range(-n/2+quad, n/2+quad):
-                color = np.asarray(base_color) + (i)*distance/float(n)
-                color[0] = util.clamp_int(color[0], 0, 255)
-                color[1] = util.clamp_int(color[1], 0, 255)
-                color[2] = util.clamp_int(color[2], 0, 255)
-                color = tuple(color.astype(int))
-                colors.append(color)
-
-        return colors
-
-
-    @staticmethod
-    # def find_best(img):
-    def find_best(img, base_color, second_color, n=2, sn=2):
-        w,h=img.size
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
+        w,h=cropped_img.size
         best_trect = None
         best_score = 10000
         for quad in quads:
-            trect = TriangleRect(size=(w,h), base_color=base_color, second_color=second_color, 
+            trect = TriangleCell(size=(w,h), base_color=base_color, second_color=second_color, 
                 shrink=0, n=n, sn=sn, quadrant=quad)
-            timg = trect.draw()
 
-            score = util.rmsdiff(img, timg)
-            # print quad, score
+            timg = trect.draw()
+            staged_image = draw_img.copy()
+            staged_image.paste(timg, (x,y))           
+
+            score = util.rmsdiff(draw_img, staged_image)
+            print quad, score
             if score <= best_score:
                 best_trect = trect
                 best_score = score
+
+        return best_trect
+
+    @staticmethod
+    def find_best(img, n=2, sn=2):
+        second_color,base_color = ColorPalette.quantize_img(img,2)
+        
+        color_combos = [[second_color,base_color], [base_color, second_color]]
+
+        quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
+
+        w,h=img.size
+        best_trect = None
+        best_score = 10000
+        for quad in quads:
+            for color_combo in color_combos:
+                trect = TriangleCell(size=(w,h), 
+                    base_color=color_combo[0], second_color=color_combo[1], 
+                    shrink=0, n=n, sn=sn, quadrant=quad)
+
+                timg = trect.draw()
+                score = util.rmsdiff(img, timg)
+                # print quad, score
+                if score <= best_score:
+                    best_trect = trect
+                    best_score = score
 
         return best_trect
 
@@ -110,9 +110,6 @@ class TriangleRect():
 
         # if random.randrange(2):
             # self.colors_secondary = list(reversed(self.colors_secondary))
-
-        if random.randrange(2):
-            self.colors = list(reversed(self.colors))
 
         if len(self.colors)>=3:
             self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
