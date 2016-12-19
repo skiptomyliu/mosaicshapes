@@ -33,7 +33,7 @@ class RectCell(Cell):
         best_score = 10000
 
         #XXX:  hardcoded at 4 at moment...  pw*2 is the minimum csize
-        for w in range(20, width):
+        for w in range(int(width-5), width):
             # for h in range(4, height):
             for color_combo in color_combos:
                 for i in range(2):
@@ -45,7 +45,6 @@ class RectCell(Cell):
                     #     rcell.colors = list(reversed(rcell.colors))
                     cimg = rcell.draw()
                     score = util.rmsdiff(img, cimg)
-                    # print quad, score
                     if score <= best_score:
                         best_rcell = rcell
                         best_score = score
