@@ -10,7 +10,7 @@ import scipy
 from scipy.misc import toimage
 from random import shuffle
 import colorsys
-
+from cell import Cell
 import util
 
 
@@ -26,7 +26,7 @@ import util
 """
 
 
-class CompColor():
+class CompColor(Cell):
     def __init__(self, size=(200,200), base_color=(0,0,0), n=4):
         self.width = size[0]
         self.height = size[1]
@@ -41,6 +41,10 @@ class CompColor():
         #                     # blue            green            red             orange
         #     self.colors = [(194,194,200), (202,218, 183), (223, 179, 181), (252, 195, 162)]
         #     shuffle(self.colors)
+
+    @staticmethod
+    def find_best(img, n=2, sn=2):
+        pass
 
     @staticmethod
     def gen_colors(base_color, n):

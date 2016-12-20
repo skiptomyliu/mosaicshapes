@@ -9,9 +9,9 @@ from trianglecell import TriangleCell
 from circlecell import CircleCell
 from rectcell import RectCell
 from pieslicecell import PieSliceCell
+from halfcirclecell import HalfCircleCell
 from skimage.color import rgb2grey
 from skimage import io, feature
-import matplotlib.pyplot as plt
 import numpy as np
 from enum import Enum
 from colorpalette import ColorPalette
@@ -26,7 +26,8 @@ class Slope(Enum):
     
 
 """
-- pie slice for edge ... should work for eyes?
+- double half circle cells
+- refactor to put find best shapes in method
 """
 class Grid():
     def __init__(self, imgpath, pix):
@@ -98,13 +99,16 @@ class Grid():
                         rect = RectCell.find_best(cropped_img, n=3, sn=2)
                         triangle = TriangleCell.find_best(cropped_img, n=1, sn=1)
                         pie = PieSliceCell.find_best(cropped_img, n=2, sn=2)
+                        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=1)
 
                         circle_rms = util.rmsdiff(cropped_img, circle.draw())
                         rect_rms = util.rmsdiff(cropped_img, rect.draw())
                         triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
                         pie_rms = util.rmsdiff(cropped_img, pie.draw())+.1
-                        shapes = [circle, rect, triangle, pie]
-                        rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms]
+                        halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
+                        
+                        shapes = [circle, rect, triangle, pie, halfc]
+                        rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
                         shape = shapes[rms_list.index(min(rms_list))]
                         best_shape = type(shape)
 
@@ -156,10 +160,19 @@ class Grid():
                                 bg,fg = ColorPalette.quantize_img(cropped_img, 2)
                                 csize_w, csize_h = (2*pix-7, pix-7)
                                 pix_w*=2
-                                shape = RectCell(size=(pix_w,pix), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=2, sn=2)
-                                img=shape.draw()
+                                rect_big = RectCell(size=(pix_w,pix), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=2, sn=2)
+                                # img = shape.draw()
 
+                                rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
+                                big_crop_img = self.og_image.crop(rect_coords3)
+                                slice_big = PieSliceCell.find_best(big_crop_img, n=3, sn=2)
 
+                                slice_big_rms = util.rmsdiff(big_crop_img, slice_big.draw())
+                                rect_big_rms = util.rmsdiff(big_crop_img, rect_big.draw())
+                                rms_list_big = [rect_big_rms, slice_big_rms]
+                                big_shapes = [rect_big, slice_big]
+                                shape = big_shapes[rms_list_big.index(min(rms_list_big))]
+                                img = shape.draw()
 
                         # """
                         # big triangle
@@ -257,9 +270,7 @@ class Grid():
                         # self.image.paste(img,    (w*pix, h*pix))
                         self.og_image.paste(img, (w*pix, h*pix))
 
-                        # if h%10 == 0:
-                        #     import pdb; pdb.set_trace()
-                        #     self.og_image.show()
+                       
 
                         self.occupy(w,h,pix_w/pix,pix_h/pix)
 

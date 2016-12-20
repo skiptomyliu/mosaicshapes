@@ -33,8 +33,8 @@ class TestPieSliceCell(unittest.TestCase):
         # Test upper right ear
         crop_right_ear = og_image.crop((340-25,270-25,340+25,270+25))       
         trect = PieSliceCell.find_best(crop_right_ear, n=2, sn=3)
-        crop_right_ear.show()
-        trect.draw().show()
+        # crop_right_ear.show()
+        # trect.draw().show()
         # self.assertEqual(trect.quadrant, Quadrant.bottom_right)
         
         # # test upper left ear
@@ -50,6 +50,9 @@ class TestPieSliceCell(unittest.TestCase):
 
 
     def test_draw(self):
+        pcell = PieSliceCell(size=(300,100), base_color=(100,100,100), 
+            second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.bottom_right)
+        pcell.draw()
         pcell = PieSliceCell(size=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.bottom_right)
         pcell.draw()

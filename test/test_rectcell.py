@@ -29,7 +29,6 @@ class TestRectCell(unittest.TestCase):
         # trect.draw().show()
 
         # self.assertEqual(trect.quadrant, Quadrant.top_right)
-
         # Test upper right ear
         crop_right_ear = og_image.crop((340-25,270-25,340+25,270+25))       
         trect = RectCell.find_best(crop_right_ear, n=3, sn=3)
