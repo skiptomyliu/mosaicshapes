@@ -164,14 +164,12 @@ class CompColor(Cell):
             print [x, y, ex, ey]
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
-        # circle_paper = circle_paper.rotate(45)
+        circle_paper = circle_paper.rotate(45*random.randint(0, 6))
         rect_paper.paste(circle_paper,(0,0), circle_paper)
-        
-        # rect_paper.show()
 
         del rect_canvas
         del circle_canvas
-        # rect_paper.thumbnail((self.width, self.height)) 
+        rect_paper.thumbnail((self.width, self.height)) 
         return rect_paper
 
     def draw(self):
