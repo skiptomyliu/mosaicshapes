@@ -28,6 +28,8 @@ class Slope(Enum):
 """
 - double half circle cells
 - refactor to put find best shapes in method
+- rotated 45 deg circles.
+- 
 """
 class Grid():
     def __init__(self, imgpath, pix):
@@ -143,8 +145,21 @@ class Grid():
                                 bg,fg = ColorPalette.quantize_img(cropped_img, 2)
                                 csize_w, csize_h = (pix-7,2*pix-7)
                                 pix_h*=2
-                                shape = RectCell(size=(pix,pix_h), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=1, sn=2)
-                                img=shape.draw()
+                                # shape = RectCell(size=(pix,pix_h), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=1, sn=2)
+                                rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
+                                big_crop_img = self.og_image.crop(rect_coords3)
+                                rect_big = RectCell.find_best(big_crop_img, n=2, sn=2)
+                                slice_big = PieSliceCell.find_best(big_crop_img, n=3, sn=2)
+                                half_big = HalfCircleCell.find_best(big_crop_img, n=3, sn=2)
+
+                                slice_big_rms = util.rmsdiff(big_crop_img, slice_big.draw())
+                                rect_big_rms = util.rmsdiff(big_crop_img, rect_big.draw())
+                                half_big_rms = util.rmsdiff(big_crop_img, half_big.draw())
+                                rms_list_big = [rect_big_rms, slice_big_rms, half_big_rms]
+                                big_shapes = [rect_big, slice_big, half_big]
+                                shape = big_shapes[rms_list_big.index(min(rms_list_big))]
+                                img = shape.draw()
+
                         else:
                             """
                             horizontal 
@@ -157,20 +172,19 @@ class Grid():
                             cropped_img2 = self.og_image.crop(rect_coords2)
                             rms_v = util.rmsdiff(cropped_img, cropped_img2)
                             if rms_v < 40:
-                                bg,fg = ColorPalette.quantize_img(cropped_img, 2)
-                                csize_w, csize_h = (2*pix-7, pix-7)
                                 pix_w*=2
-                                rect_big = RectCell(size=(pix_w,pix), csize=(csize_w, csize_h), base_color=fg, second_color=bg, n=2, sn=2)
-                                # img = shape.draw()
-
                                 rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                                 big_crop_img = self.og_image.crop(rect_coords3)
+
+                                rect_big = RectCell.find_best(big_crop_img, n=2, sn=2)
                                 slice_big = PieSliceCell.find_best(big_crop_img, n=3, sn=2)
+                                half_big = HalfCircleCell.find_best(big_crop_img, n=3, sn=2)
 
                                 slice_big_rms = util.rmsdiff(big_crop_img, slice_big.draw())
                                 rect_big_rms = util.rmsdiff(big_crop_img, rect_big.draw())
-                                rms_list_big = [rect_big_rms, slice_big_rms]
-                                big_shapes = [rect_big, slice_big]
+                                half_big_rms = util.rmsdiff(big_crop_img, half_big.draw())
+                                rms_list_big = [rect_big_rms, slice_big_rms, half_big_rms]
+                                big_shapes = [rect_big, slice_big, half_big]
                                 shape = big_shapes[rms_list_big.index(min(rms_list_big))]
                                 img = shape.draw()
 

@@ -131,6 +131,49 @@ class CompColor(Cell):
 
             pass
 
+
+    def draw_circle(self):
+        width = 10#(self.width/len(self.colors))/2-10
+        stretch = 0 #self.width/7
+        N=3
+        rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
+        rect_canvas = ImageDraw.Draw(rect_paper, rect_paper.mode)
+        
+        if len(self.colors)>=3:
+            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+
+        for idx, color in enumerate(self.colors):
+            color = int(color[0]),int(color[1]),int(color[2])
+            x = width*idx*N
+            y = width*idx*N 
+            ex = (self.width-width*idx)*N
+            ey = (self.height-width*idx)*N
+            rect_paper.paste(color, [x,y, ex, ey])
+
+
+        circle_paper = Image.new('RGBA', (self.width*N, self.height*N))
+        circle_canvas = ImageDraw.Draw(circle_paper, circle_paper.mode)
+
+        self.colors = list(reversed(self.colors))
+        for idx, color in enumerate(self.colors):
+            color = int(color[0]),int(color[1]),int(color[2])
+            x = (width*idx+stretch)*N + width*(len(self.base_color)-1)*N
+            y = width*idx*N #+ width*(len(self.base_color)-1.5)*N
+            ex = (self.width-width*idx-stretch)*N - width*(len(self.base_color)-1)*N
+            ey = (self.height-width*idx)*N #- width*(len(self.base_color)-1.5)*N
+            print [x, y, ex, ey]
+            circle_canvas.ellipse([x, y, ex, ey], fill=color)
+
+        # circle_paper = circle_paper.rotate(45)
+        rect_paper.paste(circle_paper,(0,0), circle_paper)
+        
+        # rect_paper.show()
+
+        del rect_canvas
+        del circle_canvas
+        # rect_paper.thumbnail((self.width, self.height)) 
+        return rect_paper
+
     def draw(self):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)
