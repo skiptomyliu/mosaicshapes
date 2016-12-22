@@ -32,7 +32,7 @@ class CompColor(Cell):
         self.height = size[1]
         self.base_color = base_color
         self.colors = []
-        self.colors = CompColor.gen_colors(base_color, n)
+        self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
         self.random_colors = self.__random_color()
 
         # Initial base colors to initialize with:
@@ -133,7 +133,7 @@ class CompColor(Cell):
 
 
     def draw_circle(self):
-        width = 10#(self.width/len(self.colors))/2-10
+        width = (self.width/len(self.colors))/random.randint(2,4)
         stretch = 0 #self.width/7
         N=3
         rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
@@ -145,7 +145,7 @@ class CompColor(Cell):
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             x = width*idx*N
-            y = width*idx*N 
+            y = width*idx*N
             ex = (self.width-width*idx)*N
             ey = (self.height-width*idx)*N
             rect_paper.paste(color, [x,y, ex, ey])
@@ -157,11 +157,10 @@ class CompColor(Cell):
         self.colors = list(reversed(self.colors))
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            x = (width*idx+stretch)*N + width*(len(self.base_color)-1)*N
+            x = (width*idx+stretch)*N + width/2*(len(self.base_color)-1)*N
             y = width*idx*N #+ width*(len(self.base_color)-1.5)*N
-            ex = (self.width-width*idx-stretch)*N - width*(len(self.base_color)-1)*N
+            ex = (self.width-width*idx-stretch)*N - width/2*(len(self.base_color)-1)*N
             ey = (self.height-width*idx)*N #- width*(len(self.base_color)-1.5)*N
-            print [x, y, ex, ey]
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
         circle_paper = circle_paper.rotate(45*random.randint(0, 6))
@@ -172,7 +171,7 @@ class CompColor(Cell):
         rect_paper.thumbnail((self.width, self.height)) 
         return rect_paper
 
-    def draw(self):
+    def draw_rect(self):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)
 
@@ -188,10 +187,17 @@ class CompColor(Cell):
             color = int(color[0]),int(color[1]),int(color[2])
             paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
         # paper.show()
+
         return paper
 
 
+    def draw(self):
+        if random.randrange(0,2):
+            shape = self.draw_circle()
+        else:
+            shape = self.draw_rect()
 
+        return shape
 
 
 

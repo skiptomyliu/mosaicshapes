@@ -49,9 +49,9 @@ class TestCompColor(unittest.TestCase):
         # self.assertEqual(colors, [(90.0, 90.0, 90.0), (100.0, 100.0, 100.0), (110.0, 110.0, 110.0), (120.0, 120.0, 120.0)])
 
     def test_draw_circle(self):
-        ccolor = CompColor(size=(200, 200), base_color=[180,180,180], n=3)
+        ccolor = CompColor(size=(25, 25), base_color=[180,180,180], n=3)
         img = ccolor.draw_circle()
-        img.show()
+        # img.show()
 
     def test_draw(self):
         base_color = (100,100,100)

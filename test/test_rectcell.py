@@ -22,16 +22,19 @@ class TestRectCell(unittest.TestCase):
 
         # Test lower left jaw
         cropped = og_image.crop((330-23,290,330,290+50))
-        cropped.show()
+        # cropped.show()
         fg,bg = ColorPalette.quantize_img(cropped, 2)
         csize_w, csize_h = cropped.size[0]-9,cropped.size[1]-9
         trect = RectCell(size=cropped.size, csize=(csize_w, csize_h), base_color=bg, second_color=fg, n=4, sn=1)
         # trect.draw().show()
+        
 
         # self.assertEqual(trect.quadrant, Quadrant.top_right)
         # Test upper right ear
-        crop_right_ear = og_image.crop((340-25,270-25,340+25,270+25))       
-        trect = RectCell.find_best(crop_right_ear, n=3, sn=3)
+        crop_right_ear = og_image.crop((340-25,270-25,340+50,270+25))       
+        trect = RectCell.find_best(crop_right_ear, n=3, sn=2)
+        crop_right_ear.show()
+        trect.draw().show()
         # self.assertEqual(trect.quadrant, Quadrant.bottom_right)
 
         crop_top_right_ear = og_image.crop((360-25,180-25, 360+25, 180+25))
