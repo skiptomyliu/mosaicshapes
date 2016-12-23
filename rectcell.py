@@ -32,26 +32,25 @@ class RectCell(Cell):
         best_rcell = None
         best_score = 10000
 
-        #XXX:  hardcoded at 4 at moment...  pw*2 is the minimum csize
-        # for w in range(int(width-10), width):
-            # for h in range(4, height):
-        w = width - 10
-        h = height - 25
-        for color_combo in color_combos:
-            for i in range(2):
-                h = w
-                rcell = RectCell(size=(width,height), csize=(w,h), 
-                    base_color=color_combo[0], second_color=color_combo[1], 
-                    n=n, sn=sn)
-                # if i:
-                #     rcell.colors = list(reversed(rcell.colors))
-                cimg = rcell.draw()
-                score = util.rmsdiff(img, cimg)
-                if score <= best_score:
-                    best_rcell = rcell
-                    best_score = score
-                    # best_rcell.draw().show()
-                    # import pdb; pdb.set_trace()
+        w = width 
+        h = height
+
+        # XXX: will cause probs if image size is less than 10 pixels
+        for w in range(width-10, width):
+            for h in range(height-10, height):
+
+                for color_combo in color_combos:
+                    for i in range(2):
+                        h = w
+                        rcell = RectCell(size=(width,height), csize=(w,h), 
+                            base_color=color_combo[0], second_color=color_combo[1], 
+                            n=n, sn=sn)
+
+                        cimg = rcell.draw()
+                        score = util.rmsdiff(img, cimg)
+                        if score <= best_score:
+                            best_rcell = rcell
+                            best_score = score
 
         return best_rcell
 
@@ -78,10 +77,15 @@ class RectCell(Cell):
         """
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            sx = int(round((self.width-self.cwidth)/2))
-            sy = 0 +  len(self.colors)*pw # (self.height-self.cheight)/2
+            sx = int(round(len(self.colors)*pw/2))
+            sx += (pw*idx)
+            sy = int(round(len(self.colors)*pw/2))
+            sy += (pw*idx)
+            ex = (self.width - sx) 
+            ex -= (pw*idx)
             ey = self.height - sy
-            paper.paste(color, [sx + (pw*idx), sy+(pw*idx), sx+(self.cwidth-pw*idx)+1, ey-pw*idx])
+            ey -= (pw*idx)
+            paper.paste(color, [sx, sy, ex, ey])
 
         return paper
 

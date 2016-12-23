@@ -52,7 +52,7 @@ class HalfCircleCell(Cell):
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        pw = 2 #(self.width/len(self.colors))/2
+        pw = 4 #(self.width/len(self.colors))/2
         # if random.randrange(2):
         #     self.colors = list(reversed(self.colors))
 
@@ -79,7 +79,7 @@ class HalfCircleCell(Cell):
             ex-= (pw*idx*N)
             sy = aidx*N + pw*idx*N
             ey = self.height*N 
-            ey-= pw*idx*N*2.5 + aidx*N*2.5
+            ey-= pw*idx*N*2.5 + aidx*N*2
             canvas.pieslice([sx,sy,ex,ey], sdeg, edeg, fill=color, outline=None)
 
         if self.direction == Direction.top:

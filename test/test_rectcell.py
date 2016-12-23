@@ -35,14 +35,16 @@ class TestRectCell(unittest.TestCase):
         trect = RectCell.find_best(crop_right_ear, n=3, sn=2)
         crop_right_ear.show()
         trect.draw().show()
-        # self.assertEqual(trect.quadrant, Quadrant.bottom_right)
 
         crop_top_right_ear = og_image.crop((360-25,180-25, 360+25, 180+25))
         trect = RectCell.find_best(crop_top_right_ear, n=3, sn=3)
         # self.assertTrue(trect.quadrant == Quadrant.bottom_left or trect.quadrant == Quadrant.top_right)
 
+        
+
     def test_draw(self):
         # colors = RectCell.gen_colors(base_color, n=4)
+
         ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)
         ccell.draw()
