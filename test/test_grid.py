@@ -7,8 +7,7 @@ from grid import Grid
 class TestGrid(unittest.TestCase):
 
     def setUp(self):
-        self.grid = Grid("./examples/moi.JPEG", pix=30)
-        pass
+        self.grid = Grid("./examples/tiger.JPEG", pix=55)
        
     def tearDown(self):
         pass

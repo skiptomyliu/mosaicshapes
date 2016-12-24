@@ -106,7 +106,7 @@ class TriangleCell(Cell):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)
 
-        pw = 5 #(self.width/len(self.colors))/2
+        pw = 3 #(self.width/len(self.colors))/2
 
         # if random.randrange(2):
             # self.colors_secondary = list(reversed(self.colors_secondary))

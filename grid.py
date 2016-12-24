@@ -19,10 +19,8 @@ import random
     
 
 """
-x - double half circle cells
-x - refactor to put find best shapes in method
-x - rotated 45 deg circles.
-- 
+- Need to supersample drawing triangles ... needs anti alias
+- circle stretching needs to be fixed on 2x1 cells
 """
 class Grid():
     def __init__(self, imgpath, pix):
@@ -69,7 +67,7 @@ class Grid():
     def best_shape(self, cropped_img):
         circle = CircleCell.find_best(cropped_img, n=3, sn=2)
         rect = RectCell.find_best(cropped_img, n=2, sn=2)
-        triangle = TriangleCell.find_best(cropped_img, n=3, sn=2)
+        triangle = TriangleCell.find_best(cropped_img, n=2, sn=2)
         pie = PieSliceCell.find_best(cropped_img, n=3, sn=2)
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
 
@@ -115,58 +113,45 @@ class Grid():
                     if np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
 
-                        shape = self.best_shape(cropped_img)
+                        # First find doubles
 
-                        if isinstance(shape, TriangleCell):
-                            area = edges_seg.shape[0]*edges_seg.shape[1]
-                            percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                            if percent <= .2:
-                                shape.shrink = 1
-                            if percent <= .1:
-                                shape.shrink = 2
-                        # else:
-                        #     shape = circle
-
+                        rect_coords2 = rect_coords[:]
                         if random.randint(0,1):
                             """
                             vertical 
                             """
-                            img = shape.draw()
-                            rect_coords2 = rect_coords[:]
                             rect_coords2[1] = rect_coords2[1] + pix
                             rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
-                            cropped_img2 = self.og_image.crop(rect_coords2)
-                            rms_v = util.rmsdiff(cropped_img, cropped_img2)
-                            if rms_v < 40:
-                                bg,fg = ColorPalette.quantize_img(cropped_img, 2)
-                                csize_w, csize_h = (pix-7,2*pix-7)
-                                pix_h*=2
-                                rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
-                                big_crop_img = self.og_image.crop(rect_coords3)
-
-                                shape = self.best_shape(big_crop_img)
-                                img = shape.draw()
-
-
+                            pix_h*=2
                         else:
                             """
                             horizontal 
                             """
-                            pix_w,pix_h=pix,pix
-                            img = shape.draw()
-                            rect_coords2 = rect_coords[:]
                             rect_coords2[0] = rect_coords2[0] + pix
                             rect_coords2[2] = util.clamp_int(rect_coords2[2] + pix, 0, width)
-                            cropped_img2 = self.og_image.crop(rect_coords2)
-                            rms_v = util.rmsdiff(cropped_img, cropped_img2)
-                            if rms_v < 40:
-                                pix_w*=2
-                                rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
-                                big_crop_img = self.og_image.crop(rect_coords3)
+                            pix_w*=2
+                        cropped_img2 = self.og_image.crop(rect_coords2)
+                        rms_v = util.rmsdiff(cropped_img, cropped_img2)
+                        if rms_v < 40:
+                            
+                            rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
+                            big_crop_img = self.og_image.crop(rect_coords3)
+                            shape = self.best_shape(big_crop_img)
+                            img = shape.draw()
+                        else:
+                            shape = self.best_shape(cropped_img)
 
+                            if isinstance(shape, TriangleCell):
+                                area = edges_seg.shape[0]*edges_seg.shape[1]
+                                percent = (len(np.where(edges_seg)[1])*2)/float(area)
+                                if percent <= .2:
+                                    shape.shrink = 1
+                                if percent <= .1:
+                                    shape.shrink = 2
 
-                                shape = self.best_shape(big_crop_img)
-                                img = shape.draw()
+                            img = shape.draw()
+                            
+                            pix_w,pix_h=pix,pix
 
                         # """
                         # big triangle
@@ -210,7 +195,6 @@ class Grid():
 
     def warp(self):
         width,height = self.image.size
-        # print width,height
         pix = self.pixels
 
         for w in range(width/pix):
