@@ -53,7 +53,7 @@ class CircleCell(Cell):
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        pw = 5 #(self.width/len(self.colors))/2
+        pw = 10 #(self.width/len(self.colors))/2
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 

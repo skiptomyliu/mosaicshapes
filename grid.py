@@ -21,6 +21,8 @@ import random
 """
 - Need to supersample drawing triangles ... needs anti alias
 - circle stretching needs to be fixed on 2x1 cells
+- triangle drawing on 2x2 bleeds over
+x - 2x1 rectcell is not centered
 """
 class Grid():
     def __init__(self, imgpath, pix):
@@ -132,8 +134,8 @@ class Grid():
                             pix_w*=2
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
+
                         if rms_v < 40:
-                            
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)
@@ -145,12 +147,12 @@ class Grid():
                                 area = edges_seg.shape[0]*edges_seg.shape[1]
                                 percent = (len(np.where(edges_seg)[1])*2)/float(area)
                                 if percent <= .2:
-                                    shape.shrink = 1
+                                    shape.shrink = 4
                                 if percent <= .1:
-                                    shape.shrink = 2
+                                    shape.shrink = 6
 
                             img = shape.draw()
-                            
+
                             pix_w,pix_h=pix,pix
 
                         # """
