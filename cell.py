@@ -11,6 +11,13 @@ class Quadrant(Enum):
     bottom_right = 3
     bottom_left = 4
 
+
+class Direction(Enum):
+    top = 1
+    right = 2
+    bottom = 3
+    left = 4
+
 class Cell(object):
     __metaclass__ = abc.ABCMeta
 
@@ -38,8 +45,6 @@ class Cell(object):
                 colors.append(color)
 
         return colors
-
-
 
     @abc.abstractmethod
     def find_best(self):

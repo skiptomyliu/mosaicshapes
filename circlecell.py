@@ -10,7 +10,8 @@ import util
 from cell import Cell
 
 class CircleCell(Cell):
-    def __init__(self, size=(200,200), csize=(200,200), base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1):
+    def __init__(self, size=(200,200), csize=(200,200), 
+        base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1):
 
         self.width = size[0]
         self.height = size[1]
@@ -31,8 +32,8 @@ class CircleCell(Cell):
         best_ccell = None
         best_score = 10000
 
-        #XXX:  hardcoded at 4 at moment...  pw*2 is the minimum csize
-        for w in range(width-2, width):
+        # XXX may need tweaking:
+        for w in range(width/2, width):
             # for h in range(4, height):
             h = w
             for color_combo in color_combos:
@@ -52,7 +53,7 @@ class CircleCell(Cell):
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        pw = 2 #(self.width/len(self.colors))/2
+        pw = 10 #(self.width/len(self.colors))/2
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 
