@@ -19,9 +19,11 @@ import random
     
 
 """
-- Need to supersample drawing triangles ... needs anti alias
 - circle stretching needs to be fixed on 2x1 cells
-- triangle drawing on 2x2 bleeds over
+- pw to use needs to be automated dependent on image size and n, sn count 
+
+x Need to supersample drawing triangles ... needs anti alias
+x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
 """
 class Grid():
@@ -69,7 +71,7 @@ class Grid():
     def best_shape(self, cropped_img):
         circle = CircleCell.find_best(cropped_img, n=3, sn=2)
         rect = RectCell.find_best(cropped_img, n=2, sn=2)
-        triangle = TriangleCell.find_best(cropped_img, n=2, sn=2)
+        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1)
         pie = PieSliceCell.find_best(cropped_img, n=3, sn=2)
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
 
@@ -146,10 +148,10 @@ class Grid():
                             if isinstance(shape, TriangleCell):
                                 area = edges_seg.shape[0]*edges_seg.shape[1]
                                 percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                                if percent <= .2:
-                                    shape.shrink = 4
-                                if percent <= .1:
-                                    shape.shrink = 6
+                                # if percent <= .2:
+                                #     shape.shrink = 4
+                                # if percent <= .1:
+                                #     shape.shrink = 6
 
                             img = shape.draw()
 

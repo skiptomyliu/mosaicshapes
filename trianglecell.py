@@ -78,9 +78,7 @@ class TriangleCell(Cell):
     @staticmethod
     def find_best(img, n=2, sn=2):
         second_color,base_color = ColorPalette.quantize_img(img,2)
-        
         color_combos = [[second_color,base_color], [base_color, second_color]]
-
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
         w,h=img.size
@@ -94,7 +92,6 @@ class TriangleCell(Cell):
 
                 timg = trect.draw()
                 score = util.rmsdiff(img, timg)
-                # print quad, score
                 if score <= best_score:
                     best_trect = trect
                     best_score = score
@@ -103,10 +100,11 @@ class TriangleCell(Cell):
 
     # return the perceived hue / luminance for now
     def draw(self):
-        paper = Image.new('RGBA', (self.width, self.height))
-        canvas = ImageDraw.Draw(paper)
 
+        N=4
         pw = 10 #(self.width/len(self.colors))/2
+        paper = Image.new('RGBA', (self.width*N, self.height*N))
+        canvas = ImageDraw.Draw(paper, paper.mode)
 
         # if random.randrange(2):
             # self.colors_secondary = list(reversed(self.colors_secondary))
@@ -119,8 +117,7 @@ class TriangleCell(Cell):
         """
         width = pw
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
-
+            paper.paste(color, [width*idx*N, width*idx*N, (self.width-width*idx)*N, (self.height-width*idx)*N])
 
         """
         draw triangles
@@ -130,28 +127,28 @@ class TriangleCell(Cell):
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             width,height = self.width-pw*idx, self.height-pw*idx
-            sx,sy = (pw*idx),(pw*idx + y_offset)
+            sx,sy = (pw*idx*pw), (pw*idx + y_offset)
 
-            if self.quadrant == Quadrant.top_right:
-                width-=x_offset
-                sx+=x_offset
-                coord = [(sx+(idx*pw), sy), (width, sy), (width, height-sy)]
-            elif self.quadrant ==  Quadrant.top_left:
-                sx+=x_offset
-                coord = [(sx, sy), (width-sx, sy), (sx, height-sy)]
-            elif self.quadrant ==  Quadrant.bottom_right:
-                sx+=x_offset
-                width-=x_offset
-                height-=y_offset
-                coord = [(sx+(idx*pw), height), (width, sy+(idx*pw)), (width, height)]
-            elif self.quadrant ==  Quadrant.bottom_left:
-                sx+=x_offset
-                height-=y_offset
-                coord = [(sx, sy+(idx*pw)), (width-sx, height), (sx, height)]
+            sx = int(round(len(self.colors)*pw/2.0))
+            sx += (pw*idx)
+            ex = self.width - sx
+
+            coord = [((sx + pw*idx*(self.width/float(self.height))*1.5)*N, sy*N), (ex*N, sy*N), (ex*N, (height-sy-idx*pw*(self.height/self.width))*N)]
 
             canvas.polygon(coord, fill=color)
 
-        # paper.show()
+        if self.quadrant == Quadrant.top_right:
+            pass
+        elif self.quadrant ==  Quadrant.top_left:
+            paper = paper.rotate(90)
+        elif self.quadrant ==  Quadrant.bottom_right:
+            paper = paper.rotate(-90)
+        elif self.quadrant ==  Quadrant.bottom_left:
+            paper = paper.rotate(180)
+        
+        del canvas
+        paper.thumbnail((self.width, self.height)) 
+
         return paper
 
 
