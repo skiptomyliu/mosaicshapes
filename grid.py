@@ -20,7 +20,9 @@ import random
 
 """
 - circle stretching needs to be fixed on 2x1 cells
-- pw to use needs to be automated dependent on image size and n, sn count 
+- pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
+- diamond grid instead of square grid
+- multi-color cells 
 
 x Need to supersample drawing triangles ... needs anti alias
 x triangle drawing on 2x2 bleeds over
@@ -137,7 +139,7 @@ class Grid():
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 40:
+                        if rms_v < 50:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)

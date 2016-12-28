@@ -163,7 +163,8 @@ class CompColor(Cell):
             ey = (self.height-width*idx)*N #- width*(len(self.base_color)-1.5)*N
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
-        circle_paper = circle_paper.rotate(45*random.randint(0, 6))
+        # circle_paper = circle_paper.rotate(45*random.randint(0, 6))
+        circle_paper = circle_paper.rotate(random.randint(0, 359))
         rect_paper.paste(circle_paper,(0,0), circle_paper)
 
         del rect_canvas

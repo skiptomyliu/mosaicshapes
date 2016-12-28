@@ -102,7 +102,7 @@ class TriangleCell(Cell):
     def draw(self):
 
         N=4
-        pw = 10 #(self.width/len(self.colors))/2
+        pw = 4 #(self.width/len(self.colors))/2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
