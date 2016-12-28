@@ -32,12 +32,18 @@ class CircleCell(Cell):
         best_ccell = None
         best_score = 10000
 
-        # XXX may need tweaking:
-        for w in range(width/2, width):
-            # for h in range(4, height):
-            h = w
+                
+        w = width
+        h = height  
+
+        dynamic = width if height > width else height
+
+        for d in range(dynamic/2, dynamic):
             for color_combo in color_combos:
-                ccell = CircleCell(size=(width,height), csize=(w,h), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
+                if height > width:
+                    ccell = CircleCell(size=(width,height), csize=(d,height), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
+                else:
+                    ccell = CircleCell(size=(width,height), csize=(width,d), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
                 cimg = ccell.draw()
                 score = util.rmsdiff(img, cimg)
                 if score <= best_score:
@@ -53,7 +59,7 @@ class CircleCell(Cell):
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        pw = 10 #(self.width/len(self.colors))/2
+        pw = 5 #(self.width/len(self.colors))/2
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 

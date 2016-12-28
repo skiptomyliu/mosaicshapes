@@ -19,9 +19,13 @@ import random
     
 
 """
-- Need to supersample drawing triangles ... needs anti alias
 - circle stretching needs to be fixed on 2x1 cells
-- triangle drawing on 2x2 bleeds over
+- pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
+- diamond grid instead of square grid
+- multi-color cells 
+
+x Need to supersample drawing triangles ... needs anti alias
+x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
 """
 class Grid():
@@ -69,7 +73,7 @@ class Grid():
     def best_shape(self, cropped_img):
         circle = CircleCell.find_best(cropped_img, n=3, sn=2)
         rect = RectCell.find_best(cropped_img, n=2, sn=2)
-        triangle = TriangleCell.find_best(cropped_img, n=2, sn=2)
+        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1)
         pie = PieSliceCell.find_best(cropped_img, n=3, sn=2)
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
 
@@ -135,7 +139,7 @@ class Grid():
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 40:
+                        if rms_v < 50:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)
@@ -146,10 +150,10 @@ class Grid():
                             if isinstance(shape, TriangleCell):
                                 area = edges_seg.shape[0]*edges_seg.shape[1]
                                 percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                                if percent <= .2:
-                                    shape.shrink = 4
-                                if percent <= .1:
-                                    shape.shrink = 6
+                                # if percent <= .2:
+                                #     shape.shrink = 4
+                                # if percent <= .1:
+                                #     shape.shrink = 6
 
                             img = shape.draw()
 

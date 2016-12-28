@@ -59,7 +59,7 @@ class RectCell(Cell):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)
 
-        pw = 10#(self.width/len(self.colors))/3
+        pw = 6#(self.width/len(self.colors))/3
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
             
