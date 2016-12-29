@@ -23,6 +23,7 @@ import random
 - multi-color cells 
 - pieslice bottom needs to be moved up a little
 - shrink edge cells
+- experiment with quantize og_image prior to gridding 
 
 
 
@@ -82,14 +83,16 @@ class Grid():
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
 
         circle_rms = util.rmsdiff(cropped_img, circle.draw())
-        rect_rms = util.rmsdiff(cropped_img, rect.draw())+.1
-        triangle_rms = util.rmsdiff(cropped_img, triangle.draw())+.11
-        pie_rms = util.rmsdiff(cropped_img, pie.draw())+.1
+        rect_rms = util.rmsdiff(cropped_img, rect.draw())-25
+        triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
+        pie_rms = util.rmsdiff(cropped_img, pie.draw())
         halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
         
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
         shape = shapes[rms_list.index(min(rms_list))]
+
+        # import pdb; pdb.set_trace()
         return shape
 
 
@@ -143,7 +146,7 @@ class Grid():
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 50:
+                        if rms_v < 100:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)
