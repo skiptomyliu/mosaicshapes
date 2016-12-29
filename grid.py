@@ -19,10 +19,14 @@ import random
     
 
 """
-- pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
 - diamond grid instead of square grid
 - multi-color cells 
+- pieslice bottom needs to be moved up a little
+- shrink edge cells
 
+
+
+x pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
 x - circle stretching needs to be fixed on 2x1 cells
 x Need to supersample drawing triangles ... needs anti alias
 x triangle drawing on 2x2 bleeds over
@@ -78,8 +82,8 @@ class Grid():
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
 
         circle_rms = util.rmsdiff(cropped_img, circle.draw())
-        rect_rms = util.rmsdiff(cropped_img, rect.draw())
-        triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
+        rect_rms = util.rmsdiff(cropped_img, rect.draw())+.1
+        triangle_rms = util.rmsdiff(cropped_img, triangle.draw())+.11
         pie_rms = util.rmsdiff(cropped_img, pie.draw())+.1
         halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
         

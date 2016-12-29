@@ -60,6 +60,9 @@ class CircleCell(Cell):
         canvas = ImageDraw.Draw(paper, paper.mode)
 
         pw = 5 #(self.width/len(self.colors))/2
+        shortest = self.width if self.width < self.height else self.height
+        pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
+        
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 
