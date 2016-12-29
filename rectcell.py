@@ -9,9 +9,12 @@ import matplotlib.pyplot as plt
 import util
 from cell import Cell
 
+
+"""
+XXX: ciwdth and cheight not currently utilized 
+"""
 class RectCell(Cell):
     def __init__(self, size=(200,200), csize=(200,200), base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1):
-
         self.width = size[0]
         self.height = size[1]
         self.cwidth = csize[0]
@@ -60,6 +63,12 @@ class RectCell(Cell):
         canvas = ImageDraw.Draw(paper)
 
         pw = 6#(self.width/len(self.colors))/3
+
+        longest = self.width if self.width > self.height else self.height
+
+        pw = int(round(.5 * longest* 1/(len(self.colors) + len(self.colors_secondary))))
+
+
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
             
@@ -77,9 +86,11 @@ class RectCell(Cell):
         """
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            sx = int(round(len(self.colors)*pw/2))
+            sx = int(round((len(self.colors_secondary))*pw))
+            # sx = int(round(len(self.colors)*pw/2))
             sx += (pw*idx)
-            sy = int(round(len(self.colors)*pw/2))
+            # sy = int(round(len(self.colors)*pw/2))
+            sy = int(round(len(self.colors_secondary)*pw))
             sy += (pw*idx)
             ex = self.width - sx
             ey = self.height - sy
