@@ -19,7 +19,7 @@ class TestHalfCircleCell(unittest.TestCase):
 
     def test_draw(self):
 
-        pcell = HalfCircleCell(size=(200,300), base_color=(100,100,100), 
+        pcell = HalfCircleCell(size=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2, direction=Direction.top)
         pcell.draw().show()
 

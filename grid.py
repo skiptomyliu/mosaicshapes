@@ -19,11 +19,16 @@ import random
     
 
 """
-- circle stretching needs to be fixed on 2x1 cells
-- pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
 - diamond grid instead of square grid
 - multi-color cells 
+- pieslice bottom needs to be moved up a little
+- shrink edge cells
+- experiment with quantize og_image prior to gridding 
 
+
+
+x pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
+x - circle stretching needs to be fixed on 2x1 cells
 x Need to supersample drawing triangles ... needs anti alias
 x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
@@ -78,14 +83,16 @@ class Grid():
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
 
         circle_rms = util.rmsdiff(cropped_img, circle.draw())
-        rect_rms = util.rmsdiff(cropped_img, rect.draw())
+        rect_rms = util.rmsdiff(cropped_img, rect.draw())-25
         triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
-        pie_rms = util.rmsdiff(cropped_img, pie.draw())+.1
+        pie_rms = util.rmsdiff(cropped_img, pie.draw())
         halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
         
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
         shape = shapes[rms_list.index(min(rms_list))]
+
+        # import pdb; pdb.set_trace()
         return shape
 
 
@@ -139,7 +146,7 @@ class Grid():
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 50:
+                        if rms_v < 100:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)
@@ -197,69 +204,3 @@ class Grid():
         self.og_image.show()
         self.og_image.save("out.JPEG", "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(200,200))
         import pdb; pdb.set_trace()
-
-
-    def warp(self):
-        width,height = self.image.size
-        pix = self.pixels
-
-        for w in range(width/pix):
-            for h in range(height/pix):
-                if not self.is_occupied(w,h):
-
-                    if random.randint(0,50)==1:
-                        pix_w, pix_h = (pix*2, pix*1)
-                    elif random.randint(0,50)==1:
-                        pix_w, pix_h = (pix, pix*2)
-                    else:
-                        pix_w, pix_h = (pix, pix)
-
-                    # create rect coords:
-                    x,y = w*pix, h*pix
-                    rect_coords = [
-                        x, y, 
-                        util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
-                    ]
-                    # img_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
-                    # slope = self.get_slope(img_seg)
-                    slope = None
-                    
-                    if slope:
-                        pass
-                        # x_line,y_line = np.where(img_seg==True)
-                        # prim_color = util.average_color_pixels(self.og_image, zip(x_line+x, y_line+y))
-
-                        # x_bg,y_bg = np.where(img_seg==False)
-                        # bg_color = util.average_color_pixels(self.og_image, zip(x_bg+x,y_bg+y))
-
-                        # warped_rect = Warped(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
-                        # img = warped_rect.draw(slope)
-
-                        # # t_rect = TriangleCell(size=(pix,pix), fg_color=prim_color, bg_color=bg_color)
-                        # # img = t_rect.draw(slope)
-
-                        # self.image.paste(img, (w*pix,h*pix))
-                        # self.og_image.paste(img, (w*pix,h*pix))
-
-                    else:
-                        color = util.average_color(self.og_image, rect=rect_coords)
-                        # color = self.color_palette.translate_color(color)
-                        color = np.asarray(color)/float(255)
-                        color = color.reshape(1,-1)
-                        label = self.color_palette.kmeans.predict(color)
-                            
-
-                        warped_rect = CompColor(size=(pix_w, pix_h), label=label)
-                        img = warped_rect.draw()
-                        # self.image.paste(img,    (w*pix, h*pix))
-                        self.og_image.paste(img, (w*pix, h*pix))
-
-                       
-
-                        self.occupy(w,h,pix_w/pix,pix_h/pix)
-
-            # if w%38 == 0:
-            #     self.og_image.show()
-            #     import pdb; pdb.set_trace()
-
-        self.og_image.show()
