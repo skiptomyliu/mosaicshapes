@@ -24,8 +24,7 @@ class CircleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2):
-        second_color,base_color = ColorPalette.quantize_img(img,2)
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         width,height = img.size
@@ -37,8 +36,7 @@ class CircleCell(Cell):
         h = height  
 
         dynamic = width if height > width else height
-
-        for d in range(dynamic/2, dynamic):
+        for d in range(dynamic-1, dynamic):
             for color_combo in color_combos:
                 if height > width:
                     ccell = CircleCell(size=(width,height), csize=(d,height), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
@@ -54,15 +52,15 @@ class CircleCell(Cell):
 
     # return the perceived hue / luminance for now
     def draw(self):
-        # super sample by 4x
-        N=4
+        # super sample by 2x
+        N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
         pw = 5 #(self.width/len(self.colors))/2
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-        
+
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 

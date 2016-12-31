@@ -1,16 +1,23 @@
 
 import colorsys
-import math
+import math, operator
 from PIL import ImageChops
+import numpy as np
 
 def rmsdiff(im1, im2):
     im1 = im1.convert("RGBA")
     im2 = im2.convert("RGBA")
     diff = ImageChops.difference(im1, im2)
+    # print im1.size
+    # print im2.size
     h = diff.histogram()
     sq = (value*((idx%256)**2) for idx, value in enumerate(h))
     sum_of_squares = sum(sq)
     rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
+
+    # ar = np.asarray(h)
+    # return sum(ar**2)/float(im1.size[0] * im1.size[1])
+    # import pdb; pdb.set_trace()
 
     return rms
 
@@ -47,8 +54,6 @@ def average_color(image, rect=None):
 
     r,g,b = 0,0,0
     area = w*h
-    # if area <= 0:
-    #     area = 1
 
     for x in range(x0, x1):
         for y in range(y0, y1):
@@ -58,6 +63,8 @@ def average_color(image, rect=None):
             b+=cb
 
     # if (0,0,0) == (r/area, g/area, b/area):
+
+
 
     return (r/area, g/area, b/area)
 

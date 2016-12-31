@@ -23,8 +23,7 @@ class HalfCircleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2):
-        second_color,base_color = ColorPalette.quantize_img(img,2)
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Direction.top, Direction.right, Direction.bottom, Direction.left]
@@ -47,8 +46,8 @@ class HalfCircleCell(Cell):
         return best_hcell
 
     def draw(self):
-        # super sample by 4x
-        N=4
+        # super sample by 2x
+        N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 

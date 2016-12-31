@@ -76,8 +76,7 @@ class TriangleCell(Cell):
         return best_trect
 
     @staticmethod
-    def find_best(img, n=2, sn=2):
-        second_color,base_color = ColorPalette.quantize_img(img,2)
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
         color_combos = [[second_color,base_color], [base_color, second_color]]
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
@@ -101,7 +100,7 @@ class TriangleCell(Cell):
     # return the perceived hue / luminance for now
     def draw(self):
 
-        N=4
+        N=2
         # pw = 4 #(self.width/len(self.colors))/2
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
