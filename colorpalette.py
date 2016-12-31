@@ -10,6 +10,8 @@ from sklearn.datasets import load_sample_image
 from sklearn.utils import shuffle
 from time import time
 
+
+RANDOM_SAMPLE = 100
 class ColorPalette():
     
     def __init__(self, image_path="", n_colors=64):
@@ -72,7 +74,7 @@ class ColorPalette():
         image_array = np.reshape(sample_image, (w*h, d))
 
         # xxx:  use percentage of total pixs instead?
-        image_array_sample = shuffle(image_array, random_state=0)[:1000] 
+        image_array_sample = shuffle(image_array, random_state=0)[:RANDOM_SAMPLE] 
         kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
         colorbook = kmeans.cluster_centers_
         return colorbook
@@ -86,7 +88,7 @@ class ColorPalette():
         image_array = np.reshape(sample_image, (w*h, d))
 
         # xxx:  use percentage of total pixs instead?
-        image_array_sample = shuffle(image_array, random_state=0)[:1000] 
+        image_array_sample = shuffle(image_array, random_state=0)[:RANDOM_SAMPLE] 
         kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
         colorbook = kmeans.cluster_centers_
 
@@ -110,7 +112,7 @@ class ColorPalette():
         image_array = np.reshape(sample_image, (w*h, d))
 
         # xxx:  use percentage of total pixs instead?
-        image_array_sample = shuffle(image_array, random_state=0)[:3000] 
+        image_array_sample = shuffle(image_array, random_state=0)[:RANDOM_SAMPLE] 
         self.kmeans = KMeans(n_clusters=n_colors, random_state=0).fit(image_array_sample)
         self.colorbook = self.kmeans.cluster_centers_
 

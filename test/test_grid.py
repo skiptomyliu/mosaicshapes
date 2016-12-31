@@ -3,11 +3,14 @@
 import unittest
 from grid import Grid
 
+import profile
+import cProfile
+
 
 class TestGrid(unittest.TestCase):
-
     def setUp(self):
         self.grid = Grid("./examples/moi.JPEG", pix=30)
+
        
     def tearDown(self):
         pass
@@ -33,4 +36,5 @@ class TestGrid(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    cProfile.run("unittest.main()", 'test.profile')
+    # unittest.main()

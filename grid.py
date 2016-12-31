@@ -1,7 +1,6 @@
 
 
 import util 
-
 from PIL import Image, ImageDraw
 from warped import Warped
 from comp import CompColor
@@ -19,6 +18,8 @@ import random
     
 
 """
+- find best quantize image, refactor so quantize once 
+
 - diamond grid instead of square grid
 - multi-color cells 
 - pieslice bottom needs to be moved up a little
@@ -76,14 +77,16 @@ class Grid():
             return slope
 
     def best_shape(self, cropped_img):
-        circle = CircleCell.find_best(cropped_img, n=3, sn=2)
-        rect = RectCell.find_best(cropped_img, n=2, sn=2)
-        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1)
-        pie = PieSliceCell.find_best(cropped_img, n=3, sn=2)
-        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2)
+        second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
+
+        circle = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
+        rect = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color)
+        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1, base_color=base_color, second_color=second_color)
+        pie = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
+        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
 
         circle_rms = util.rmsdiff(cropped_img, circle.draw())
-        rect_rms = util.rmsdiff(cropped_img, rect.draw())-25
+        rect_rms = util.rmsdiff(cropped_img, rect.draw())
         triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
         pie_rms = util.rmsdiff(cropped_img, pie.draw())
         halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
@@ -92,7 +95,6 @@ class Grid():
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
         shape = shapes[rms_list.index(min(rms_list))]
 
-        # import pdb; pdb.set_trace()
         return shape
 
 

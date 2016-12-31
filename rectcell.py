@@ -26,9 +26,7 @@ class RectCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2):
-        second_color,base_color = ColorPalette.quantize_img(img, 2)
-
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
         color_combos = [[base_color, second_color], [second_color, base_color]]
 
         width,height = img.size
@@ -39,8 +37,8 @@ class RectCell(Cell):
         h = height
 
         # XXX: will cause probs if image size is less than 10 pixels
-        for w in range(width-10, width):
-            for h in range(height-10, height):
+        for w in range(width-1, width):
+            for h in range(height-1, height):
 
                 for color_combo in color_combos:
                     for i in range(2):
