@@ -15,7 +15,8 @@ import numpy as np
 from enum import Enum
 from colorpalette import ColorPalette
 import random 
-    
+import os
+
 
 """
 - find best quantize image, refactor so quantize once 
@@ -36,8 +37,15 @@ x - 2x1 rectcell is not centered
 """
 class Grid():
     def __init__(self, imgpath, pix):
+        self.imgpath = imgpath
         self.pixels = pix
         self.og_image = Image.open(imgpath)
+
+        og_image_rgb = Image.new("RGB", self.og_image.size, (255,255,255))
+        og_image_rgb.paste(self.og_image,self.og_image)
+        self.og_image = og_image_rgb
+
+
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
 
@@ -45,8 +53,10 @@ class Grid():
         self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=4)
 
         self.width,self.height = self.image.size
-        
-        self.color_palette = ColorPalette(imgpath, 4)
+        longest = self.width if self.width>self.height else self.height
+        self.pixels = int(round(longest*.014))
+        print self.pixels
+        # self.color_palette = ColorPalette(imgpath, 4)
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
@@ -98,7 +108,8 @@ class Grid():
         return shape
 
 
-    def n_pass(self, n_total=1):
+    def n_pass(self, n_total=-1):
+
         width,height = self.image.size
         pix = self.pixels
 
@@ -165,36 +176,7 @@ class Grid():
                                 #     shape.shrink = 6
 
                             img = shape.draw()
-
                             pix_w,pix_h=pix,pix
-
-                        # """
-                        # big triangle
-                        # """
-                        # if best_shape == TriangleCell:
-                        #     # import pdb; pdb.set_trace()
-                        #     pix_w,pix_h=pix,pix
-                        #     img = shape.draw()
-                        #     rect_coords2 = rect_coords[:]
-                        #     rect_coords2[0] = rect_coords2[0] + pix #sx
-                        #     rect_coords2[1] = rect_coords2[1] + pix #sy
-                        #     rect_coords2[2] = util.clamp_int(rect_coords2[2] + pix, 0, width)
-                        #     rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
-                        #     cropped_img2 = self.og_image.crop(rect_coords2)
-
-                        #     rms_v = util.rmsdiff(cropped_img, cropped_img2)
-
-                        #     rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
-                        #     big_crop_img = self.og_image.crop(rect_coords3)
-                        #     if rms_v < 80:
-                        #         bg,fg = ColorPalette.quantize_img(big_crop_img, 2)
-                        #         csize_w, csize_h = (2*pix-7, 2*pix-7)
-                        #         pix_w*=2
-                        #         pix_h*=2
-                        #         shape = TriangleCell.find_best(big_crop_img, n=1, sn=1)
-                        #         img=shape.draw()
-
-                                # import pdb; pdb.set_trace()
 
                     else:
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4)
@@ -203,6 +185,13 @@ class Grid():
                     self.og_image.paste(img, (x,y))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
 
-        self.og_image.show()
+        # self.og_image.show()
         self.og_image.save("out.JPEG", "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(200,200))
-        import pdb; pdb.set_trace()
+        
+
+    def save(self, path):
+        filename=os.path.basename(self.imgpath)
+        out_path = "{path}/{fname}_abs.JPEG".format(path=path, fname=filename)
+        print("output: " + out_path)
+        self.og_image.save(out_path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(200,200))
+

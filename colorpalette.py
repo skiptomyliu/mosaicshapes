@@ -40,10 +40,7 @@ class ColorPalette():
         w2, h2, d2 = original_shape = tuple(moi_image.shape)
         assert d2 == 3
         moi_array = np.reshape(moi_image, (w2 * h2, d2))
-        labels = self.kmeans.predict(moi_array)
-
-         # import pdb; pdb.set_trace()
-        
+        labels = self.kmeans.predict(moi_array)        
         # Display all results, alongside original image
         plt.figure(1)
         plt.clf()
