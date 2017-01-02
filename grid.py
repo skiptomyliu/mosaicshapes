@@ -16,6 +16,7 @@ from enum import Enum
 from colorpalette import ColorPalette
 import random 
 import os
+import imghdr
 
 
 """
@@ -41,9 +42,10 @@ class Grid():
         self.pixels = pix
         self.og_image = Image.open(imgpath)
 
-        og_image_rgb = Image.new("RGB", self.og_image.size, (255,255,255))
-        og_image_rgb.paste(self.og_image,self.og_image)
-        self.og_image = og_image_rgb
+        if imghdr.what(imgpath) == 'png':
+            og_image_rgb = Image.new("RGB", self.og_image.size, (255,255,255))
+            og_image_rgb.paste(self.og_image,self.og_image)
+            self.og_image = og_image_rgb
 
 
         self.image = Image.new('RGB', self.og_image.size)
@@ -56,7 +58,6 @@ class Grid():
         longest = self.width if self.width>self.height else self.height
         self.pixels = int(round(longest*.014))
         print self.pixels
-        # self.color_palette = ColorPalette(imgpath, 4)
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
