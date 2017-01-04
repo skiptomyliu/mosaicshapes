@@ -24,8 +24,9 @@ def restrain_img_size(im, max_pix=1500):
     return im
 
 def png_to_jpeg(im):
+    im=im.convert('RGB')
     og_image_rgb = Image.new("RGB", im.size, (255,255,255))
-    og_image_rgb.paste(im,im)
+    og_image_rgb.paste(im)
     return og_image_rgb
 
 def clamp_int(val, minval, maxval):

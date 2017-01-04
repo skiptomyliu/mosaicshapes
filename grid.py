@@ -43,10 +43,9 @@ class Grid():
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image)
         print(self.og_image.size)
-
+	
         if imghdr.what(imgpath) == 'png':
             self.og_image = util.png_to_jpeg(self.og_image)
-            
 
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
@@ -186,7 +185,7 @@ class Grid():
                     self.og_image.paste(img, (x,y))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
 
-        # self.og_image.show()
+        #self.og_image.show()
         self.og_image.save("out.JPEG", "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(200,200))
         
 
