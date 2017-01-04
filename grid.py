@@ -1,5 +1,4 @@
 
-
 import util 
 from PIL import Image, ImageDraw
 from warped import Warped
@@ -37,26 +36,27 @@ x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
 """
 class Grid():
-    def __init__(self, imgpath, pix):
+    def __init__(self, imgpath, pix=0, restrain=False):
         self.imgpath = imgpath
-        self.pixels = pix
         self.og_image = Image.open(imgpath)
 
-        if imghdr.what(imgpath) == 'png':
-            og_image_rgb = Image.new("RGB", self.og_image.size, (255,255,255))
-            og_image_rgb.paste(self.og_image,self.og_image)
-            self.og_image = og_image_rgb
+        if restrain:
+            self.og_image = util.restrain_img_size(self.og_image)
+        print(self.og_image.size)
 
+        if imghdr.what(imgpath) == 'png':
+            self.og_image = util.png_to_jpeg(self.og_image)
+            
 
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
-
-        self.image_array = io.imread(imgpath)
+        self.image_array = np.array(self.og_image)
+        # self.image_array = io.imread(imgpath)
         self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=4)
 
         self.width,self.height = self.image.size
         longest = self.width if self.width>self.height else self.height
-        self.pixels = int(round(longest*.014))
+        self.pixels = pix if pix>0 else int(round(longest*.014))
         print self.pixels
 
         self.cols = (self.width/self.pixels)
@@ -160,7 +160,7 @@ class Grid():
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 100:
+                        if rms_v < 70:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)

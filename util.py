@@ -1,25 +1,32 @@
 
 import colorsys
 import math, operator
-from PIL import ImageChops
+from PIL import Image, ImageChops
 import numpy as np
 
 def rmsdiff(im1, im2):
     im1 = im1.convert("RGBA")
     im2 = im2.convert("RGBA")
     diff = ImageChops.difference(im1, im2)
-    # print im1.size
-    # print im2.size
     h = diff.histogram()
     sq = (value*((idx%256)**2) for idx, value in enumerate(h))
     sum_of_squares = sum(sq)
     rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
 
-    # ar = np.asarray(h)
-    # return sum(ar**2)/float(im1.size[0] * im1.size[1])
-    # import pdb; pdb.set_trace()
-
     return rms
+
+def restrain_img_size(im, max_pix=1500):
+    max_size = (max_pix, max_pix)
+    w,h = im.size
+    if w > 1500 or h > 1500:
+        im.thumbnail(max_size, Image.ANTIALIAS)
+
+    return im
+
+def png_to_jpeg(im):
+    og_image_rgb = Image.new("RGB", im.size, (255,255,255))
+    og_image_rgb.paste(im,im)
+    return og_image_rgb
 
 def clamp_int(val, minval, maxval):
     if val < minval: return int(minval)
