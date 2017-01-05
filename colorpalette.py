@@ -5,8 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import io, feature
 from sklearn.cluster import KMeans
-from sklearn.metrics import pairwise_distances_argmin
-from sklearn.datasets import load_sample_image
 from sklearn.utils import shuffle
 from time import time
 
@@ -61,8 +59,11 @@ class ColorPalette():
 
     @staticmethod
     def quantize_img(img, n):
-        return (ColorPalette.average_colors(img,n)*255).astype(int)
+        result = img.quantize(colors=n, kmeans=n).convert('RGB').getcolors()
+        return [result[0][1], result[1][1]]
+        # return (ColorPalette.average_colors(img,n)*255).astype(int)
 
+    # deprecated:
     @staticmethod
     def average_colors(img, n_colors=2):
         sample_image = np.array(img, dtype=np.float64)/255

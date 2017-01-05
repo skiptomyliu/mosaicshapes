@@ -112,7 +112,6 @@ class Grid():
         width,height = self.image.size
         pix = self.pixels
 
-
         for row in range(self.rows):
             for col in range(self.cols):
                 if not self.is_occupied(col,row):
@@ -174,8 +173,7 @@ class Grid():
                             pix_w,pix_h=pix,pix
 
                     else:
-                        #XXX: move colorpalette to TriangleCell.. same with shrink calc
-                        og_color = util.average_color(self.og_image.crop(rect_coords))
+                        og_color = util.average_color_img(self.og_image.crop(rect_coords))
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4)
                         img = ccolor.draw()
 

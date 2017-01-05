@@ -48,8 +48,11 @@ def clamp_int(val, minval, maxval):
 #     total = len(pixels)
 #     return (r/total, g/total, b/total)
 
+def average_color_img(image):
+    result = image.quantize(colors=1).convert('RGB').getcolors()
+    return result[0][1]
 
-
+#deprecated in favor of average_color_img
 def average_color(image, rect=None):
     if not rect:            # Use whole image
         w,h = image.size
@@ -71,8 +74,6 @@ def average_color(image, rect=None):
             b+=cb
 
     # if (0,0,0) == (r/area, g/area, b/area):
-
-
 
     return (r/area, g/area, b/area)
 
