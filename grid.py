@@ -50,7 +50,6 @@ class Grid():
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
         self.image_array = np.array(self.og_image)
-        # self.image_array = io.imread(imgpath)
         self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=4)
 
         self.width,self.height = self.image.size
@@ -132,15 +131,11 @@ class Grid():
                         x, y, 
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
-                    #XXX: move colorpalette to TriangleCell.. same with shrink calc
-                    og_color = util.average_color(self.og_image, rect=rect_coords)
-
                     edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
-                    if np.any(edges_seg) and len(np.where(edges_seg)[1]):
+                    if 0 and np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
 
                         # First find doubles
-
                         rect_coords2 = rect_coords[:]
                         if random.randint(0,1):
                             """
@@ -179,6 +174,8 @@ class Grid():
                             pix_w,pix_h=pix,pix
 
                     else:
+                        #XXX: move colorpalette to TriangleCell.. same with shrink calc
+                        og_color = util.average_color(self.og_image.crop(rect_coords))
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4)
                         img = ccolor.draw()
 

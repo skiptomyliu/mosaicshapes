@@ -36,17 +36,17 @@ def clamp_int(val, minval, maxval):
     return int(val)
 
 
-def average_color_pixels(image, pixels):
-    r,g,b = 0,0,0
-    for pixel in pixels:
-        x,y = pixel
-        cr,cg,cb = image.getpixel((x,y))
-        r+=cr
-        g+=cg
-        b+=cb
+# def average_color_pixels(image, pixels):
+#     r,g,b = 0,0,0
+#     for pixel in pixels:
+#         x,y = pixel
+#         cr,cg,cb = image.getpixel((x,y))
+#         r+=cr
+#         g+=cg
+#         b+=cb
 
-    total = len(pixels)
-    return (r/total, g/total, b/total)
+#     total = len(pixels)
+#     return (r/total, g/total, b/total)
 
 
 
