@@ -132,7 +132,7 @@ class Grid():
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
                     edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
-                    if 0 and np.any(edges_seg) and len(np.where(edges_seg)[1]):
+                    if np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
 
                         # First find doubles
