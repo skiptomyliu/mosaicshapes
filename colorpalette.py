@@ -60,7 +60,10 @@ class ColorPalette():
     @staticmethod
     def quantize_img(img, n):
         result = img.quantize(colors=n, kmeans=n).convert('RGB').getcolors()
-        return [result[0][1], result[1][1]]
+        if len(result)==2:
+            return [result[0][1], result[1][1]]
+        else:
+            return [result[0][1], result[0][1]]
         # return (ColorPalette.average_colors(img,n)*255).astype(int)
 
     # deprecated:

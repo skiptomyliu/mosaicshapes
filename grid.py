@@ -42,7 +42,7 @@ class Grid():
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image)
         print(self.og_image.size)
-	
+	   
         if imghdr.what(imgpath) == 'png':
             self.og_image = util.png_to_jpeg(self.og_image)
 
