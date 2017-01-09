@@ -16,7 +16,7 @@ from colorpalette import ColorPalette
 import random 
 import os
 import imghdr
-
+import functools
 
 """
 - find best quantize image, refactor so quantize once 
@@ -38,8 +38,7 @@ x - 2x1 rectcell is not centered
 class Grid():
     def __init__(self, imgpath, pix=0, restrain=False):
         self.imgpath = imgpath
-        self.og_image = Image.open(imgpath)
-
+        self.og_image = util.image_transpose_exif(Image.open(imgpath))
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image)
         print(self.og_image.size)

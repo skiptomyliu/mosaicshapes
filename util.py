@@ -1,8 +1,9 @@
 
 import colorsys
 import math, operator
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ExifTags
 import numpy as np
+import functools
 
 def rmsdiff(im1, im2):
     im1 = im1.convert("RGBA")
@@ -35,6 +36,28 @@ def clamp_int(val, minval, maxval):
 
     return int(val)
 
+
+
+    
+def image_transpose_exif(im):
+    exif_orientation_tag = 0x0112 # contains an integer, 1 through 8
+    exif_transpose_sequences = [  # corresponding to the following
+        [],
+        [Image.FLIP_LEFT_RIGHT],
+        [Image.ROTATE_180],
+        [Image.FLIP_TOP_BOTTOM],
+        [Image.FLIP_LEFT_RIGHT, Image.ROTATE_90],
+        [Image.ROTATE_270],
+        [Image.FLIP_TOP_BOTTOM, Image.ROTATE_90],
+        [Image.ROTATE_90],
+    ]
+
+    try:
+        seq = exif_transpose_sequences[im._getexif()[exif_orientation_tag] - 1]
+    except Exception:
+        return im
+    else:
+        return functools.reduce(lambda im, op: im.transpose(op), seq, im)
 
 # def average_color_pixels(image, pixels):
 #     r,g,b = 0,0,0
