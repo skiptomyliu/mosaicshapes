@@ -54,7 +54,7 @@ class Grid():
 
         self.width,self.height = self.image.size
         longest = self.width if self.width>self.height else self.height
-        self.pixels = pix if pix>0 else int(round(longest*.014))
+        self.pixels = pix if pix>0 else int(round(longest*.018))
         print self.pixels
 
         self.cols = (self.width/self.pixels)
@@ -108,7 +108,7 @@ class Grid():
 
     # XXX: rename n_pass
     def n_pass(self, n_total=-1):
-        self.n_pass(0, self.rows)
+        self.grid_start_end(0, self.rows)
 
     def grid_start_end(self, s_row, f_row):
         width,height = self.image.size
