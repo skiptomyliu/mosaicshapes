@@ -16,10 +16,10 @@ def rmsdiff(im1, im2):
 
     return rms
 
-def restrain_img_size(im, max_pix=1500):
+def restrain_img_size(im, max_pix=2000):
     max_size = (max_pix, max_pix)
     w,h = im.size
-    if w > 1500 or h > 1500:
+    if w > max_pix or h > max_pix:
         im.thumbnail(max_size, Image.ANTIALIAS)
 
     return im
