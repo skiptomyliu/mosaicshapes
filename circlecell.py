@@ -36,7 +36,8 @@ class CircleCell(Cell):
         h = height  
 
         dynamic = width if height > width else height
-        for d in range(dynamic-1, dynamic):
+        #XXX:  May need to double check these on smaller images:
+        for d in range(dynamic/2, dynamic, int((dynamic-dynamic/2)/(4.0))):
             for color_combo in color_combos:
                 if height > width:
                     ccell = CircleCell(size=(width,height), csize=(d,height), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)

@@ -42,7 +42,7 @@ class Grid():
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image)
         print(self.og_image.size)
-	
+	   
         if imghdr.what(imgpath) == 'png':
             self.og_image = util.png_to_jpeg(self.og_image)
 
@@ -53,7 +53,7 @@ class Grid():
 
         self.width,self.height = self.image.size
         longest = self.width if self.width>self.height else self.height
-        self.pixels = pix if pix>0 else int(round(longest*.014))
+        self.pixels = pix if pix>0 else int(round(longest*.018))
         print self.pixels
 
         self.cols = (self.width/self.pixels)
