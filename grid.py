@@ -107,7 +107,7 @@ class Grid():
 
     # XXX: rename n_pass
     def n_pass(self, n_total=-1):
-        self.n_pass(0, self.rows)
+        self.grid_start_end(0, self.rows)
 
     def grid_start_end(self, s_row, f_row):
         width,height = self.image.size
@@ -181,86 +181,9 @@ class Grid():
                     self.og_image.paste(img, (x,y))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
 
-    # def n_pass(self, n_total=-1):
 
-    #     width,height = self.image.size
-    #     pix = self.pixels
 
-    #     for row in range(self.rows):
-    #         for col in range(self.cols):
-    #             if not self.is_occupied(col,row):
-    #                 pix_w, pix_h = (pix, pix)
-
-    #                 # create rect coords:
-    #                 # if random.randint(0,50)==1:
-    #                 #     pix_w, pix_h = (pix*2, pix*1)
-    #                 # elif random.randint(0,50)==1:
-    #                 #     pix_w, pix_h = (pix, pix*2)
-    #                 # else:
-    #                 #     pix_w, pix_h = (pix, pix)
-
-    #                 x,y = col*pix, row*pix
-    #                 rect_coords = [
-    #                     x, y, 
-    #                     util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
-    #                 ]
-    #                 edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
-    #                 if np.any(edges_seg) and len(np.where(edges_seg)[1]):
-    #                     cropped_img = self.og_image.crop(rect_coords)
-
-    #                     # First find doubles
-    #                     rect_coords2 = rect_coords[:]
-    #                     if random.randint(0,1):
-    #                         """
-    #                         vertical 
-    #                         """
-    #                         rect_coords2[1] = rect_coords2[1] + pix
-    #                         rect_coords2[3] = util.clamp_int(rect_coords2[3] + pix, 0, height)
-    #                         pix_h*=2
-    #                     else:
-    #                         """
-    #                         horizontal 
-    #                         """
-    #                         rect_coords2[0] = rect_coords2[0] + pix
-    #                         rect_coords2[2] = util.clamp_int(rect_coords2[2] + pix, 0, width)
-    #                         pix_w*=2
-    #                     cropped_img2 = self.og_image.crop(rect_coords2)
-    #                     rms_v = util.rmsdiff(cropped_img, cropped_img2)
-
-    #                     if rms_v < 70:
-    #                         rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
-    #                         big_crop_img = self.og_image.crop(rect_coords3)
-    #                         shape = self.best_shape(big_crop_img)
-    #                         img = shape.draw()
-    #                     else:
-    #                         shape = self.best_shape(cropped_img)
-
-    #                         if isinstance(shape, TriangleCell):
-    #                             area = edges_seg.shape[0]*edges_seg.shape[1]
-    #                             percent = (len(np.where(edges_seg)[1])*2)/float(area)
-    #                             # if percent <= .2:
-    #                             #     shape.shrink = 4
-    #                             # if percent <= .1:
-    #                             #     shape.shrink = 6
-
-    #                         img = shape.draw()
-    #                         pix_w,pix_h=pix,pix
-
-    #                 else:
-    #                     og_color = util.average_color_img(self.og_image.crop(rect_coords))
-    #                     ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4)
-    #                     img = ccolor.draw()
-
-    #                 self.og_image.paste(img, (x,y))
-    #                 self.occupy(col,row,pix_w/pix,pix_h/pix)
-
-    #     #self.og_image.show()
-    #     self.og_image.save("out.JPEG", "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(200,200))
-        
-
-    def save(self, path):
-        filename=os.path.basename(self.imgpath)
-        out_path = "{path}/{fname}_abs.JPEG".format(path=path, fname=filename)
-        print("output: " + out_path)
-        self.og_image.save(out_path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(200,200))
+    def save(self, path, dpi=200):
+        print("output: " + path)
+        self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
 
