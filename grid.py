@@ -1,6 +1,6 @@
 
 import util 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 from warped import Warped
 from comp import CompColor
 from trianglecell import TriangleCell
@@ -44,6 +44,9 @@ class Grid():
 
         if enlarge:
             self.og_image = util.enlarge_img(self.og_image, 9000)
+            self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100))
+        else:
+            self.edg_img = self.og_image
 
         print(self.og_image.size)
 	   
@@ -52,8 +55,8 @@ class Grid():
 
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
-        self.image_array = np.array(self.og_image)
-        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2, low_threshold=10, high_threshold=20)
+        self.image_array = np.array(self.edg_img)
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2)#, low_threshold=10, high_threshold=20)
 
         self.width,self.height = self.image.size
         longest = self.width if self.width>self.height else self.height
