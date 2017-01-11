@@ -24,17 +24,17 @@ contours = measure.find_contours(img, .48)
 # contours = measure.find_contours(r, 0.8)
 
 # Display the image and plot all contours found
-fig, ax = plt.subplots()
-ax.imshow(img, interpolation='nearest')
-ax.imshow(img, interpolation='nearest', cmap=plt.cm.gray)
+# fig, ax = plt.subplots()
+# ax.imshow(img, interpolation='nearest')
+# ax.imshow(img, interpolation='nearest', cmap=plt.cm.gray)
 
-for n, contour in enumerate(contours):
-    ax.plot(contour[:, 1], contour[:, 0], linewidth=5)
+# for n, contour in enumerate(contours):
+#     ax.plot(contour[:, 1], contour[:, 0], linewidth=5)
 
-ax.axis('image')
-ax.set_xticks([])
-ax.set_yticks([])
-plt.show()
+# ax.axis('image')
+# ax.set_xticks([])
+# ax.set_yticks([])
+# plt.show()
 
 # test = np.array([[1,2,3,4],[5,6,7,8], [9,10,11,12],[13,14,15,16],[17,18,19,20]])
 # (Pdb) test
@@ -72,8 +72,8 @@ from skimage import feature
 
 # Compute the Canny filter for two values of sigma
 
-edges1 = feature.canny(img, sigma=3)
-edges2 = feature.canny(img, sigma=4)
+edges1 = feature.canny(img, sigma=2, low_threshold=.01, high_threshold=.1)
+edges2 = feature.canny(img, sigma=2, low_threshold=.05, high_threshold=.1)
 # slope \ 
 # edges2[595:610,104:110]
  # x,y = np.where(edges2[595:610,104:110]==True)

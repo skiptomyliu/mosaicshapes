@@ -36,11 +36,15 @@ x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
 """
 class Grid():
-    def __init__(self, imgpath, pix=0, restrain=False):
+    def __init__(self, imgpath, pix=0, restrain=False, enlarge=False):
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image)
+
+        if enlarge:
+            self.og_image = util.enlarge_img(self.og_image, 9000)
+
         print(self.og_image.size)
 	   
         if imghdr.what(imgpath) == 'png':
@@ -49,7 +53,7 @@ class Grid():
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
         self.image_array = np.array(self.og_image)
-        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=4)
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2, low_threshold=.05, high_threshold=.1)
 
         self.width,self.height = self.image.size
         longest = self.width if self.width>self.height else self.height
@@ -151,10 +155,11 @@ class Grid():
                             rect_coords2[0] = rect_coords2[0] + pix
                             rect_coords2[2] = util.clamp_int(rect_coords2[2] + pix, 0, width)
                             pix_w*=2
+
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 70:
+                        if rms_v < 50:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)
@@ -162,13 +167,13 @@ class Grid():
                         else:
                             shape = self.best_shape(cropped_img)
 
-                            if isinstance(shape, TriangleCell):
-                                area = edges_seg.shape[0]*edges_seg.shape[1]
-                                percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                                # if percent <= .2:
-                                #     shape.shrink = 4
-                                # if percent <= .1:
-                                #     shape.shrink = 6
+                            # if isinstance(shape, TriangleCell):
+                            #     area = edges_seg.shape[0]*edges_seg.shape[1]
+                            #     percent = (len(np.where(edges_seg)[1])*2)/float(area)
+                            #     # if percent <= .2:
+                            #     #     shape.shrink = 4
+                            #     # if percent <= .1:
+                            #     #     shape.shrink = 6
 
                             img = shape.draw()
                             pix_w,pix_h=pix,pix
