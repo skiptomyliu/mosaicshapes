@@ -53,7 +53,7 @@ class Grid():
         self.image = Image.new('RGB', self.og_image.size)
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
         self.image_array = np.array(self.og_image)
-        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2, low_threshold=.05, high_threshold=.1)
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2, low_threshold=10, high_threshold=20)
 
         self.width,self.height = self.image.size
         longest = self.width if self.width>self.height else self.height
@@ -62,6 +62,9 @@ class Grid():
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
+
+        self.og_image = self.og_image.crop((0, 0, self.cols*self.pixels, self.rows*self.pixels))
+
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
 
     # By default we occupy one cell at a time.  x_total is number of additional horizontal
@@ -159,7 +162,7 @@ class Grid():
                         cropped_img2 = self.og_image.crop(rect_coords2)
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
-                        if rms_v < 50:
+                        if rms_v < 40:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
                             shape = self.best_shape(big_crop_img)
@@ -188,7 +191,7 @@ class Grid():
 
 
 
-    def save(self, path, dpi=200):
+    def save(self, path, dpi=300):
         print("output: " + path)
         self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
 

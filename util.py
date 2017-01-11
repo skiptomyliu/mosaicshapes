@@ -25,23 +25,28 @@ def restrain_img_size(im, max_pix=2000):
     return im
 
 def enlarge_img(im, max_pix=9000):
-    max_size = (9000, 9000)
+    max_size = (max_pix, max_pix)
     w,h = im.size
     if w < max_pix and h < max_pix:
         if w > h:
-            m = int(9000.0/w)
-            h = m*h
-            w = 9000
+            m = float(max_pix)/w
+            h = int(m*h)
+            w = max_pix
+
             resize = (w,h)
         else:
-            m = int(9000.0/h)
-            w = m*w
-            h = 9000
+            m = float(max_pix)/h
+            w = int(m*w)
+            h = max_pix
             resize = (w,h)
         im = im.resize(resize, Image.ANTIALIAS)
         # im.thumbnail(max_size, Image.ANTIALIAS)
 
     return im
+
+# def crop_difference(im, cols, rows, pix):
+#     return im.crop((0, 0, cols*pix, rows*pix))
+
 
 def png_to_jpeg(im):
     im=im.convert('RGB')

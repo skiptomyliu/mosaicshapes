@@ -9,7 +9,7 @@ from skimage.color import rgb2grey
 
 
 
-moi = io.imread("./examples/moi.JPEG")
+moi = io.imread("./examples/bpitt.JPEG")
 
 
 # Construct some test data
@@ -72,8 +72,8 @@ from skimage import feature
 
 # Compute the Canny filter for two values of sigma
 
-edges1 = feature.canny(img, sigma=2, low_threshold=.01, high_threshold=.1)
-edges2 = feature.canny(img, sigma=2, low_threshold=.05, high_threshold=.1)
+edges1 = feature.canny(img, sigma=2)
+edges2 = feature.canny(img, sigma=2, low_threshold=10, high_threshold=20)
 # slope \ 
 # edges2[595:610,104:110]
  # x,y = np.where(edges2[595:610,104:110]==True)
