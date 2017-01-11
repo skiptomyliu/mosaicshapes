@@ -19,12 +19,13 @@ import imghdr
 import functools
 
 """
-- find best quantize image, refactor so quantize once 
+
+- do we need to get rid of the copy of self.image?  we are drawing directly to self.og_image anyway
+
 
 - diamond grid instead of square grid
 - multi-color cells 
 - pieslice bottom needs to be moved up a little
-- shrink edge cells
 - experiment with quantize og_image prior to gridding 
 
 
@@ -36,36 +37,52 @@ x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
 """
 class Grid():
-    def __init__(self, imgpath, pix=0, restrain=False, enlarge=False):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, restrain=False, enlarge=False):
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
+
+        # Non-VIP images get resized to 1500:
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image)
 
+        # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
         if enlarge:
             self.og_image = util.enlarge_img(self.og_image, 9000)
-            self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100))
+            self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
         else:
             self.edg_img = self.og_image
 
         print(self.og_image.size)
-	   
+	       
+        # Convert to JPEG if png
         if imghdr.what(imgpath) == 'png':
             self.og_image = util.png_to_jpeg(self.og_image)
 
-        self.image = Image.new('RGB', self.og_image.size)
+
+
+        self.image = Image.new('RGB', self.og_image.size) #XXX:  Do we need this self.image?
         self.draw = ImageDraw.Draw(self.image, 'RGBA')
         self.image_array = np.array(self.edg_img)
-        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2)#, low_threshold=10, high_threshold=20)
+        # Find edges
+        self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2) #, low_threshold=10, high_threshold=20)
 
         self.width,self.height = self.image.size
+            
+        # Determine our grid size:
         longest = self.width if self.width>self.height else self.height
-        self.pixels = pix if pix>0 else int(round(longest*.018))
+        if pix_multi > 0 and pix_multi < 1:
+            self.pixels = int(round(longest*pix_multi))
+        elif pix > 0:
+            self.pixels = int(pix)
+        else:
+            self.pixels = int(longest*.018)
+
         print self.pixels
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
 
+        # Crop the image if our pixels doesn't divide equally.  Most cases we always crop
         self.og_image = self.og_image.crop((0, 0, self.cols*self.pixels, self.rows*self.pixels))
 
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
