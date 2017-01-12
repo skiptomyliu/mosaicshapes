@@ -58,15 +58,11 @@ class Grid():
         if imghdr.what(imgpath) == 'png':
             self.og_image = util.png_to_jpeg(self.og_image)
 
-
-
-        self.image = Image.new('RGB', self.og_image.size) #XXX:  Do we need this self.image?
-        self.draw = ImageDraw.Draw(self.image, 'RGBA')
         self.image_array = np.array(self.edg_img)
         # Find edges
         self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2) #, low_threshold=10, high_threshold=20)
 
-        self.width,self.height = self.image.size
+        self.width,self.height = self.og_image.size
             
         # Determine our grid size:
         longest = self.width if self.width>self.height else self.height
@@ -137,7 +133,7 @@ class Grid():
         self.grid_start_end(0, self.rows)
 
     def grid_start_end(self, s_row, f_row):
-        width,height = self.image.size
+        width,height = self.og_image.size
         pix = self.pixels
 
         for row in range(self.rows)[s_row:f_row]:
