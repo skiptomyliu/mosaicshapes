@@ -4,13 +4,6 @@ import os
 import math
 import util
 
-# def crop(im,height,width):
-#     imgwidth, imgheight = im.size
-#     for i in range(imgheight//height):
-#         for j in range(imgwidth//width):
-#             import pdb; pdb.set_trace()
-#             box = (j*width, i*height, (j+1)*width, (i+1)*height)
-#             yield im.crop(box)
 
 def crop(im,height,width):
 
@@ -33,7 +26,6 @@ class Lego():
     class __init__():
         pass
 
-
     @staticmethod
     def divide_and_save(im, window, out_filename):
         files = []
@@ -49,6 +41,7 @@ class Lego():
         og = Image.new('RGB', size, 255)
         col,row = 0,0
         cur_w, cur_h = 0,0
+        total_w = 0
         
         for f in file_paths:
             im = Image.open(f)
@@ -60,10 +53,10 @@ class Lego():
             if col==0:
                 row += 1
                 cur_h += h
+                total_w = cur_w
                 cur_w = 0
-                # og.show()
-                # import pdb; pdb.set_trace()
 
+        og = og.crop((0, 0, total_w, cur_h))
         return og
                     
 

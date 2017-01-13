@@ -36,8 +36,10 @@ x Need to supersample drawing triangles ... needs anti alias
 x triangle drawing on 2x2 bleeds over
 x - 2x1 rectcell is not centered
 """
+
+
 class Grid():
-    def __init__(self, imgpath, pix=0, pix_multi=-1, restrain=False, enlarge=False):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, unsharp_radius=2, restrain=False, enlarge=False):
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
 
@@ -50,7 +52,8 @@ class Grid():
             self.og_image = util.enlarge_img(self.og_image, 9000)
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
         else:
-            self.edg_img = self.og_image
+            self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
+            # self.edg_img = self.og_image
 
         print(self.og_image.size)
 	       
