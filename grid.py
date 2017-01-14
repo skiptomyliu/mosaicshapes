@@ -74,7 +74,7 @@ class Grid():
         elif pix > 0:
             self.pixels = int(pix)
         else:
-            self.pixels = int(longest*.01)
+            self.pixels = int(longest*.012)
 
         print self.pixels
 
