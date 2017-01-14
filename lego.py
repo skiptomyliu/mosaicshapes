@@ -3,6 +3,7 @@ from PIL import Image
 import os
 import math
 import util
+import gc
 
 
 def crop(im,height,width):
@@ -43,10 +44,12 @@ class Lego():
         cur_w, cur_h = 0,0
         total_w = 0
         
+
         for f in file_paths:
             im = Image.open(f)
             w,h = im.size
             og.paste(im, (cur_w,cur_h))
+            del im
 
             col = (col+1)%cols
             cur_w += w
@@ -55,6 +58,7 @@ class Lego():
                 cur_h += h
                 total_w = cur_w
                 cur_w = 0
+            gc.collect()
 
         og = og.crop((0, 0, total_w, cur_h))
         return og
