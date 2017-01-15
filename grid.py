@@ -45,7 +45,7 @@ class Grid():
 
         # Non-VIP images get resized to 1500:
         if restrain:
-            self.og_image = util.restrain_img_size(self.og_image)
+            self.og_image = util.restrain_img_size(self.og_image, 1700)
 
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
         if enlarge:
