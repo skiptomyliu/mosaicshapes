@@ -37,7 +37,10 @@ class CircleCell(Cell):
 
         dynamic = width if height > width else height
         #XXX:  May need to double check these on smaller images:
-        for d in range(dynamic/2, dynamic, int((dynamic-dynamic/2)/(4.0))):
+        step = int((dynamic-dynamic/2)/(4.0))
+        step = 1 if not step else step
+        for d in range(dynamic/2, dynamic, step):
+            # d = dynamic
             for color_combo in color_combos:
                 if height > width:
                     ccell = CircleCell(size=(width,height), csize=(d,height), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
@@ -49,7 +52,7 @@ class CircleCell(Cell):
                     best_ccell = ccell
                     best_score = score
 
-        return best_ccell
+            return best_ccell
 
     # return the perceived hue / luminance for now
     def draw(self):
