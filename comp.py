@@ -4,7 +4,6 @@
 from PIL import Image, ImageDraw
 import numpy as np
 import random
-import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
@@ -32,8 +31,10 @@ class CompColor(Cell):
         self.height = size[1]
         self.base_color = base_color
         self.colors = []
-        self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
-        self.random_colors = self.__random_color()
+        # self.colors = CompColor.gen_colors_c(base_color, random.randint(2,n+1))
+        # self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
+        self.colors = Cell.gen_colors(base_color, random.randint(2,n+1))
+        # self.random_colors = self.__random_color()
 
         # Initial base colors to initialize with:
 
@@ -46,29 +47,60 @@ class CompColor(Cell):
     def find_best(img, n=2, sn=2):
         pass
 
-    @staticmethod
-    def gen_colors(base_color, n):
-        deg = 30/360.0
-        colors = []
-        if n==1:
-            colors.append(base_color)
-        else:   
-            # minimum distance of twenty values
-            distance = 40
-            colors = []
 
-            r,g,b = base_color
-            quad = 1 if util.luminance(r,g,b) > 100 else 0
-            for i in range(-n/2+quad, n/2+quad):
-                color = np.asarray(base_color) + (i)*distance/float(n)
-                color[0] = util.clamp_int(color[0], 0, 255)
-                color[1] = util.clamp_int(color[1], 0, 255)
-                color[2] = util.clamp_int(color[2], 0, 255)
-                color = tuple(color)
-                colors.append(color)
+    # @staticmethod 
+    # def gen_colors_c(base_color, n):
+    #     r,g,b = base_color
+    #     adj_colors = util.adjacent_colors(base_color)
+    #     complement_colors = [util.complement(r,g,b) for c in adj_colors]
+
+    #     # shuffle(adj_colors)
+    #     shuffle(complement_colors)
 
 
-        return colors
+    #     # all_colors = [adj_colors[0]] + [complement_colors[0]] + [base_color]
+    #     c1 = CompColor.gen_colors(adj_colors[0], random.randint(2,2))
+    #     c2 = CompColor.gen_colors(adj_colors[1], random.randint(2,2))
+    #     all_colors = c1 + c2
+
+    #     # import pdb; pdb.set_trace()
+    #     if n==1:
+    #         colors.append(base_color)
+    #     else:
+    #         shuffle(all_colors)
+            
+    #     return all_colors
+
+
+
+
+# adjacent_colors
+# complement
+
+    # @staticmethod
+    # def gen_colors(base_color, n):
+    #     # print "in here"
+    #     deg = 30/360.0
+    #     colors = []
+    #     if n==1:
+    #         colors.append(base_color)
+    #     else:   
+    #         # minimum distance of twenty values
+    #         distance = 40
+    #         colors = []
+
+    #         r,g,b = base_color
+    #         quad = 1 if util.luminance(r,g,b) > 100 else 0
+    #         for i in range(-n/2+quad, n/2+quad):
+    #             color = np.asarray(base_color) + (i)*distance/float(n)
+    #             color[0] = util.clamp_int(color[0], 0, 255) #R
+    #             color[1] = util.clamp_int(color[1], 0, 255) #G
+    #             color[2] = util.clamp_int(color[2], 0, 255) #B
+    #             color = tuple(color)
+    #             colors.append(color)
+
+
+    #     return colors
 
     def __random_color(self):
         g0 = (220, 220, 220)

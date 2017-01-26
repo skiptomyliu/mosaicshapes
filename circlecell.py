@@ -5,7 +5,6 @@ from PIL import Image, ImageDraw
 import numpy as np
 from colorpalette import ColorPalette
 import random
-import matplotlib.pyplot as plt
 import util
 from cell import Cell
 

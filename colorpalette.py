@@ -2,7 +2,7 @@
 
 
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from skimage import io, feature
 from sklearn.cluster import KMeans
 from sklearn.utils import shuffle
@@ -40,21 +40,21 @@ class ColorPalette():
         moi_array = np.reshape(moi_image, (w2 * h2, d2))
         labels = self.kmeans.predict(moi_array)        
         # Display all results, alongside original image
-        plt.figure(1)
-        plt.clf()
-        ax = plt.axes([0, 0, 1, 1])
-        plt.axis('off')
-        plt.title('Original image (96,615 colors)')
-        plt.imshow(moi_image)
+        # plt.figure(1)
+        # plt.clf()
+        # ax = plt.axes([0, 0, 1, 1])
+        # plt.axis('off')
+        # plt.title('Original image (96,615 colors)')
+        # plt.imshow(moi_image)
 
-        plt.figure(2)
-        plt.clf()
-        ax = plt.axes([0, 0, 1, 1])
-        plt.axis('off')
-        plt.title('Quantized image (64 colors, K-Means)')
-        plt.imshow(ColorPalette.recreate_image(self.kmeans.cluster_centers_, labels, w2, h2))
+        # plt.figure(2)
+        # plt.clf()
+        # ax = plt.axes([0, 0, 1, 1])
+        # plt.axis('off')
+        # plt.title('Quantized image (64 colors, K-Means)')
+        # plt.imshow(ColorPalette.recreate_image(self.kmeans.cluster_centers_, labels, w2, h2))
 
-        plt.show()
+        # plt.show()
 
 
     @staticmethod
@@ -96,8 +96,6 @@ class ColorPalette():
         labels = kmeans.predict(image_array)
 
         recreated_img = ColorPalette.recreate_image(kmeans.cluster_centers_, labels, w, h)
-        # plt.imshow(recreated_img)
-        # plt.show()
         return recreated_img, colorbook
 
     def quantize(self, image_path, n_colors=64):

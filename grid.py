@@ -1,7 +1,6 @@
 
 import util 
 from PIL import Image, ImageDraw, ImageFilter
-from warped import Warped
 from comp import CompColor
 from trianglecell import TriangleCell
 from circlecell import CircleCell
@@ -49,7 +48,7 @@ class Grid():
 
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
         if enlarge:
-            self.og_image = util.enlarge_img(self.og_image, 9000)
+            self.og_image = util.enlarge_img(self.og_image, 4500)
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
         else:
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
@@ -115,7 +114,7 @@ class Grid():
 
         circle = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
         rect = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color)
-        triangle = TriangleCell.find_best(cropped_img, n=2, sn=1, base_color=base_color, second_color=second_color)
+        triangle = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color)
         pie = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
         halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
 
@@ -158,6 +157,8 @@ class Grid():
                         util.clamp_int(x+pix_w, 0, width), util.clamp_int(y+pix_h, 0, height)
                     ]
                     edges_seg = self.img_edges[y:y+pix_w,x:x+pix_h]
+
+                    # If pixel has edge:
                     if np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
 
@@ -201,6 +202,7 @@ class Grid():
                             pix_w,pix_h=pix,pix
 
                     else:
+
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4)
                         img = ccolor.draw()

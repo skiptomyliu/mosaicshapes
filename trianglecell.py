@@ -5,7 +5,6 @@ from PIL import Image, ImageDraw
 import numpy as np
 from colorpalette import ColorPalette
 import random
-import matplotlib.pyplot as plt
 from skimage.transform import PiecewiseAffineTransform, warp
 import scipy
 from scipy.misc import toimage
@@ -104,6 +103,9 @@ class TriangleCell(Cell):
         # pw = 4 #(self.width/len(self.colors))/2
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
+
+
+
         # pw = 30
         # pw = 10
         # print pw
@@ -126,6 +128,7 @@ class TriangleCell(Cell):
         """
         draw triangles
         """
+
         x_offset = pw*(len(self.colors_secondary))+self.shrink
         y_offset = pw*(len(self.colors_secondary))+self.shrink
         for idx, color in enumerate(self.colors):
@@ -140,6 +143,7 @@ class TriangleCell(Cell):
             coord = [((sx + pw*idx*(self.width/float(self.height))*1.5)*N, sy*N), (ex*N, sy*N), (ex*N, (height-sy-idx*pw*(self.height/self.width))*N)]
 
             canvas.polygon(coord, fill=color)
+        # import pdb; pdb.set_trace()
 
         if self.quadrant == Quadrant.top_right:
             pass
@@ -150,6 +154,7 @@ class TriangleCell(Cell):
         elif self.quadrant ==  Quadrant.bottom_left:
             paper = paper.rotate(180)
         
+        # import pdb; pdb.set_trace()
         del canvas
         paper.thumbnail((self.width, self.height)) 
 

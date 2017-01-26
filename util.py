@@ -16,7 +16,7 @@ def rmsdiff(im1, im2):
 
     return rms
 
-def restrain_img_size(im, max_pix=2000):
+def restrain_img_size(im, max_pix=1700):
     max_size = (max_pix, max_pix)
     w,h = im.size
     if w > max_pix or h > max_pix:
@@ -125,7 +125,7 @@ def average_color(image, rect=None):
     return (r/area, g/area, b/area)
 
 
-DEG30 = 40/360.
+DEG30 = 30/360.
 
 def adjacent_colors((r, g, b), d=DEG30): # Assumption: r, g, b in [0, 255]
     r, g, b = map(lambda x: x/255., [r, g, b]) # Convert to [0, 1]
