@@ -213,6 +213,5 @@ class Grid():
 
 
     def save(self, path, dpi=300):
-        print("output: " + path)
         self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
 
