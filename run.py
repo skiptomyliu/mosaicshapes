@@ -39,7 +39,7 @@ def main():
         help="Use diamond grid instead of squares")
     parser.add_argument("-r", "--restrain", default=False, action='store_true', 
         help="Use diamond grid instead of squares")
-    parser.add_argument("-e", "--enlarge", default=False, action='store_true', 
+    parser.add_argument("-e", "--enlarge", default=4500, type=int, 
         help="Use diamond grid instead of squares")
     parser.add_argument("-m", "--multi", default=.014, type=float)
     parser.add_argument("-o", "--out", default="/tmp/out.JPEG", type=str);

@@ -38,7 +38,7 @@ x - 2x1 rectcell is not centered
 
 
 class Grid():
-    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, unsharp_radius=2, restrain=False, enlarge=False):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, unsharp_radius=2, restrain=False, enlarge=4000):
         self.is_diamond = diamond
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
@@ -52,7 +52,7 @@ class Grid():
 
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
         if enlarge:
-            self.og_image = util.enlarge_img(self.og_image, 4500)
+            self.og_image = util.enlarge_img(self.og_image, enlarge)
             if self.is_diamond:
                 self.og_size = self.og_image.size
                 self.og_image = self.og_image.rotate(45, expand=True)

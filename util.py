@@ -40,7 +40,6 @@ def enlarge_img(im, max_pix=9000):
             h = max_pix
             resize = (w,h)
         im = im.resize(resize, Image.ANTIALIAS)
-        # im.thumbnail(max_size, Image.ANTIALIAS)
 
     return im
 
