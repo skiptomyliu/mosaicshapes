@@ -38,7 +38,8 @@ x - 2x1 rectcell is not centered
 
 
 class Grid():
-    def __init__(self, imgpath, pix=0, pix_multi=-1, unsharp_radius=2, restrain=False, enlarge=False):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, unsharp_radius=2, restrain=False, enlarge=False):
+        self.is_diamond = diamond
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
 
@@ -46,15 +47,23 @@ class Grid():
         if restrain:
             self.og_image = util.restrain_img_size(self.og_image, 1700)
 
+
+
+
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
         if enlarge:
             self.og_image = util.enlarge_img(self.og_image, 4500)
+            if self.is_diamond:
+                self.og_size = self.og_image.size
+                self.og_image = self.og_image.rotate(45, expand=True)
+
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
         else:
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
             # self.edg_img = self.og_image
 
         print(self.og_image.size)
+        
 	       
         # Convert to JPEG if png
         if imghdr.what(imgpath) == 'png':
@@ -210,7 +219,19 @@ class Grid():
                     self.og_image.paste(img, (x,y))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
 
+        if f_row >= self.rows:
+            if self.is_diamond:
+                self.restore_diamond()
 
+
+    def restore_diamond(self):
+        self.og_image = self.og_image.rotate(-45, expand=False)
+        self.og_image = self.og_image.crop((
+            (self.og_image.size[0] - self.og_size[0])/2 + int(self.pixels*1.5),
+            (self.og_image.size[1] - self.og_size[1])/2 + int(self.pixels*1.5), 
+            self.og_size[0] + (self.og_image.size[0] - self.og_size[0])/2 - int(self.pixels*1.5), 
+            self.og_size[1] + (self.og_image.size[1] - self.og_size[1])/2 - int(self.pixels*1.5),
+            ))
 
     def save(self, path, dpi=300):
         self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))

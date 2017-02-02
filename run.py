@@ -2,14 +2,15 @@
 
 from grid import Grid
 import argparse
+import util
 
 
 
-def create_reg_images(photo_path, pix_multi, restrain, enlarge, output_path):
-    grid = Grid(photo_path, pix=0, pix_multi=pix_multi, restrain=restrain, enlarge=enlarge)
+def create_reg_images(photo_path, pix_multi, diamond, restrain, enlarge, output_path):
+    grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond, restrain=restrain, enlarge=enlarge)
     # XXX: enforce minimum image size
     total_updates = 20
-    step_size = grid.rows / total_updates 
+    step_size = util.clamp_int(grid.rows/total_updates, 1, 10000)
 
     ending_index = step_size*total_updates
     diff = grid.rows - step_size*total_updates
@@ -18,6 +19,7 @@ def create_reg_images(photo_path, pix_multi, restrain, enlarge, output_path):
         e_index = s_index + step_size
         grid.grid_start_end(s_index, e_index)
         progress_percent = int(round(((i*step_size)/float(grid.rows))*100))
+        # import pdb; pdb.set_trace()
         grid.save(output_path)
         print progress_percent
 
@@ -33,7 +35,7 @@ def main():
     parser.add_argument('photos', metavar='N', type=str, nargs='+',
                     help='Photo path')
 
-    parser.add_argument("-d", "--diamond", action='store_true', 
+    parser.add_argument("-d", "--diamond", default=True, action='store_true', 
         help="Use diamond grid instead of squares")
     parser.add_argument("-r", "--restrain", default=False, action='store_true', 
         help="Use diamond grid instead of squares")
@@ -49,7 +51,7 @@ def main():
         # grid = Grid(photo_path, pix_multi=args.multi, restrain=args.restrain, enlarge=args.enlarge)
         # grid.n_pass(1)
         # grid.save("/tmp/out.JPEG") 
-        create_reg_images(photo_path, args.multi, args.restrain, args.enlarge, args.out)
+        create_reg_images(photo_path, args.multi, args.diamond, args.restrain, args.enlarge, args.out)
 
 
 
