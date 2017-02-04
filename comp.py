@@ -26,14 +26,14 @@ import util
 
 
 class CompColor(Cell):
-    def __init__(self, size=(200,200), base_color=(0,0,0), n=4):
+    def __init__(self, size=(200,200), base_color=(0,0,0), n=4, colorful=True):
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
         self.colors = []
         # self.colors = CompColor.gen_colors_c(base_color, random.randint(2,n+1))
         # self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
-        self.colors = Cell.gen_colors(base_color, random.randint(2,n+1))
+        self.colors = Cell.gen_colors(base_color, random.randint(2,n+1), colorful)
         # self.random_colors = self.__random_color()
 
         # Initial base colors to initialize with:

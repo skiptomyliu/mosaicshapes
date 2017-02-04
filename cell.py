@@ -26,9 +26,11 @@ class Cell(object):
         print "I am init"
 
     @staticmethod
-    def gen_colors(base_color, n):
-
-        return Cell.gen_colorful(base_color, n)
+    def gen_colors(base_color, n, colorful=True):
+        if colorful:
+            return Cell.gen_colorful(base_color, n)
+        else:
+            return Cell.gen_colors_og(base_color, n)
 
         colors = []
         if n==1:

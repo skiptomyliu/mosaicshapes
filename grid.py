@@ -8,7 +8,7 @@ from rectcell import RectCell
 from pieslicecell import PieSliceCell
 from halfcirclecell import HalfCircleCell
 from skimage.color import rgb2grey
-from skimage import io, feature
+from skimage import feature
 import numpy as np
 from enum import Enum
 from colorpalette import ColorPalette
@@ -19,13 +19,9 @@ import functools
 
 """
 
-- do we need to get rid of the copy of self.image?  we are drawing directly to self.og_image anyway
-
-
 - diamond grid instead of square grid
 - multi-color cells 
 - pieslice bottom needs to be moved up a little
-- experiment with quantize og_image prior to gridding 
 
 
 
@@ -38,8 +34,9 @@ x - 2x1 rectcell is not centered
 
 
 class Grid():
-    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, unsharp_radius=2, restrain=False, enlarge=4000):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, colorful=True, unsharp_radius=2, restrain=False, enlarge=4000):
         self.is_diamond = diamond
+        self.is_colorful = colorful
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
 
@@ -122,11 +119,11 @@ class Grid():
     def best_shape(self, cropped_img):
         second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
 
-        circle = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
-        rect = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color)
-        triangle = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color)
-        pie = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
-        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color)
+        circle = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        rect = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        triangle = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        pie = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
 
         circle_rms = util.rmsdiff(cropped_img, circle.draw())
         rect_rms = util.rmsdiff(cropped_img, rect.draw())
@@ -214,17 +211,12 @@ class Grid():
                     else:
 
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
-                        ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4)
+                        ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, 
+                            n=4, colorful=self.is_colorful)
                         img = ccolor.draw()
 
                     self.og_image.paste(img, (x,y))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
-
-
-
-        # if f_row >= self.rows:
-        #     if self.is_diamond:
-        #         self.crop_diamond()
 
 
     def crop_diamond(self, img):
@@ -234,7 +226,6 @@ class Grid():
             self.og_size[0] - int(self.pixels*1.5), 
             self.og_size[1] - int(self.pixels*1.5),
             ))
-
 
     def restore_diamond(self):
         diamond_img = self.og_image.rotate(-45, expand=False, resample=Image.BICUBIC)
@@ -253,12 +244,7 @@ class Grid():
             if not is_continue:
                 diamond_img = self.crop_diamond(diamond_img)
 
-            # import pdb; pdb.set_trace()
             diamond_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))    
         else:
             self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
-
-
-        # if self.is_diamond and is_continue:
-        #     self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
 

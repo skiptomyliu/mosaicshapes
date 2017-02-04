@@ -10,20 +10,20 @@ from cell import Cell, Quadrant
 
 class PieSliceCell(Cell):
     def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), 
-        shrink=0, n=4, sn=1, quadrant=Quadrant.top_left):
+        shrink=0, n=4, sn=1, quadrant=Quadrant.top_left, colorful=True):
 
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
 
-        self.colors = Cell.gen_colors(base_color, n)
-        self.colors_secondary = Cell.gen_colors(second_color,sn)
+        self.colors = Cell.gen_colors(base_color, n, colorful)
+        self.colors_secondary = Cell.gen_colors(second_color,sn, colorful)
         self.quadrant = quadrant
         self.shrink = shrink
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
@@ -35,7 +35,7 @@ class PieSliceCell(Cell):
             for color_combo in color_combos:
                 pcell = PieSliceCell(size=(w,h), 
                     base_color=color_combo[0], second_color=color_combo[1], 
-                    shrink=0, n=n, sn=sn, quadrant=quad)
+                    shrink=0, n=n, sn=sn, quadrant=quad, colorful=colorful)
 
                 pimg = pcell.draw()
                 score = util.rmsdiff(img, pimg)
@@ -46,7 +46,7 @@ class PieSliceCell(Cell):
         return best_pcell
 
     def draw(self):
-        # super sample by 2x
+        # super sample by 3x
         N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)

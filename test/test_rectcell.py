@@ -26,8 +26,6 @@ class TestRectCell(unittest.TestCase):
         fg,bg = ColorPalette.quantize_img(cropped, 2)
         csize_w, csize_h = cropped.size[0]-9,cropped.size[1]-9
         trect = RectCell(size=cropped.size, csize=(csize_w, csize_h), base_color=bg, second_color=fg, n=4, sn=1)
-        # trect.draw().show()
-        
 
         # self.assertEqual(trect.quadrant, Quadrant.top_right)
         # Test upper right ear
@@ -43,10 +41,8 @@ class TestRectCell(unittest.TestCase):
 
 
     def test_draw(self):
-        # colors = RectCell.gen_colors(base_color, n=4)
-
         ccell = RectCell(size=(200,100), csize=(100,100), base_color=(100,100,100), 
-            second_color=(200,200,200), n=1, sn=2)
+            second_color=(200,200,200), n=1, sn=2, colorful=False)
         ccell.draw().show()
         ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)

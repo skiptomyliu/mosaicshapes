@@ -10,20 +10,20 @@ from cell import Cell, Direction
 
 class HalfCircleCell(Cell):
     def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), 
-        shrink=0, n=4, sn=1, direction=Direction.top):
+        shrink=0, n=4, sn=1, direction=Direction.top, colorful=True):
 
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
 
-        self.colors = Cell.gen_colors(base_color, n)
-        self.colors_secondary = Cell.gen_colors(second_color,sn)
+        self.colors = Cell.gen_colors(base_color, n, colorful)
+        self.colors_secondary = Cell.gen_colors(second_color, sn, colorful)
         self.direction = direction
         self.shrink = shrink
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Direction.top, Direction.right, Direction.bottom, Direction.left]
@@ -35,7 +35,7 @@ class HalfCircleCell(Cell):
             for color_combo in color_combos:
                 hcell = HalfCircleCell(size=(w,h), 
                     base_color=color_combo[0], second_color=color_combo[1], 
-                    shrink=0, n=n, sn=sn, direction=quad)
+                    shrink=0, n=n, sn=sn, direction=quad, colorful=colorful)
 
                 himg = hcell.draw()
                 score = util.rmsdiff(img, himg)
