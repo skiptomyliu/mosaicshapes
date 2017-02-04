@@ -48,17 +48,18 @@ class Grid():
             self.og_image = util.restrain_img_size(self.og_image, 1700)
 
 
-
-
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
         if enlarge:
             self.og_image = util.enlarge_img(self.og_image, enlarge)
             if self.is_diamond:
                 self.og_size = self.og_image.size
-                self.og_image = self.og_image.rotate(45, expand=True)
+                self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
 
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
         else:
+            if self.is_diamond:
+                self.og_size = self.og_image.size
+                self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
             # self.edg_img = self.og_image
 
@@ -219,20 +220,45 @@ class Grid():
                     self.og_image.paste(img, (x,y))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
 
-        if f_row >= self.rows:
-            if self.is_diamond:
-                self.restore_diamond()
+
+
+        # if f_row >= self.rows:
+        #     if self.is_diamond:
+        #         self.crop_diamond()
+
+
+    def crop_diamond(self, img):
+        return img.crop((
+            int(self.pixels*1.5),
+            int(self.pixels*1.5), 
+            self.og_size[0] - int(self.pixels*1.5), 
+            self.og_size[1] - int(self.pixels*1.5),
+            ))
 
 
     def restore_diamond(self):
-        self.og_image = self.og_image.rotate(-45, expand=False)
-        self.og_image = self.og_image.crop((
-            (self.og_image.size[0] - self.og_size[0])/2 + int(self.pixels*1.5),
-            (self.og_image.size[1] - self.og_size[1])/2 + int(self.pixels*1.5), 
-            self.og_size[0] + (self.og_image.size[0] - self.og_size[0])/2 - int(self.pixels*1.5), 
-            self.og_size[1] + (self.og_image.size[1] - self.og_size[1])/2 - int(self.pixels*1.5),
+        diamond_img = self.og_image.rotate(-45, expand=False, resample=Image.BICUBIC)
+        return diamond_img.crop((
+            (self.og_image.size[0] - self.og_size[0])/2 ,
+            (self.og_image.size[1] - self.og_size[1])/2 ,
+            self.og_size[0] + (self.og_image.size[0] - self.og_size[0])/2 ,
+            self.og_size[1] + (self.og_image.size[1] - self.og_size[1])/2 ,
             ))
 
-    def save(self, path, dpi=300):
-        self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
+
+    def save(self, path, dpi=300, is_continue=False):
+        # import pdb; pdb.set_trace()
+        if self.is_diamond:
+            diamond_img = self.restore_diamond()
+            if not is_continue:
+                diamond_img = self.crop_diamond(diamond_img)
+
+            # import pdb; pdb.set_trace()
+            diamond_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))    
+        else:
+            self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
+
+
+        # if self.is_diamond and is_continue:
+        #     self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
 
