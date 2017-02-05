@@ -3,7 +3,7 @@
 from grid import Grid
 import argparse
 import util
-
+import math
 
 
 def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarge, output_path):
@@ -11,10 +11,13 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         restrain=restrain, enlarge=enlarge)
     # XXX: enforce minimum image size
     total_updates = 20
-    step_size = util.clamp_int(grid.rows/total_updates, 1, 10000)
+    step_size = util.clamp_int(int(math.ceil(grid.rows/(1.0*total_updates))), 1, 10000)
 
     ending_index = step_size*total_updates
     diff = grid.rows - step_size*total_updates
+
+    
+
 
     for i in range(total_updates+1):
         s_index = step_size*i
@@ -22,14 +25,18 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         grid.grid_start_end(s_index, e_index)
         progress_percent = int(round(((i*step_size)/float(grid.rows))*100))
 
-        grid.save(output_path, is_continue=True)
+        is_continue = False if e_index >= grid.rows else True
+        grid.save(output_path, is_continue=is_continue)
         print progress_percent
+        if not is_continue:
+            break
 
-    s_index = ending_index
-    e_index = grid.rows
-    grid.grid_start_end(s_index, e_index)
-    grid.save(output_path)
-    print 100
+    if e_index < grid.rows:
+        s_index = ending_index
+        e_index = grid.rows
+        grid.grid_start_end(s_index, e_index)
+        grid.save(output_path)
+        print 100
 
 def main():
     parser = argparse.ArgumentParser(description='Mosaic photos')
