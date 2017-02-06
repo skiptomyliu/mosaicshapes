@@ -4,9 +4,12 @@ from grid import Grid
 import argparse
 import util
 import math
+from multiprocessing.dummy import Pool as ThreadPool 
 
 
-def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarge, output_path):
+
+def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarge, pool, output_path):
+
     grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond, colorful=colorful, 
         restrain=restrain, enlarge=enlarge)
     # XXX: enforce minimum image size
@@ -16,20 +19,28 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
     ending_index = step_size*total_updates
     diff = grid.rows - step_size*total_updates
 
-    
-
-
+    todos = []
     for i in range(total_updates+1):
         s_index = step_size*i
         e_index = s_index + step_size
-        grid.grid_start_end(s_index, e_index)
-        progress_percent = int(round(((i*step_size)/float(grid.rows))*100))
-
+        todos.append((s_index, e_index, output_path))
+        
         is_continue = False if e_index >= grid.rows else True
-        grid.save(output_path, is_continue=is_continue)
-        print progress_percent
+        # grid.save(output_path, is_continue=is_continue)
         if not is_continue:
             break
+
+    # double check that we are not doing double work
+    try:
+        pool = ThreadPool(8)
+        pool.map(grid.grid_start_end_thread, todos)
+        pool.close()
+        pool.join()
+    except (KeyboardInterrupt, SystemExit):
+        pool.terminate()
+
+    grid.save(output_path)
+    print 100
 
     if e_index < grid.rows:
         s_index = ending_index
@@ -52,6 +63,7 @@ def main():
     parser.add_argument("-e", "--enlarge", default=0, required=False, type=int, 
         help="Use diamond grid instead of squares")
     parser.add_argument("-m", "--multi", default=.014, type=float)
+    parser.add_argument("-p", "--pool", default=1, type=int)
     parser.add_argument("-o", "--out", default="/tmp/out.JPEG", type=str);
 
     args = parser.parse_args()
@@ -62,7 +74,7 @@ def main():
         # grid.n_pass(1)
         # grid.save("/tmp/out.JPEG")
         create_reg_images(photo_path, args.multi, args.diamond, args.colorful, 
-            args.restrain, args.enlarge, args.out)
+            args.restrain, args.enlarge, args.pool, args.out)
 
 
 

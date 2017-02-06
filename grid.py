@@ -140,6 +140,11 @@ class Grid():
     def n_pass(self, n_total=-1):
         self.grid_start_end(0, self.rows)
 
+    def grid_start_end_thread(self, (s_row, f_row, out_path)):
+        self.grid_start_end(s_row, f_row)
+        self.save(out_path)
+        print "{s},{e}".format(s=s_row, e=f_row)
+
     def grid_start_end(self, s_row, f_row):
         width,height = self.og_image.size
         pix = self.pixels
@@ -231,8 +236,8 @@ class Grid():
         return diamond_img.crop((
             (self.og_image.size[0] - self.og_size[0])/2 ,
             (self.og_image.size[1] - self.og_size[1])/2 ,
-            self.og_size[0] + (self.og_image.size[0] - self.og_size[0])/2 ,
-            self.og_size[1] + (self.og_image.size[1] - self.og_size[1])/2 ,
+            self.og_size[0] + (self.og_image.size[0] - self.og_size[0])/2,
+            self.og_size[1] + (self.og_image.size[1] - self.og_size[1])/2,
             ))
 
 
