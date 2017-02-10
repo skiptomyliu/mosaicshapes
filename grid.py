@@ -1,6 +1,6 @@
 
 import util 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageFilter
 from comp import CompColor
 from trianglecell import TriangleCell
 from circlecell import CircleCell
@@ -10,12 +10,9 @@ from halfcirclecell import HalfCircleCell
 from skimage.color import rgb2grey
 from skimage import feature
 import numpy as np
-from enum import Enum
 from colorpalette import ColorPalette
 import random 
-import os
 import imghdr
-import functools
 
 """
 

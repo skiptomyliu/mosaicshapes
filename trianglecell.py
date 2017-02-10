@@ -4,11 +4,6 @@
 from PIL import Image, ImageDraw
 import numpy as np
 from colorpalette import ColorPalette
-import random
-from skimage.transform import PiecewiseAffineTransform, warp
-import scipy
-from scipy.misc import toimage
-from random import shuffle
 import util
 from cell import Cell, Quadrant
 
