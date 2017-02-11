@@ -2,15 +2,13 @@
 
 
 from PIL import Image, ImageDraw
-import numpy as np
-from colorpalette import ColorPalette
 import random
 import util
 from cell import Cell
 
 class CircleCell(Cell):
     def __init__(self, size=(200,200), csize=(200,200), 
-        base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1):
+        base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1, colorful=True):
 
         self.width = size[0]
         self.height = size[1]
@@ -18,12 +16,12 @@ class CircleCell(Cell):
         self.cheight = csize[1]
         self.base_color = base_color
 
-        self.colors = Cell.gen_colors(base_color, n)
-        self.colors_secondary = Cell.gen_colors(second_color,sn)
+        self.colors = Cell.gen_colors(base_color, n, colorful)
+        self.colors_secondary = Cell.gen_colors(second_color,sn, colorful)
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         width,height = img.size
@@ -42,9 +40,13 @@ class CircleCell(Cell):
             # d = dynamic
             for color_combo in color_combos:
                 if height > width:
-                    ccell = CircleCell(size=(width,height), csize=(d,height), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
+                    ccell = CircleCell(size=(width,height), csize=(d,height), 
+                        base_color=color_combo[0], second_color=color_combo[1], 
+                        n=n, sn=sn, colorful=colorful)
                 else:
-                    ccell = CircleCell(size=(width,height), csize=(width,d), base_color=color_combo[0], second_color=color_combo[1], n=n, sn=sn)
+                    ccell = CircleCell(size=(width,height), csize=(width,d), 
+                        base_color=color_combo[0], second_color=color_combo[1], 
+                        n=n, sn=sn, colorful=colorful)
                 cimg = ccell.draw()
                 score = util.rmsdiff(img, cimg)
                 if score <= best_score:

@@ -4,11 +4,6 @@
 from PIL import Image, ImageDraw
 import numpy as np
 from colorpalette import ColorPalette
-import random
-from skimage.transform import PiecewiseAffineTransform, warp
-import scipy
-from scipy.misc import toimage
-from random import shuffle
 import util
 from cell import Cell, Quadrant
 
@@ -23,14 +18,14 @@ from cell import Cell, Quadrant
 
 class TriangleCell(Cell):
     def __init__(self, size=(200,200), base_color=(0,0,0), second_color=(0,0,0), 
-        shrink=0, n=4, sn=1, quadrant=Quadrant.top_left):
+        shrink=0, n=4, sn=1, quadrant=Quadrant.top_left, colorful=True):
 
         self.width = size[0]
         self.height = size[1]
         self.base_color = base_color
 
-        self.colors = Cell.gen_colors(base_color, n)
-        self.colors_secondary = Cell.gen_colors(second_color,sn)
+        self.colors = Cell.gen_colors(base_color, n, colorful)
+        self.colors_secondary = Cell.gen_colors(second_color,sn, colorful)
         self.quadrant = quadrant
         self.shrink = shrink
 
@@ -46,36 +41,8 @@ class TriangleCell(Cell):
         return TriangleCell.__avg_lum(self.colors)
 
 
-    # Should we use this??
     @staticmethod
-    def find_best_xy(draw_img, cropped_img, (x,y), n=2, sn=1):
-        fg,bg = ColorPalette.average_colors(cropped_img,2)
-        second_color = (fg*255).astype(int)
-        base_color = (bg*255).astype(int)
-
-        quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
-
-        w,h=cropped_img.size
-        best_trect = None
-        best_score = 10000
-        for quad in quads:
-            trect = TriangleCell(size=(w,h), base_color=base_color, second_color=second_color, 
-                shrink=0, n=n, sn=sn, quadrant=quad)
-
-            timg = trect.draw()
-            staged_image = draw_img.copy()
-            staged_image.paste(timg, (x,y))           
-
-            score = util.rmsdiff(draw_img, staged_image)
-            print quad, score
-            if score <= best_score:
-                best_trect = trect
-                best_score = score
-
-        return best_trect
-
-    @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0)):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
         color_combos = [[second_color,base_color], [base_color, second_color]]
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
@@ -86,7 +53,7 @@ class TriangleCell(Cell):
             for color_combo in color_combos:
                 trect = TriangleCell(size=(w,h), 
                     base_color=color_combo[0], second_color=color_combo[1], 
-                    shrink=0, n=n, sn=sn, quadrant=quad)
+                    shrink=0, n=n, sn=sn, quadrant=quad, colorful=colorful)
 
                 timg = trect.draw()
                 score = util.rmsdiff(img, timg)

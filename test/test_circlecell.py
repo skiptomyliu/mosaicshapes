@@ -40,7 +40,7 @@ class TestCircleCell(unittest.TestCase):
     def test_draw(self):
         # colors = CircleCell.gen_colors(base_color, n=4)
         ccell = CircleCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=3, sn=2)
+            second_color=(200,200,200), n=3, sn=2, colorful=False)
         ccell.draw().show()
         ccell = CircleCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)

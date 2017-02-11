@@ -1,8 +1,7 @@
 
 import colorsys
 import math, operator
-from PIL import Image, ImageChops, ExifTags
-import numpy as np
+from PIL import Image, ImageChops
 import functools
 
 def rmsdiff(im1, im2):
