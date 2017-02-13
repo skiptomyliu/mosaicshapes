@@ -70,12 +70,13 @@ def main():
 
     if args.photos:
         photo_path = args.photos[0]
-        # grid = Grid(photo_path, pix_multi=args.multi, restrain=args.restrain, enlarge=args.enlarge)
-        # grid.n_pass(1)
-        # grid.save("/tmp/out.JPEG")
-        create_reg_images(photo_path, args.multi, args.diamond, args.colorful, 
-            args.restrain, args.enlarge, args.pool, args.out)
-
+        try:
+            create_reg_images(photo_path, args.multi, args.diamond, args.colorful, 
+                args.restrain, args.enlarge, args.pool, args.out)
+        except Exception as e:
+            print e
+            return 1
+    return 0
 
 
 if __name__ == "__main__":
