@@ -2,11 +2,7 @@
 
 
 from PIL import Image, ImageDraw
-import numpy as np
 import random
-from skimage.transform import PiecewiseAffineTransform, warp
-import scipy
-from scipy.misc import toimage
 from random import shuffle
 import colorsys
 from cell import Cell

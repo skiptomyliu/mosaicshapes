@@ -4,9 +4,7 @@ from grid import Grid
 import argparse
 import util
 import math
-from multiprocessing.dummy import Pool as ThreadPool 
-
-
+# from multiprocessing.dummy import Pool as ThreadPool 
 
 def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarge, pool, output_path):
 
@@ -26,22 +24,22 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         todos.append((s_index, e_index, output_path))
         
         is_continue = False if e_index >= grid.rows else True
-        # grid.save(output_path, is_continue=is_continue)
         if not is_continue:
             break
 
     # double check that we are not doing double work
-    try:
-        pool = ThreadPool(8)
-        pool.map(grid.grid_start_end_thread, todos)
-        pool.close()
-        pool.join()
-    except (KeyboardInterrupt, SystemExit):
-        pool.terminate()
+    # try:
+    #     pool = ThreadPool(8)
+    #     pool.map(grid.grid_start_end_thread, todos)
+    #     pool.close()
+    #     pool.join()
+    # except (KeyboardInterrupt, SystemExit):
+    #     pool.terminate()
 
-    grid.save(output_path)
+    # grid.save(output_path)
     print 100
-
+    grid.grid_start_end(0, grid.rows)
+    grid.save(output_path)
     if e_index < grid.rows:
         s_index = ending_index
         e_index = grid.rows
@@ -50,6 +48,7 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         print 100
 
 def main():
+    print "hello world"
     parser = argparse.ArgumentParser(description='Mosaic photos')
 
     parser.add_argument('photos', metavar='N', type=str, nargs='+',
@@ -71,8 +70,10 @@ def main():
     if args.photos:
         photo_path = args.photos[0]
         try:
+            print "hello"
             create_reg_images(photo_path, args.multi, args.diamond, args.colorful, 
                 args.restrain, args.enlarge, args.pool, args.out)
+            print "world"
         except Exception as e:
             print e
             return 1
@@ -81,3 +82,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

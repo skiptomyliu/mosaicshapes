@@ -3,9 +3,7 @@
 
 import numpy as np
 # import matplotlib.pyplot as plt
-from skimage import io, feature
-from sklearn.cluster import KMeans
-from sklearn.utils import shuffle
+# from skimage import io, feature
 from time import time
 
 
