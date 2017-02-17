@@ -37,7 +37,7 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         pool.terminate()
 
     grid.save(output_path)
-    print 100
+    # print 100
     # grid.grid_start_end(0, grid.rows)
     # grid.save(output_path)
     # if e_index < grid.rows:
@@ -48,7 +48,6 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
     #     print 100
 
 def main():
-    print "hello world"
     parser = argparse.ArgumentParser(description='Mosaic photos')
 
     parser.add_argument('photos', metavar='N', type=str, nargs='+',

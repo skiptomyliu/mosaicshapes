@@ -57,7 +57,7 @@ class Grid():
             self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
             # self.edg_img = self.og_image
 
-        print(self.og_image.size)
+        # print(self.og_image.size)
         
 	       
         # Convert to JPEG if png
@@ -79,7 +79,7 @@ class Grid():
         else:
             self.pixels = int(longest*.013)
 
-        print self.pixels
+        # print self.pixels
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
@@ -140,7 +140,7 @@ class Grid():
     def grid_start_end_thread(self, (s_row, f_row, out_path)):
         self.grid_start_end(s_row, f_row)
         self.save(out_path)
-        print "{s},{e}".format(s=s_row, e=f_row)
+        # print "{s},{e}".format(s=s_row, e=f_row)
 
     def grid_start_end(self, s_row, f_row):
         width,height = self.og_image.size
