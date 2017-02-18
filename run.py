@@ -6,8 +6,6 @@ import util
 import math
 from multiprocessing.dummy import Pool as ThreadPool 
 
-
-
 def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarge, pool, output_path):
 
     grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond, colorful=colorful, 
@@ -26,7 +24,6 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         todos.append((s_index, e_index, output_path))
         
         is_continue = False if e_index >= grid.rows else True
-        # grid.save(output_path, is_continue=is_continue)
         if not is_continue:
             break
 
@@ -40,14 +37,15 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         pool.terminate()
 
     grid.save(output_path)
-    print 100
-
-    if e_index < grid.rows:
-        s_index = ending_index
-        e_index = grid.rows
-        grid.grid_start_end(s_index, e_index)
-        grid.save(output_path)
-        print 100
+    # print 100
+    # grid.grid_start_end(0, grid.rows)
+    # grid.save(output_path)
+    # if e_index < grid.rows:
+    #     s_index = ending_index
+    #     e_index = grid.rows
+    #     grid.grid_start_end(s_index, e_index)
+    #     grid.save(output_path)
+    #     print 100
 
 def main():
     parser = argparse.ArgumentParser(description='Mosaic photos')
@@ -81,3 +79,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
