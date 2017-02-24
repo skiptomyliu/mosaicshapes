@@ -115,11 +115,11 @@ class Grid():
 
     def best_shape(self, cropped_img):
         second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
-        circle = CircleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        circle = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
         rect = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
         triangle = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        pie = PieSliceCell.find_best(cropped_img, n=4, sn=3, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        halfc = HalfCircleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        pie = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
 
         circle_rms = util.rmsdiff(cropped_img, circle.draw())
         rect_rms = util.rmsdiff(cropped_img, rect.draw())

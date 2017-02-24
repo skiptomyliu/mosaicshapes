@@ -60,7 +60,6 @@ class Cell(object):
         adj_colors = util.adjacent_colors(base_color)
         complement_colors = [util.complement(r,g,b) for c in adj_colors]
 
-
         # shuffle(complement_colors)
         c1 = Cell.gen_colors_og(adj_colors[0], random.randint(1,1))
         c2 = Cell.gen_colors_og(adj_colors[1], random.randint(1,1))
@@ -86,18 +85,17 @@ class Cell(object):
         #     if i<len(complement_colors)-1:
         #         i_list.append(complement_colors[i])
         #     i+=1
-
         # all_colors = i_list
         # shuffle(all_colors)
 
-        base_lum = util.luminance(r,g,b)
-        all_colors_tinted = []
-        for color in all_colors:
-            if util.luminance < base_lum:
-                all_colors_tinted.append(util.tint_to_lum(color, base_lum))
-            else:
-                all_colors_tinted.append(util.shade_to_lum(color, base_lum))
-        all_colors = all_colors_tinted
+        # base_lum = util.luminance(r,g,b)
+        # all_colors_tinted = []
+        # for color in all_colors:
+        #     if util.luminance < base_lum:
+        #         all_colors_tinted.append(util.tint_to_lum(color, base_lum))
+        #     else:
+        #         all_colors_tinted.append(util.shade_to_lum(color, base_lum))
+        # all_colors = all_colors_tinted
 
         return all_colors
 
