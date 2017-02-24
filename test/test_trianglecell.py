@@ -76,11 +76,12 @@ class TestTriangleCell(unittest.TestCase):
         self.assertTrue(trect.quadrant == Quadrant.bottom_left or trect.quadrant == Quadrant.top_right)
 
     def test_draw(self):
-        triangle = TriangleCell(size=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
+        triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
+            second_color=(100,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
+        triangle.draw().show()
 
-        triangle = TriangleCell(size=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.bottom_left)
+        triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
+            second_color=(100,200,200), n=3, sn=2, quadrant=Quadrant.bottom_left)
         triangle.draw()
 
         triangle = TriangleCell(size=(200,200), base_color=(100,100,100), 

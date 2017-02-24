@@ -29,99 +29,15 @@ class CompColor(Cell):
         self.colors = []
         # self.colors = CompColor.gen_colors_c(base_color, random.randint(2,n+1))
         # self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
-        self.colors = Cell.gen_colors(base_color, random.randint(2,n+1), colorful)
+
+        s=2 #xxx: this was set to 2 before
+        self.colors = Cell.gen_colors(base_color, random.randint(s,n+1), colorful)
+        # self.colors = Cell.gen_colors(base_color, n, colorful)
         # self.random_colors = self.__random_color()
-
-        # Initial base colors to initialize with:
-
-        # if label%4 == 1:
-        #                     # blue            green            red             orange
-        #     self.colors = [(194,194,200), (202,218, 183), (223, 179, 181), (252, 195, 162)]
-        #     shuffle(self.colors)
 
     @staticmethod
     def find_best(img, n=2, sn=2):
         pass
-
-
-    # @staticmethod 
-    # def gen_colors_c(base_color, n):
-    #     r,g,b = base_color
-    #     adj_colors = util.adjacent_colors(base_color)
-    #     complement_colors = [util.complement(r,g,b) for c in adj_colors]
-
-    #     # shuffle(adj_colors)
-    #     shuffle(complement_colors)
-
-
-    #     # all_colors = [adj_colors[0]] + [complement_colors[0]] + [base_color]
-    #     c1 = CompColor.gen_colors(adj_colors[0], random.randint(2,2))
-    #     c2 = CompColor.gen_colors(adj_colors[1], random.randint(2,2))
-    #     all_colors = c1 + c2
-
-    #     # import pdb; pdb.set_trace()
-    #     if n==1:
-    #         colors.append(base_color)
-    #     else:
-    #         shuffle(all_colors)
-            
-    #     return all_colors
-
-
-
-
-# adjacent_colors
-# complement
-
-    # @staticmethod
-    # def gen_colors(base_color, n):
-    #     # print "in here"
-    #     deg = 30/360.0
-    #     colors = []
-    #     if n==1:
-    #         colors.append(base_color)
-    #     else:   
-    #         # minimum distance of twenty values
-    #         distance = 40
-    #         colors = []
-
-    #         r,g,b = base_color
-    #         quad = 1 if util.luminance(r,g,b) > 100 else 0
-    #         for i in range(-n/2+quad, n/2+quad):
-    #             color = np.asarray(base_color) + (i)*distance/float(n)
-    #             color[0] = util.clamp_int(color[0], 0, 255) #R
-    #             color[1] = util.clamp_int(color[1], 0, 255) #G
-    #             color[2] = util.clamp_int(color[2], 0, 255) #B
-    #             color = tuple(color)
-    #             colors.append(color)
-
-
-    #     return colors
-
-    def __random_color(self):
-        g0 = (220, 220, 220)
-        g1 = (153, 153, 153)
-        g2 = (119, 119, 119)
-        g3 = (85, 85,  85) 
-        g4 = (51, 51,  51)
-        g5 = (17, 17,  17)  
-        colors = [g0,g1,g2,g3,g4,g5]
-        shuffle(colors)
-        return colors
-
-    # def __random_color(self):
-    #     salmon = (230,115,100)
-    #     pink = (227, 151, 184)
-    #     l_blue = (80,155,195)
-    #     red = (205,40,60)
-    #     purple = (130,118,154)
-    #     l_green = (177,181,107)
-    #     orange = (225,97,55)
-    #     yellow = (250,193,67)
-    #     colors = [salmon, pink, l_blue, red, purple, l_green, orange, yellow]
-    #     shuffle(colors)
-    #     return colors 
-    #     # return colors[0]
 
     # return the perceived hue / luminance for now
     def avg_lum(self, colors):
@@ -155,20 +71,19 @@ class CompColor(Cell):
             if self.avg_lum(self.colors + [rc]) < target_lum:
                 rc = util.tint_to_lums(rc, self.colors, target_lum)
                 self.colors.append(rc)
-
-
             pass
 
 
+    # Draws a rect and then a circle inside rect
     def draw_circle(self):
-        width = (self.width/len(self.colors))/random.randint(2,4)
+        width = (self.width/len(self.colors))/random.randint(3,4)
         stretch = 0 #self.width/7
         N=3
         rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
         rect_canvas = ImageDraw.Draw(rect_paper, rect_paper.mode)
         
-        if len(self.colors)>=3:
-            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        # if len(self.colors)>=3:
+            # self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
@@ -200,6 +115,7 @@ class CompColor(Cell):
         rect_paper.thumbnail((self.width, self.height)) 
         return rect_paper
 
+    # Draw rect only
     def draw_rect(self):
         paper = Image.new('RGBA', (self.width, self.height))
         canvas = ImageDraw.Draw(paper)

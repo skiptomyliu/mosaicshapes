@@ -44,7 +44,7 @@ class PieSliceCell(Cell):
 
     def draw(self):
         # super sample by 3x
-        N=2
+        N=3
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
@@ -66,18 +66,20 @@ class PieSliceCell(Cell):
         draw pie slices
         """
         # Start with botom right quadrant drawing
-        x_offset = N*(pw*(len(self.colors_secondary))+self.shrink)
-        y_offset = N*(pw*(len(self.colors_secondary))+self.shrink)
+        # self.shrink=3
+
+        x_offset = N*(pw*(len(self.colors_secondary)/2)+self.shrink)
+        y_offset = N*(pw*(len(self.colors_secondary)/2)+self.shrink)
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            aidx = len(self.colors_secondary) + idx
+            aidx = len(self.colors_secondary) + idx +1
             sdeg, edeg = (180, 270)
-            sx = pw*idx*N+(aidx*2*N)
+            sx = pw*idx*N*1.5+x_offset#+(aidx*2*N)
             ex = (self.width*2-pw*aidx)*N
             ex-= (pw*idx*N*2)
-            sy = pw*idx*N+(aidx*2*N)
-            ey = (self.height*2.0-pw*aidx)*N 
-            ey-= pw*idx*N*2
+            sy = pw*idx*N+y_offset #+(aidx*2*N)
+            ey = (self.height*2-pw*aidx)*N 
+            ey-= pw*idx*N*1.5
             canvas.pieslice([sx,sy,ex,ey], sdeg, edeg, fill=color, outline=None)
 
         if self.quadrant == Quadrant.top_right:
