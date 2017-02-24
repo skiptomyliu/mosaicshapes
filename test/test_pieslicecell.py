@@ -53,6 +53,11 @@ class TestPieSliceCell(unittest.TestCase):
         pcell = PieSliceCell(size=(100,100), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.bottom_right, colorful=False)
         pcell.draw().show()
+
+        pcell = PieSliceCell(size=(20,20), base_color=(100,100,100), 
+            second_color=(200,200,200), n=3, sn=3, quadrant=Quadrant.bottom_right, colorful=False)
+        pcell.draw().show()
+
         pcell = PieSliceCell(size=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.bottom_right)
         pcell.draw()

@@ -70,12 +70,6 @@ class TriangleCell(Cell):
         # pw = 4 #(self.width/len(self.colors))/2
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-
-
-
-        # pw = 30
-        # pw = 10
-        # print pw
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 

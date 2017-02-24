@@ -44,7 +44,7 @@ class HalfCircleCell(Cell):
 
     def draw(self):
         # super sample by 2x
-        N=2
+        N=3
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 

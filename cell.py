@@ -60,21 +60,43 @@ class Cell(object):
         adj_colors = util.adjacent_colors(base_color)
         complement_colors = [util.complement(r,g,b) for c in adj_colors]
 
-        shuffle(complement_colors)
-
+        # shuffle(complement_colors)
         c1 = Cell.gen_colors_og(adj_colors[0], random.randint(1,1))
         c2 = Cell.gen_colors_og(adj_colors[1], random.randint(1,1))
 
+        # option for non complement
         all_colors = c1 + c2 + complement_colors
-
         shuffle(all_colors)
         if n==1:
             all_colors.append(base_color)
 
+        #XXX: The complementary colors likely should be the main middle
+        # it occupies too much space, it should be accentuating
+        # base + adj colors should be more towards middle
         all_colors = all_colors[:n-1]
         all_colors.append(base_color)
-
         shuffle(all_colors)
+
+        # i = 0
+        # i_list = []
+        # shuffle(complement_colors)
+        # for color in all_colors:
+        #     i_list.append(color)
+        #     if i<len(complement_colors)-1:
+        #         i_list.append(complement_colors[i])
+        #     i+=1
+        # all_colors = i_list
+        # shuffle(all_colors)
+
+        # base_lum = util.luminance(r,g,b)
+        # all_colors_tinted = []
+        # for color in all_colors:
+        #     if util.luminance < base_lum:
+        #         all_colors_tinted.append(util.tint_to_lum(color, base_lum))
+        #     else:
+        #         all_colors_tinted.append(util.shade_to_lum(color, base_lum))
+        # all_colors = all_colors_tinted
+
         return all_colors
 
     @staticmethod
@@ -91,6 +113,8 @@ class Cell(object):
 
             r,g,b = base_color
             quad = 1 if util.luminance(r,g,b) > 100 else 0
+
+
             for i in range(-n/2+quad, n/2+quad):
                 color = np.asarray(base_color) + (i)*distance/float(n)
                 color[0] = util.clamp_int(color[0], 0, 255) #R

@@ -239,7 +239,6 @@ class Grid():
 
 
     def save(self, path, dpi=300, is_continue=False):
-        # import pdb; pdb.set_trace()
         if self.is_diamond:
             diamond_img = self.restore_diamond()
             if not is_continue:
