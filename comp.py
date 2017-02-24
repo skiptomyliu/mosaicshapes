@@ -30,10 +30,8 @@ class CompColor(Cell):
         # self.colors = CompColor.gen_colors_c(base_color, random.randint(2,n+1))
         # self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
 
-        s=2 #xxx: this was set to 2 before
+        s=3 #xxx: this was set to 2 before
         self.colors = Cell.gen_colors(base_color, random.randint(s,n+1), colorful)
-        # self.colors = Cell.gen_colors(base_color, n, colorful)
-        # self.random_colors = self.__random_color()
 
     @staticmethod
     def find_best(img, n=2, sn=2):
@@ -76,9 +74,9 @@ class CompColor(Cell):
 
     # Draws a rect and then a circle inside rect
     def draw_circle(self):
-        width = (self.width/len(self.colors))/random.randint(3,4)
-        stretch = 0 #self.width/7
-        N=3
+        width = (self.width/len(self.colors))/random.randint(2,2) # line width of circles
+        stretch = 0 
+        N=3 # super sample
         rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
         rect_canvas = ImageDraw.Draw(rect_paper, rect_paper.mode)
         
@@ -93,11 +91,16 @@ class CompColor(Cell):
             ey = (self.height-width*idx)*N
             rect_paper.paste(color, [x,y, ex, ey])
 
-
         circle_paper = Image.new('RGBA', (self.width*N, self.height*N))
         circle_canvas = ImageDraw.Draw(circle_paper, circle_paper.mode)
 
-        self.colors = list(reversed(self.colors))
+        if random.randrange(2):
+            self.colors = list(reversed(self.colors))
+
+        if len(self.colors)>=3:
+            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+
+        # self.colors = list(reversed(self.colors))
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             x = (width*idx+stretch)*N + width/2*(len(self.base_color)-1)*N
@@ -121,7 +124,6 @@ class CompColor(Cell):
         canvas = ImageDraw.Draw(paper)
 
         width = (self.width/len(self.colors))/2
-
         if random.randrange(2):
             self.colors = list(reversed(self.colors))
 

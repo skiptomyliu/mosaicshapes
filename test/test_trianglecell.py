@@ -78,7 +78,7 @@ class TestTriangleCell(unittest.TestCase):
     def test_draw(self):
         triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
             second_color=(100,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
-        triangle.draw().show()
+        # triangle.draw().show()
 
         triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
             second_color=(100,200,200), n=3, sn=2, quadrant=Quadrant.bottom_left)
@@ -88,8 +88,8 @@ class TestTriangleCell(unittest.TestCase):
             second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.top_left)
         triangle.draw()
 
-        triangle = TriangleCell(size=(40,40), base_color=(100,100,100), 
-            second_color=(200,200,200), n=2, sn=1, quadrant=Quadrant.top_right, colorful=False)
+        triangle = TriangleCell(size=(30,30), base_color=(100,100,100), 
+            second_color=(200,200,200), n=3, sn=1, quadrant=Quadrant.top_right, colorful=False)
         triangle.draw().show()
 
 

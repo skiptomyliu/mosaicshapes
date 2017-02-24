@@ -76,6 +76,19 @@ class Cell(object):
         # base + adj colors should be more towards middle
         all_colors = all_colors[:n-1]
         all_colors.append(base_color)
+        shuffle(all_colors)
+
+        # i = 0
+        # i_list = []
+        # shuffle(complement_colors)
+        # for color in all_colors:
+        #     i_list.append(color)
+        #     if i<len(complement_colors)-1:
+        #         i_list.append(complement_colors[i])
+        #     i+=1
+
+        # all_colors = i_list
+        # shuffle(all_colors)
 
         base_lum = util.luminance(r,g,b)
         all_colors_tinted = []
@@ -84,12 +97,8 @@ class Cell(object):
                 all_colors_tinted.append(util.tint_to_lum(color, base_lum))
             else:
                 all_colors_tinted.append(util.shade_to_lum(color, base_lum))
-        # all_colors = all_colors_tinted
-        # print all_colors
+        all_colors = all_colors_tinted
 
-        shuffle(all_colors)
-        # all_colors = all_colors[:n-1]
-        # all_colors.append(base_color)
         return all_colors
 
     @staticmethod

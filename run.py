@@ -37,6 +37,9 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
         pool.terminate()
 
     grid.save(output_path)
+
+
+    
     # print 100
     # grid.grid_start_end(0, grid.rows)
     # grid.save(output_path)
