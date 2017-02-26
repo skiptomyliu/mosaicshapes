@@ -35,7 +35,7 @@ class Grid():
         self.is_diamond = diamond
         self.is_colorful = colorful
         self.imgpath = imgpath
-        self.og_image = util.image_transpose_exif(Image.open(imgpath))
+        self.og_image = util.image_transpose_exif(Image.open(imgpath)) # we draw directly 
 
         # Non-VIP images get resized to 1500:
         if restrain:

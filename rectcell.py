@@ -7,17 +7,12 @@ import util
 from cell import Cell
 
 
-"""
-XXX: ciwdth and cheight not currently utilized 
-"""
 class RectCell(Cell):
     def __init__(self, size=(200,200), csize=(200,200), 
         base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1, colorful=True):
 
         self.width = size[0]
         self.height = size[1]
-        self.cwidth = csize[0]
-        self.cheight = csize[1]
         self.base_color = base_color
 
         self.colors = Cell.gen_colors(base_color, n, colorful)
