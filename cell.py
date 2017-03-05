@@ -32,35 +32,6 @@ class Cell(object):
         else:
             return Cell.gen_colors_og(base_color, n)
 
-        colors = []
-        if n==1:
-            if isinstance(base_color, (np.ndarray, np.generic)):
-                base_color = tuple(base_color.astype(int))
-            colors.append(base_color)
-        else:   
-            # maximum distance between all colors combined
-            distance = 25
-            colors = []
-
-            r,g,b = base_color
-            quad = 1 if util.luminance(r,g,b) > 100 else 0
-            for i in range(-n/2+quad, n/2+quad):
-                color = np.asarray(base_color) + (i)*distance/float(n)
-                color[0] = util.clamp_int(color[0], 0, 255) #R
-                color[1] = util.clamp_int(color[1], 0, 255) #G
-                color[2] = util.clamp_int(color[2], 0, 255) #B
-                color = tuple(color.astype(int))
-                colors.append(color)
-
-
-            # if random.randrange(2):
-            #     self.colors = list(reversed(self.colors))
-
-            # if len(self.colors)>=3:
-            #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
-        return colors
-
     @staticmethod
     def gen_colorful(base_color, n):
         r,g,b = base_color
@@ -119,6 +90,16 @@ class Cell(object):
                 color[2] = util.clamp_int(color[2], 0, 255) #B
                 color = tuple(color.astype(int))
                 colors.append(color)
+
+            # if random.randrange(2):
+
+            
+            if not random.getrandbits(1):
+                shuffle(colors)
+                # colors = list(reversed(colors))
+
+            if len(colors)>=3:
+                colors[1], colors[2] = colors[2], colors[1]
 
         return colors
 
