@@ -44,7 +44,7 @@ class Cell(object):
 
         # option for non complement
         all_colors = c1 + c2 #+ complement_colors
-        shuffle(all_colors)
+        # shuffle(all_colors)
         if n==1:
             all_colors.append(base_color)
 
@@ -55,15 +55,10 @@ class Cell(object):
         all_colors.append(base_color)
         shuffle(all_colors)
 
-
         # all_colors.insert(randint(1,len(all_colors)-1), complement_colors[0])
-        
-        # if len(all_colors)>2:
         if randint(0,100)>30:
             all_colors.insert(randint(1,len(all_colors)-1), complement_colors[randint(0,1)])
 
-        # for ccolor in complement_colors:
-            # all_colors.insert(randint(1,len(all_colors)-1), ccolor)
 
         return all_colors
 
@@ -93,13 +88,20 @@ class Cell(object):
 
             # if random.randrange(2):
 
+                
+            # if random.randrange(2):
+            #     colors = list(reversed(colors))
             
+            # if len(colors)>=3:
+            #     colors[1], colors[2] = colors[2], colors[1]
+
+
             if not random.getrandbits(1):
                 shuffle(colors)
                 # colors = list(reversed(colors))
-
-            if len(colors)>=3:
-                colors[1], colors[2] = colors[2], colors[1]
+            else:
+                if len(colors)>=3:
+                    colors[1], colors[2] = colors[2], colors[1]
 
         return colors
 
