@@ -212,8 +212,7 @@ class Grid():
                     else:
 
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
-                        ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, 
-                            n=4, colorful=self.is_colorful)
+                        ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
                         img = ccolor.draw()
 
                     self.og_image.paste(img, (x,y))

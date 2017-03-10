@@ -76,8 +76,8 @@ class TriangleCell(Cell):
         # if random.randrange(2):
             # self.colors_secondary = list(reversed(self.colors_secondary))
 
-        if len(self.colors)>=3:
-            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        # if len(self.colors)>=3:
+        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         """
         draw border square

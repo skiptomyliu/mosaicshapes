@@ -65,11 +65,11 @@ class CircleCell(Cell):
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.2 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
 
-        if random.randrange(2):
-            self.colors = list(reversed(self.colors))
+        # if random.randrange(2):
+        #     self.colors = list(reversed(self.colors))
 
-        if len(self.colors)>=3:
-            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        # if len(self.colors)>=3:
+        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         """
         draw border square

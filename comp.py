@@ -94,11 +94,11 @@ class CompColor(Cell):
         circle_paper = Image.new('RGBA', (self.width*N, self.height*N))
         circle_canvas = ImageDraw.Draw(circle_paper, circle_paper.mode)
 
-        if random.randrange(2):
-            self.colors = list(reversed(self.colors))
+        # if random.randrange(2):
+        #     self.colors = list(reversed(self.colors))
 
-        if len(self.colors)>=3:
-            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        # if len(self.colors)>=3:
+        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         # self.colors = list(reversed(self.colors))
         for idx, color in enumerate(self.colors):
@@ -124,11 +124,11 @@ class CompColor(Cell):
         canvas = ImageDraw.Draw(paper)
 
         width = (self.width/len(self.colors))/2
-        if random.randrange(2):
-            self.colors = list(reversed(self.colors))
+        # if random.randrange(2):
+        #     self.colors = list(reversed(self.colors))
 
-        if len(self.colors)>=3:
-            self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        # if len(self.colors)>=3:
+        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
