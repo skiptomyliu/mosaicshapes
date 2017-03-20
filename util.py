@@ -5,8 +5,8 @@ from PIL import Image, ImageChops
 import functools
 
 def rmsdiff(im1, im2):
-    im1 = im1.convert("RGBA")
-    im2 = im2.convert("RGBA")
+    # im1 = im1.convert("RGBA")
+    # im2 = im2.convert("RGBA")
     diff = ImageChops.difference(im1, im2)
     h = diff.histogram()
     sq = [value*((idx%256)**2) for idx, value in enumerate(h)]
@@ -118,8 +118,6 @@ def average_color(image, rect=None):
             g+=cg
             b+=cb
 
-    # if (0,0,0) == (r/area, g/area, b/area):
-
     return (r/area, g/area, b/area)
 
 
@@ -131,6 +129,7 @@ def adjacent_colors((r, g, b), d=DEG30): # Assumption: r, g, b in [0, 255]
 
     adjacent = [map(lambda x: int(round(x*255)), colorsys.hls_to_rgb(hi, l, s))
             for hi in h] # H'LS -> new RGB
+
 
     adjacent[0] = tuple(adjacent[0])
     adjacent[1] = tuple(adjacent[1])

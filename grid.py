@@ -36,6 +36,7 @@ class Grid():
         self.is_colorful = colorful
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
+        self.og_image = self.og_image.convert("RGBA")
 
         # Non-VIP images get resized to 1500:
         if restrain:
