@@ -46,7 +46,7 @@ class Grid():
             self.og_size = self.canvas_img.size
             self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
             self.canvas_img = self.canvas_img.rotate(45, expand=True, resample=Image.BICUBIC)
-        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
+        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(150))
 
         # Non-VIP images get resized to 1500:
         # if restrain:
