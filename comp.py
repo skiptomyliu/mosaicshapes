@@ -76,7 +76,7 @@ class CompColor(Cell):
     def draw_circle(self):
         width = (self.width/len(self.colors))/random.randint(2,2) # line width of circles
         stretch = 0 
-        N=3 # super sample
+        N=2 # super sample
         rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
         rect_canvas = ImageDraw.Draw(rect_paper, rect_paper.mode)
         
@@ -115,24 +115,19 @@ class CompColor(Cell):
 
         del rect_canvas
         del circle_canvas
-        rect_paper.thumbnail((self.width, self.height)) 
+        # rect_paper.thumbnail((self.width, self.height)) 
         return rect_paper
 
     # Draw rect only
     def draw_rect(self):
-        paper = Image.new('RGBA', (self.width, self.height))
+        N=2
+        paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper)
 
         width = (self.width/len(self.colors))/2
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
+            paper.paste(color, [width*idx*N,width*idx*N, (self.width-width*idx)*N, (self.height-width*idx)*N])
         # paper.show()
 
         return paper

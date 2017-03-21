@@ -32,31 +32,40 @@ x - 2x1 rectcell is not centered
 
 class Grid():
     def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, colorful=True, unsharp_radius=2, restrain=False, enlarge=4000):
+
+        self.N = 2 
         self.is_diamond = diamond
         self.is_colorful = colorful
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
         self.og_image = self.og_image.convert("RGBA")
 
+        self.width, self.height = self.og_image.size
+        self.canvas_img = Image.new('RGBA', (self.width*self.N, self.height*self.N))
+
+        if self.is_diamond:
+            self.og_size = self.canvas_img.size
+            self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
+        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
+
         # Non-VIP images get resized to 1500:
-        if restrain:
-            self.og_image = util.restrain_img_size(self.og_image, 1700)
+        # if restrain:
+            # self.og_image = util.restrain_img_size(self.og_image, 1700)
 
 
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
-        if enlarge:
-            self.og_image = util.enlarge_img(self.og_image, enlarge)
-            if self.is_diamond:
-                self.og_size = self.og_image.size
-                self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
+        # if enlarge:
+        #     self.og_image = util.enlarge_img(self.og_image, enlarge)
+        #     if self.is_diamond:
+        #         self.og_size = self.og_image.size
+        #         self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
 
-            self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
-        else:
-            if self.is_diamond:
-                self.og_size = self.og_image.size
-                self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
-            self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
-            # self.edg_img = self.og_image
+        #     self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
+        # else:
+            # if self.is_diamond:
+            #     self.og_size = self.og_image.size
+            #     self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
+            # self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
 
         # print(self.og_image.size)
         
@@ -80,7 +89,6 @@ class Grid():
         else:
             self.pixels = int(longest*.013)
 
-        # print self.pixels
 
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
@@ -198,26 +206,20 @@ class Grid():
                             img = shape.draw()
                         else:
                             shape = self.best_shape(cropped_img)
-
-                            # if isinstance(shape, TriangleCell):
-                            #     area = edges_seg.shape[0]*edges_seg.shape[1]
-                            #     percent = (len(np.where(edges_seg)[1])*2)/float(area)
-                            #     # if percent <= .2:
-                            #     #     shape.shrink = 4
-                            #     # if percent <= .1:
-                            #     #     shape.shrink = 6
-
                             img = shape.draw()
                             pix_w,pix_h=pix,pix
 
                     else:
-
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
                         img = ccolor.draw()
 
-                    self.og_image.paste(img, (x,y))
+                    # self.og_image.paste(img, (x,y))
+                    self.canvas_img.paste(img, (x*self.N,y*self.N))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
+
+        self.canvas_img.show()
+        import pdb; pdb.set_trace()
 
 
     def crop_diamond(self, img):
@@ -229,12 +231,12 @@ class Grid():
             ))
 
     def restore_diamond(self):
-        diamond_img = self.og_image.rotate(-45, expand=False, resample=Image.BICUBIC)
+        diamond_img = self.canvas_img.rotate(-45, expand=False, resample=Image.BICUBIC)
         return diamond_img.crop((
-            (self.og_image.size[0] - self.og_size[0])/2 ,
-            (self.og_image.size[1] - self.og_size[1])/2 ,
-            self.og_size[0] + (self.og_image.size[0] - self.og_size[0])/2,
-            self.og_size[1] + (self.og_image.size[1] - self.og_size[1])/2,
+            (self.canvas_img.size[0] - self.canvas_img[0])/2 ,
+            (self.canvas_img.size[1] - self.canvas_img[1])/2 ,
+            self.og_size[0] + (self.canvas_img.size[0] - self.canvas_img[0])/2,
+            self.og_size[1] + (self.canvas_img.size[1] - self.canvas_img[1])/2,
             ))
 
 
@@ -246,5 +248,5 @@ class Grid():
 
             diamond_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))    
         else:
-            self.og_image.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
+            self.canvas_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
 

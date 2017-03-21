@@ -56,24 +56,19 @@ class RectCell(Cell):
 
     # return the perceived hue / luminance for now
     def draw(self):
-        paper = Image.new('RGBA', (self.width, self.height))
+        N = 2
+        paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper)
 
         pw = 4#(self.width/len(self.colors))/3
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
 
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-            
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
         """
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx,pw*idx, self.width-pw*idx, self.height-pw*idx])
+            paper.paste(color, [pw*idx*N,pw*idx*N, (self.width-pw*idx)*N, (self.height-pw*idx)*N])
 
         """
         draw rect
@@ -88,7 +83,7 @@ class RectCell(Cell):
             sy += (pw*idx)
             ex = self.width - sx
             ey = self.height - sy
-            paper.paste(color, [sx, sy, ex, ey])
+            paper.paste(color, [sx*N, sy*N, ex*N, ey*N])
 
         return paper
 

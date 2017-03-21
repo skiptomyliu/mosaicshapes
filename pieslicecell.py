@@ -44,7 +44,7 @@ class PieSliceCell(Cell):
 
     def draw(self):
         # super sample by 3x
-        N=3
+        N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
@@ -91,7 +91,8 @@ class PieSliceCell(Cell):
         elif self.quadrant ==  Quadrant.bottom_left:
             paper = paper.rotate(90*3)
         del canvas
-        paper.thumbnail((self.width, self.height))
+
+        # paper.thumbnail((self.width, self.height))
 
         return paper
 

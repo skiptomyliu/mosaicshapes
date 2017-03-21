@@ -117,7 +117,7 @@ class TriangleCell(Cell):
         
         # import pdb; pdb.set_trace()
         del canvas
-        paper.thumbnail((self.width, self.height)) 
+        # paper.thumbnail((self.width, self.height)) 
 
         return paper
 
