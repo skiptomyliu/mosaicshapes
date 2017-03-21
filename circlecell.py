@@ -25,7 +25,7 @@ class CircleCell(Cell):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         width,height = img.size
-        best_ccell = None
+        best_img = None
         best_score = 10000
 
         w = width
@@ -46,19 +46,18 @@ class CircleCell(Cell):
                     ccell = CircleCell(size=(width,height), csize=(width,d), 
                         base_color=color_combo[0], second_color=color_combo[1], 
                         n=n, sn=sn, colorful=colorful)
-                cimg = ccell.draw()
+                cimg = ccell.draw(N=1)
                 score = util.rmsdiff(img, cimg)
-                import pdb; pdb.set_trace()
+
                 if score <= best_score:
-                    best_ccell = ccell
+                    best_img = ccell.draw(N=2)
                     best_score = score
 
-            return best_ccell
+            return (best_img, best_score)
 
     # return the perceived hue / luminance for now
-    def draw(self):
+    def draw(self, N=2):
         # super sample by 2x
-        N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 

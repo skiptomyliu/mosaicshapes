@@ -47,7 +47,7 @@ class TriangleCell(Cell):
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
         w,h=img.size
-        best_trect = None
+        best_img = None
         best_score = 10000
         for quad in quads:
             for color_combo in color_combos:
@@ -55,29 +55,21 @@ class TriangleCell(Cell):
                     base_color=color_combo[0], second_color=color_combo[1], 
                     shrink=0, n=n, sn=sn, quadrant=quad, colorful=colorful)
 
-                timg = trect.draw()
+                timg = trect.draw(N=1)
                 score = util.rmsdiff(img, timg)
                 if score <= best_score:
-                    best_trect = trect
+                    best_img = trect.draw(N=2)
                     best_score = score
 
-        return best_trect
+        return best_img, best_score
 
     # return the perceived hue / luminance for now
-    def draw(self):
-
-        N=2
+    def draw(self, N=2):
         # pw = 4 #(self.width/len(self.colors))/2
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
-
-        # if random.randrange(2):
-            # self.colors_secondary = list(reversed(self.colors_secondary))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         """
         draw border square

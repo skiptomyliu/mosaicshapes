@@ -25,7 +25,7 @@ class PieSliceCell(Cell):
 
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
-        best_pcell = None
+        best_img = None
         best_score = 10000
         w,h = img.size
         for quad in quads:
@@ -34,17 +34,16 @@ class PieSliceCell(Cell):
                     base_color=color_combo[0], second_color=color_combo[1], 
                     shrink=0, n=n, sn=sn, quadrant=quad, colorful=colorful)
 
-                pimg = pcell.draw()
+                pimg = pcell.draw(N=1)
                 score = util.rmsdiff(img, pimg)
                 if score <= best_score:
-                    best_pcell = pcell
+                    best_img = pcell.draw(N=2)
                     best_score = score
 
-        return best_pcell
+        return best_img, best_score
 
-    def draw(self):
+    def draw(self, N=2):
         # super sample by 3x
-        N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 

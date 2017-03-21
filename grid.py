@@ -32,7 +32,6 @@ x - 2x1 rectcell is not centered
 
 class Grid():
     def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, colorful=True, unsharp_radius=2, restrain=False, enlarge=4000):
-
         self.N = 2 
         self.is_diamond = diamond
         self.is_colorful = colorful
@@ -46,6 +45,7 @@ class Grid():
         if self.is_diamond:
             self.og_size = self.canvas_img.size
             self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
+            self.canvas_img = self.canvas_img.rotate(45, expand=True, resample=Image.BICUBIC)
         self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
 
         # Non-VIP images get resized to 1500:
@@ -124,17 +124,17 @@ class Grid():
 
     def best_shape(self, cropped_img):
         second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
-        circle = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        rect = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        triangle = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        pie = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        halfc = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        triangle,triangle_rms = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
+        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
 
-        circle_rms = util.rmsdiff(cropped_img, circle.draw())
-        rect_rms = util.rmsdiff(cropped_img, rect.draw())
-        triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
-        pie_rms = util.rmsdiff(cropped_img, pie.draw())
-        halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
+        # circle_rms = util.rmsdiff(cropped_img, circle.draw())
+        # rect_rms = util.rmsdiff(cropped_img, rect.draw())
+        # triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
+        # pie_rms = util.rmsdiff(cropped_img, pie.draw())
+        # halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
         
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
@@ -202,11 +202,14 @@ class Grid():
                         if rms_v < 40:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
-                            shape = self.best_shape(big_crop_img)
-                            img = shape.draw()
+                            # shape = self.best_shape(big_crop_img)
+                            # img = shape.draw()
+                            img = self.best_shape(big_crop_img)
+                            
                         else:
-                            shape = self.best_shape(cropped_img)
-                            img = shape.draw()
+                            # shape = self.best_shape(cropped_img)
+                            # img = shape.draw()
+                            img = self.best_shape(cropped_img)
                             pix_w,pix_h=pix,pix
 
                     else:
@@ -214,12 +217,11 @@ class Grid():
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
                         img = ccolor.draw()
 
-                    # self.og_image.paste(img, (x,y))
                     self.canvas_img.paste(img, (x*self.N,y*self.N))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
 
-        self.canvas_img.show()
-        import pdb; pdb.set_trace()
+        # self.canvas_img.show()
+
 
 
     def crop_diamond(self, img):
@@ -233,10 +235,10 @@ class Grid():
     def restore_diamond(self):
         diamond_img = self.canvas_img.rotate(-45, expand=False, resample=Image.BICUBIC)
         return diamond_img.crop((
-            (self.canvas_img.size[0] - self.canvas_img[0])/2 ,
-            (self.canvas_img.size[1] - self.canvas_img[1])/2 ,
-            self.og_size[0] + (self.canvas_img.size[0] - self.canvas_img[0])/2,
-            self.og_size[1] + (self.canvas_img.size[1] - self.canvas_img[1])/2,
+            (self.canvas_img.size[0] - self.og_size[0])/2 ,
+            (self.canvas_img.size[1] - self.og_size[1])/2 ,
+            self.og_size[0] + (self.canvas_img.size[0] - self.og_size[0])/2,
+            self.og_size[1] + (self.canvas_img.size[1] - self.og_size[1])/2,
             ))
 
 

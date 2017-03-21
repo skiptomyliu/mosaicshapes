@@ -25,7 +25,7 @@ class HalfCircleCell(Cell):
 
         quads = [Direction.top, Direction.right, Direction.bottom, Direction.left]
 
-        best_hcell = None
+        best_img = None
         best_score = 10000
         w,h = img.size
         for quad in quads:
@@ -34,27 +34,21 @@ class HalfCircleCell(Cell):
                     base_color=color_combo[0], second_color=color_combo[1], 
                     shrink=0, n=n, sn=sn, direction=quad, colorful=colorful)
 
-                himg = hcell.draw()
+                himg = hcell.draw(N=1)
                 score = util.rmsdiff(img, himg)
                 if score <= best_score:
-                    best_hcell = hcell
+                    best_img = hcell.draw(N=2)
                     best_score = score
 
-        return best_hcell
+        return best_img, best_score
 
-    def draw(self):
+    def draw(self, N=2):
         # super sample by 2x
-        N=2
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
         shortest = self.width if self.width < self.height else self.height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         """
         draw border square

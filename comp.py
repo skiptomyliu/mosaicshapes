@@ -73,10 +73,9 @@ class CompColor(Cell):
 
 
     # Draws a rect and then a circle inside rect
-    def draw_circle(self):
+    def draw_circle(self, N):
         width = (self.width/len(self.colors))/random.randint(2,2) # line width of circles
         stretch = 0 
-        N=2 # super sample
         rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
         rect_canvas = ImageDraw.Draw(rect_paper, rect_paper.mode)
         
@@ -94,13 +93,7 @@ class CompColor(Cell):
         circle_paper = Image.new('RGBA', (self.width*N, self.height*N))
         circle_canvas = ImageDraw.Draw(circle_paper, circle_paper.mode)
 
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
 
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
-        # self.colors = list(reversed(self.colors))
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             x = (width*idx+stretch)*N + width/2*(len(self.base_color)-1)*N
@@ -119,8 +112,7 @@ class CompColor(Cell):
         return rect_paper
 
     # Draw rect only
-    def draw_rect(self):
-        N=2
+    def draw_rect(self,N):
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper)
 
@@ -128,16 +120,14 @@ class CompColor(Cell):
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             paper.paste(color, [width*idx*N,width*idx*N, (self.width-width*idx)*N, (self.height-width*idx)*N])
-        # paper.show()
 
         return paper
 
-
-    def draw(self):
-        if random.randrange(0,2):
-            shape = self.draw_circle()
+    def draw(self, N=2):
+        if random.getrandbits(1): #XXX: Change to faster
+            shape = self.draw_circle(N)
         else:
-            shape = self.draw_rect()
+            shape = self.draw_rect(N)
 
         return shape
 

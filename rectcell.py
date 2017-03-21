@@ -29,7 +29,7 @@ class RectCell(Cell):
         color_combos = [[base_color, second_color], [second_color, base_color]]
 
         width,height = img.size
-        best_rcell = None
+        best_img = None
         best_score = 10000
 
         w = width 
@@ -46,17 +46,16 @@ class RectCell(Cell):
                             base_color=color_combo[0], second_color=color_combo[1], 
                             n=n, sn=sn, colorful=colorful)
 
-                        cimg = rcell.draw()
+                        cimg = rcell.draw(N=1)
                         score = util.rmsdiff(img, cimg)
                         if score <= best_score:
-                            best_rcell = rcell
+                            best_img = rcell.draw(N=2)
                             best_score = score
 
-        return best_rcell
+        return best_img, best_score
 
     # return the perceived hue / luminance for now
-    def draw(self):
-        N = 2
+    def draw(self, N=2):
         paper = Image.new('RGBA', (self.width*N, self.height*N))
         canvas = ImageDraw.Draw(paper)
 
