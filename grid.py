@@ -37,7 +37,7 @@ class Grid():
         self.is_colorful = colorful
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
-        self.og_image = self.og_image.convert("RGBA")
+        # self.og_image = self.og_image.convert("RGBA")
 
         self.width, self.height = self.og_image.size
         self.canvas_img = Image.new('RGBA', (self.width*self.N, self.height*self.N))
