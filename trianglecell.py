@@ -1,7 +1,7 @@
 
 
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 import numpy as np
 from colorpalette import ColorPalette
 import util
@@ -14,6 +14,8 @@ from cell import Cell, Quadrant
 - multiple boxes for grid again
 - choosing between triangle and pie slice should measure against "closeness" to og_image.
 
+
+xxx: 3/25, shrink is not implemented
 """
 
 class TriangleCell(Cell):
@@ -26,6 +28,7 @@ class TriangleCell(Cell):
 
         self.colors = Cell.gen_colors(base_color, n, colorful)
         self.colors_secondary = Cell.gen_colors(second_color,sn, colorful)
+
         self.quadrant = quadrant
         self.shrink = shrink
 
@@ -71,6 +74,9 @@ class TriangleCell(Cell):
         shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
         pw = util.clamp_int(pw, 1, 10000)
+        pw = 6
+        # print pw 
+        # import pdb; pdb.set_trace()
         # pw = 1
         # print pw
         # import pdb; pdb.set_trace()
@@ -87,24 +93,27 @@ class TriangleCell(Cell):
         draw triangles
         """
 
-        x_offset = pw*(len(self.colors_secondary))+self.shrink
-        y_offset = pw*(len(self.colors_secondary))+self.shrink
+        x_offset = pw*(len(self.colors_secondary))
+        y_offset = pw*(len(self.colors_secondary))
+
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             width,height = n_width-pw*idx, n_height-pw*idx
-            sx,sy = (pw*idx*pw), (pw*idx + y_offset)
+            sx = (pw*idx + x_offset)
+            sy = (pw*idx + y_offset)
 
-            sx = int(round(len(self.colors)*pw/2.0))
-            sx += (pw*idx)
+            # sx = int(round(len(self.colors)*pw/2.0))
+            # sx += (pw*idx)
             ex = n_width - sx
-
             if sy*N >= self.width*N/2.0-1 and N==1:
                 break
 
-            coord = [((sx + pw*idx*(n_width/float(n_height))*1.5), sy), (ex, sy), (ex, (height-sy-idx*pw*(n_height/n_width)))]
-            # import pdb; pdb.set_trace()
+            coord = [((sx + pw*idx*(n_width/float(n_height))*1.5), sy), (ex, sy), (ex, (height-sy-idx*pw*float(n_height/n_width)))]        
             canvas.polygon(coord, fill=color)
 
+
+
+        # paper=ImageOps.mirror(paper)
 
         if self.quadrant == Quadrant.top_right:
             pass

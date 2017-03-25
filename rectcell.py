@@ -63,7 +63,8 @@ class RectCell(Cell):
         # pw = 4 #(self.width/len(self.colors))/3
         shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-
+        # print pw
+        # import pdb; pdb.set_trace()
         """
         draw border square
         """
@@ -81,8 +82,8 @@ class RectCell(Cell):
             # sy = int(round(len(self.colors)*pw/2))
             sy = int(round(len(self.colors_secondary)*pw))
             sy += (pw*idx)
-            ex = self.width - sx
-            ey = self.height - sy
+            ex = n_width - sx
+            ey = n_height - sy
             paper.paste(color, [sx, sy, ex, ey])
 
         return paper

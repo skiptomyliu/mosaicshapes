@@ -28,21 +28,21 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, restrain, enlarg
             break
 
     # double check that we are not doing double work
-    try:
-        pool = ThreadPool(8)
-        pool.map(grid.grid_start_end_thread, todos)
-        pool.close()
-        pool.join()
-    except (KeyboardInterrupt, SystemExit):
-        pool.terminate()
+    # try:
+    #     pool = ThreadPool(8)
+    #     pool.map(grid.grid_start_end_thread, todos)
+    #     pool.close()
+    #     pool.join()
+    # except (KeyboardInterrupt, SystemExit):
+    #     pool.terminate()
 
-    grid.save(output_path)
+    # grid.save(output_path)
 
 
     
     # print 100
-    # grid.grid_start_end(0, grid.rows)
-    # grid.save(output_path)
+    grid.grid_start_end(0, grid.rows)
+    grid.save(output_path)
 
     
     # if e_index < grid.rows:
