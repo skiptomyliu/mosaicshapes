@@ -74,7 +74,7 @@ class TriangleCell(Cell):
         shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
         pw = util.clamp_int(pw, 1, 10000)
-        pw = 6
+        # pw = 6
         # print pw 
         # import pdb; pdb.set_trace()
         # pw = 1
