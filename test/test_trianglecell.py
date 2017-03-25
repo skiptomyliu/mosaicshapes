@@ -48,6 +48,7 @@ class TestTriangleCell(unittest.TestCase):
     #     self.assertEqual(colors, [(80.0, 80.0, 80.0), (90.0, 90.0, 90.0), (100.0, 100.0, 100.0), (110.0, 110.0, 110.0)])
 
     def test_find_best(self):
+        """
         og_image = Image.open("./examples/test.JPEG")
 
         # Test lower left jaw
@@ -74,23 +75,24 @@ class TestTriangleCell(unittest.TestCase):
         crop_top_right_ear = og_image.crop((360-25,180-25, 360+25, 180+25))
         trect = TriangleCell.find_best(crop_top_right_ear, n=2, sn=3)
         self.assertTrue(trect.quadrant == Quadrant.bottom_left or trect.quadrant == Quadrant.top_right)
+        """
 
     def test_draw(self):
-        triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
-            second_color=(100,200,200), n=2, sn=2, quadrant=Quadrant.bottom_right)
-        # triangle.draw().show()
+        triangle = TriangleCell(size=(10,10), base_color=(200,0,0), 
+            second_color=(100,200,200), n=4, sn=2, quadrant=Quadrant.bottom_right, colorful=False)
+        triangle.draw(N=1).show()
 
-        triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
-            second_color=(100,200,200), n=3, sn=2, quadrant=Quadrant.bottom_left)
-        triangle.draw()
+        # triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
+        #     second_color=(100,200,200), n=3, sn=2, quadrant=Quadrant.bottom_left)
+        # triangle.draw()
 
-        triangle = TriangleCell(size=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.top_left)
-        triangle.draw()
+        # triangle = TriangleCell(size=(200,200), base_color=(100,100,100), 
+        #     second_color=(200,200,200), n=3, sn=2, quadrant=Quadrant.top_left)
+        # triangle.draw()
 
-        triangle = TriangleCell(size=(30,30), base_color=(100,100,100), 
-            second_color=(200,200,200), n=3, sn=1, quadrant=Quadrant.top_right, colorful=False)
-        triangle.draw().show()
+        # triangle = TriangleCell(size=(30,30), base_color=(100,100,100), 
+        #     second_color=(200,200,200), n=3, sn=1, quadrant=Quadrant.top_right, colorful=False)
+        # triangle.draw()
 
 
 if __name__ == '__main__':

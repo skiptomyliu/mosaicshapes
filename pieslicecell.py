@@ -37,17 +37,18 @@ class PieSliceCell(Cell):
                 pimg = pcell.draw(N=1)
                 score = util.rmsdiff(img, pimg)
                 if score <= best_score:
-                    best_img = pcell.draw(N=2)
+                    best_img = pcell.draw(N=4)
                     best_score = score
 
         return best_img, best_score
 
     def draw(self, N=2):
         # super sample by 3x
-        paper = Image.new('RGBA', (self.width*N, self.height*N))
+        n_width, n_height = (self.width*N, self.height*N)
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        shortest = self.width if self.width < self.height else self.height
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
         # if random.randrange(2):
         #     self.colors = list(reversed(self.colors))
@@ -59,7 +60,7 @@ class PieSliceCell(Cell):
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx*N,pw*idx*N, (self.width-pw*idx)*N, (self.height-pw*idx)*N])
+            paper.paste(color, [pw*idx, pw*idx, (n_width-pw*idx), (n_height-pw*idx)])
 
         """
         draw pie slices
@@ -67,18 +68,18 @@ class PieSliceCell(Cell):
         # Start with botom right quadrant drawing
         # self.shrink=3
 
-        x_offset = N*(pw*(len(self.colors_secondary)/2)+self.shrink)
-        y_offset = N*(pw*(len(self.colors_secondary)/2)+self.shrink)
+        x_offset = (pw*(len(self.colors_secondary)/2)+self.shrink)
+        y_offset = (pw*(len(self.colors_secondary)/2)+self.shrink)
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
             aidx = len(self.colors_secondary) + idx +1
             sdeg, edeg = (180, 270)
-            sx = pw*idx*N*1.5+x_offset#+(aidx*2*N)
-            ex = (self.width*2-pw*aidx)*N
-            ex-= (pw*idx*N*2)
-            sy = pw*idx*N+y_offset #+(aidx*2*N)
-            ey = (self.height*2-pw*aidx)*N 
-            ey-= pw*idx*N*1.5
+            sx = pw*idx*1.5+x_offset#+(aidx*2*N)
+            ex = (n_width*2-pw*aidx)
+            ex-= (pw*idx*2)
+            sy = pw*idx+y_offset #+(aidx*2*N)
+            ey = (n_height*2-pw*aidx)
+            ey-= pw*idx*1.5
             canvas.pieslice([sx,sy,ex,ey], sdeg, edeg, fill=color, outline=None)
 
         if self.quadrant == Quadrant.top_right:

@@ -19,12 +19,12 @@ class TestHalfCircleCell(unittest.TestCase):
 
     def test_draw(self):
 
-        pcell = HalfCircleCell(size=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=3, sn=2, direction=Direction.top)
+        pcell = HalfCircleCell(size=(10,10), base_color=(100,100,100), 
+            second_color=(200,200,200), n=3, sn=2, direction=Direction.top, colorful=False)
         pcell.draw().show()
 
-        pcell = HalfCircleCell(size=(200,200), base_color=(100,100,100), 
-            second_color=(200,200,200), n=3, sn=2, direction=Direction.top)
+        pcell = HalfCircleCell(size=(500,500), base_color=(100,100,100), 
+            second_color=(200,200,200), n=3, sn=2, direction=Direction.top, colorful=False)
         pcell.draw()
         pcell = HalfCircleCell(size=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2, direction=Direction.right)

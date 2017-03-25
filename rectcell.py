@@ -49,25 +49,26 @@ class RectCell(Cell):
                         cimg = rcell.draw(N=1)
                         score = util.rmsdiff(img, cimg)
                         if score <= best_score:
-                            best_img = rcell.draw(N=2)
+                            best_img = rcell.draw(N=4)
                             best_score = score
 
         return best_img, best_score
 
     # return the perceived hue / luminance for now
     def draw(self, N=2):
-        paper = Image.new('RGBA', (self.width*N, self.height*N))
+        n_width, n_height = self.width*N, self.height*N
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper)
 
-        pw = 4#(self.width/len(self.colors))/3
-        shortest = self.width if self.width < self.height else self.height
+        # pw = 4 #(self.width/len(self.colors))/3
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
 
         """
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx*N,pw*idx*N, (self.width-pw*idx)*N, (self.height-pw*idx)*N])
+            paper.paste(color, [pw*idx, pw*idx, n_width-pw*idx, n_height-pw*idx])
 
         """
         draw rect
@@ -82,7 +83,7 @@ class RectCell(Cell):
             sy += (pw*idx)
             ex = self.width - sx
             ey = self.height - sy
-            paper.paste(color, [sx*N, sy*N, ex*N, ey*N])
+            paper.paste(color, [sx, sy, ex, ey])
 
         return paper
 

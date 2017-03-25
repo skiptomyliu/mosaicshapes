@@ -50,7 +50,7 @@ class CircleCell(Cell):
                 score = util.rmsdiff(img, cimg)
 
                 if score <= best_score:
-                    best_img = ccell.draw(N=2)
+                    best_img = ccell.draw(N=4)
                     best_score = score
 
             return (best_img, best_score)
@@ -58,27 +58,33 @@ class CircleCell(Cell):
     # return the perceived hue / luminance for now
     def draw(self, N=2):
         # super sample by 2x
-        paper = Image.new('RGBA', (self.width*N, self.height*N))
+
+
+        #XXX:  This may need double checking
+        n_width, n_height = self.width*N, self.height*N
+        n_cwidth, n_cheight = self.cwidth*N, self.cheight*N
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        pw = 4 #(self.width/len(self.colors))/2
-        shortest = self.width if self.width < self.height else self.height
+        # pw = 4 #(self.width/len(self.colors))/2
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.2 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
+        pw = util.clamp_int(pw, 1, 10000)
 
         """
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx*N,pw*idx*N, (self.width-pw*idx)*N, (self.height-pw*idx)*N])
+            paper.paste(color, [pw*idx, pw*idx, n_width-pw*idx, n_height-pw*idx])
 
         """
         draw circles
         """
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            sx = (self.width-self.cwidth)/2
-            sy = (self.height-self.cheight)/2
-            canvas.ellipse([(sx + (pw*idx))*N, (sy+(pw*idx))*N, (sx+(self.cwidth-pw*idx))*N, (sy+(self.cheight-pw*idx))*N], fill=color)
+            sx = (n_width-n_cwidth)/2
+            sy = (n_height-n_cheight)/2
+            canvas.ellipse([(sx + (pw*idx)), (sy+(pw*idx)), (sx+(n_cwidth-pw*idx)), (sy+(n_cheight-pw*idx))], fill=color)
 
         del canvas
         # paper.thumbnail((self.width, self.height)) 
