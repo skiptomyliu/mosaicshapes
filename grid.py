@@ -40,12 +40,13 @@ class Grid():
         # self.og_image = self.og_image.convert("RGBA")
 
         self.width, self.height = self.og_image.size
-        self.canvas_img = Image.new('RGBA', (self.width*self.N, self.height*self.N))
+        # self.canvas_img = Image.new('RGBA', (self.width*self.N, self.height*self.N))
 
         if self.is_diamond:
-            self.og_size = self.canvas_img.size
+            self.og_size = self.width*self.N, self.height*self.N
             self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
-            self.canvas_img = self.canvas_img.rotate(45, expand=True, resample=Image.BICUBIC)
+            self.canvas_img = Image.new('RGBA', (self.og_image.size[0]*self.N, self.og_image.size[1]*self.N))
+            # self.canvas_img = self.canvas_img.rotate(45, expand=True, resample=Image.BICUBIC)
         self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(150))
 
         # Non-VIP images get resized to 1500:
