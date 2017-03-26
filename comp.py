@@ -122,7 +122,7 @@ class CompColor(Cell):
 
         return paper
 
-    def draw(self, N=4):
+    def draw(self, N=2):
         if random.getrandbits(1) and False: #XXX: Change to faster
             shape = self.draw_circle(N)
         else:

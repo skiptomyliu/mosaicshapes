@@ -50,7 +50,7 @@ class CircleCell(Cell):
                 score = util.rmsdiff(img, cimg)
 
                 if score <= best_score:
-                    best_img = ccell.draw(N=4)
+                    best_img = ccell.draw(N=2)
                     best_score = score
 
             return (best_img, best_score)

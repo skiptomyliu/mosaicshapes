@@ -61,7 +61,7 @@ class TriangleCell(Cell):
                 timg = trect.draw(N=1)
                 score = util.rmsdiff(img, timg)
                 if score <= best_score:
-                    best_img = trect.draw(N=4)
+                    best_img = trect.draw(N=2)
                     best_score = score
 
         return best_img, best_score
@@ -110,8 +110,6 @@ class TriangleCell(Cell):
 
             coord = [((sx + pw*idx*(n_width/float(n_height))*1.5), sy), (ex, sy), (ex, (height-sy-idx*pw*float(n_height/n_width)))]        
             canvas.polygon(coord, fill=color)
-
-
 
         # paper=ImageOps.mirror(paper)
 

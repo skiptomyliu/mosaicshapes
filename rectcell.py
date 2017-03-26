@@ -49,7 +49,7 @@ class RectCell(Cell):
                         cimg = rcell.draw(N=1)
                         score = util.rmsdiff(img, cimg)
                         if score <= best_score:
-                            best_img = rcell.draw(N=4)
+                            best_img = rcell.draw(N=2)
                             best_score = score
 
         return best_img, best_score

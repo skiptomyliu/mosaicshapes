@@ -37,7 +37,7 @@ class PieSliceCell(Cell):
                 pimg = pcell.draw(N=1)
                 score = util.rmsdiff(img, pimg)
                 if score <= best_score:
-                    best_img = pcell.draw(N=4)
+                    best_img = pcell.draw(N=2)
                     best_score = score
 
         return best_img, best_score
