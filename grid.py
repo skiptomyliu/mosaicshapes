@@ -131,11 +131,6 @@ class Grid():
         pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
         halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
 
-        # circle_rms = util.rmsdiff(cropped_img, circle.draw())
-        # rect_rms = util.rmsdiff(cropped_img, rect.draw())
-        # triangle_rms = util.rmsdiff(cropped_img, triangle.draw())
-        # pie_rms = util.rmsdiff(cropped_img, pie.draw())
-        # halfc_rms = util.rmsdiff(cropped_img, halfc.draw())
         
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]

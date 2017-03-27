@@ -38,19 +38,17 @@ class RectCell(Cell):
         # XXX: will cause probs if image size is less than 10 pixels
         for w in range(width-1, width):
             for h in range(height-1, height):
-
                 for color_combo in color_combos:
-                    for i in range(2):
-                        h = w
-                        rcell = RectCell(size=(width,height), csize=(w,h), 
-                            base_color=color_combo[0], second_color=color_combo[1], 
-                            n=n, sn=sn, colorful=colorful)
+                    h = w
+                    rcell = RectCell(size=(width,height), csize=(w,h), 
+                        base_color=color_combo[0], second_color=color_combo[1], 
+                        n=n, sn=sn, colorful=colorful)
 
-                        cimg = rcell.draw(N=1)
-                        score = util.rmsdiff(img, cimg)
-                        if score <= best_score:
-                            best_img = rcell.draw(N=2)
-                            best_score = score
+                    cimg = rcell.draw(N=1)
+                    score = util.rmsdiff(img, cimg)
+                    if score <= best_score:
+                        best_img = rcell.draw(N=2)
+                        best_score = score
 
         return best_img, best_score
 
