@@ -69,7 +69,6 @@ class TriangleCell(Cell):
     # return the perceived hue / luminance for now
     def draw(self, N=2):
         # pw = 4 #(self.width/len(self.colors))/2
-
         n_width, n_height = self.width*N, self.height*N
         shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
@@ -105,11 +104,14 @@ class TriangleCell(Cell):
             # sx = int(round(len(self.colors)*pw/2.0))
             # sx += (pw*idx)
             ex = n_width - sx
-            if sy*N >= self.width*N/2.0-1 and N==1:
-                break
-
-            coord = [((sx + pw*idx*(n_width/float(n_height))*1.5), sy), (ex, sy), (ex, (height-sy-idx*pw*float(n_height/n_width)))]        
+            coord = [(sx + pw*idx), sy, 
+                    (ex, sy), 
+                    (ex, (height-sy-idx))]        
             canvas.polygon(coord, fill=color)
+
+            # paper.show()
+            # print coord
+            # import pdb; pdb.set_trace()
 
         # paper=ImageOps.mirror(paper)
 
@@ -122,7 +124,6 @@ class TriangleCell(Cell):
         elif self.quadrant ==  Quadrant.bottom_left:
             paper = paper.rotate(180)
         
-
         del canvas
         # paper.thumbnail((self.width, self.height)) 
 

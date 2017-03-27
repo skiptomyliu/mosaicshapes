@@ -80,7 +80,7 @@ class TestTriangleCell(unittest.TestCase):
     def test_draw(self):
         triangle = TriangleCell(size=(10,10), base_color=(200,0,0), 
             second_color=(100,200,200), n=4, sn=1, quadrant=Quadrant.bottom_left, colorful=True)
-        # triangle.draw(N=50).show()
+        triangle.draw(N=2).show()
 
         # triangle = TriangleCell(size=(200,200), base_color=(100,200,100), 
         #     second_color=(100,200,200), n=3, sn=2, quadrant=Quadrant.bottom_left)
