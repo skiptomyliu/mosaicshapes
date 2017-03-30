@@ -20,7 +20,7 @@ class HalfCircleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Direction.top, Direction.right, Direction.bottom, Direction.left]
@@ -37,7 +37,7 @@ class HalfCircleCell(Cell):
                 himg = hcell.draw(N=1)
                 score = util.rmsdiff(img, himg)
                 if score <= best_score:
-                    best_img = hcell.draw(N=2)
+                    best_img = hcell.draw(N=N) #can be improved... draw on return only!!!!
                     best_score = score
 
         return best_img, best_score

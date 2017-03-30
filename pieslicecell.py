@@ -20,7 +20,7 @@ class PieSliceCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
@@ -37,7 +37,7 @@ class PieSliceCell(Cell):
                 pimg = pcell.draw(N=1)
                 score = util.rmsdiff(img, pimg)
                 if score <= best_score:
-                    best_img = pcell.draw(N=2)
+                    best_img = pcell.draw(N=N)
                     best_score = score
 
         return best_img, best_score

@@ -15,6 +15,12 @@ def rmsdiff(im1, im2):
 
     return rms
 
+def get_multi(im, min_size):
+    w,h = im.size
+    if w > h:
+        return float(min_size)/w
+    return float(min_size)/h
+
 def restrain_img_size(im, max_pix=1700):
     max_size = (max_pix, max_pix)
     w,h = im.size
@@ -25,12 +31,15 @@ def restrain_img_size(im, max_pix=1700):
 
 def mult_img_size(im, scale):
     w,h = im.size[0]*scale, im.size[1]*scale
-    im = im.resize((w,h), Image.ANTIALIAS)
+    if scale > 1:
+        im = im.resize((w,h), Image.ANTIALIAS)
+    else:
+        im.thumbnail((w,h), Image.ANTIALIAS)
 
     return im
 
+
 def enlarge_img(im, max_pix=9000):
-    max_size = (max_pix, max_pix)
     w,h = im.size
     if w < max_pix and h < max_pix:
         if w > h:

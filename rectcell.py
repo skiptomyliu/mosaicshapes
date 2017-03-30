@@ -25,7 +25,7 @@ class RectCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[base_color, second_color], [second_color, base_color]]
 
         width,height = img.size
@@ -36,19 +36,19 @@ class RectCell(Cell):
         h = height
 
         # XXX: will cause probs if image size is less than 10 pixels
-        for w in range(width-1, width):
-            for h in range(height-1, height):
-                for color_combo in color_combos:
-                    h = w
-                    rcell = RectCell(size=(width,height), csize=(w,h), 
-                        base_color=color_combo[0], second_color=color_combo[1], 
-                        n=n, sn=sn, colorful=colorful)
+        # for w in range(width-1, width):
+            # for h in range(height-1, height):
+        for color_combo in color_combos:
+            # h = w
+            rcell = RectCell(size=(width,height), csize=(width,height), 
+                base_color=color_combo[0], second_color=color_combo[1], 
+                n=n, sn=sn, colorful=colorful)
 
-                    cimg = rcell.draw(N=1)
-                    score = util.rmsdiff(img, cimg)
-                    if score <= best_score:
-                        best_img = rcell.draw(N=2)
-                        best_score = score
+            cimg = rcell.draw(N=1)
+            score = util.rmsdiff(img, cimg)
+            if score <= best_score:
+                best_img = rcell.draw(N=N) #XXX:  Draw on return only
+                best_score = score
 
         return best_img, best_score
 

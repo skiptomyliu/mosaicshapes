@@ -31,32 +31,42 @@ x - 2x1 rectcell is not centered
 
 
 class Grid():
-    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, colorful=True, unsharp_radius=2, restrain=False, enlarge=4000):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, colorful=True, unsharp_radius=2, restrain=False, enlarge=2000):
+
         self.N = 2
         self.is_diamond = diamond
         self.is_colorful = colorful
         self.imgpath = imgpath
         self.og_image = util.image_transpose_exif(Image.open(imgpath))
-        # self.og_image = self.og_image.convert("RGBA")
-
         self.width, self.height = self.og_image.size
-        # self.canvas_img = Image.new('RGBA', (self.width*self.N, self.height*self.N))
+
+        # Convert to JPEG if png
+        if imghdr.what(imgpath) == 'png':
+            self.og_image = util.png_to_jpeg(self.og_image)
+
+        if restrain:
+            self.og_image = util.restrain_img_size(self.og_image, max_pix=1024)
+
+        if enlarge:
+            self.N = int(util.get_multi(self.og_image, enlarge*2))
+
+        print self.N
+        # self.og_image = self.og_image.convert("RGBA")
 
         if self.is_diamond:
             self.og_size = self.width*self.N, self.height*self.N
             self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
             # XXX:  Use this one if we don't care about showing updates
             # self.canvas_img = Image.new('RGBA', (self.og_image.size[0]*self.N, self.og_image.size[1]*self.N))
-            self.canvas_img = util.mult_img_size(self.og_image, 2)
-            # self.canvas_img = self.canvas_img.rotate(45, expand=True, resample=Image.BICUBIC)
+            self.canvas_img = util.mult_img_size(self.og_image, self.N)
         else:
-            self.canvas_img = Image.new('RGBA', (self.og_image.size[0]*self.N, self.og_image.size[1]*self.N))
+            self.canvas_img = util.mult_img_size(self.og_image, self.N)
 
         self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(150))
 
-        # Non-VIP images get resized to 1500:
+        # # Faster processing images get resized to 1000:
         # if restrain:
-            # self.og_image = util.restrain_img_size(self.og_image, 1700)
+        #     self.og_image = util.restrain_img_size(self.og_image, 1000)
 
 
         # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
@@ -74,11 +84,8 @@ class Grid():
             # self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
 
         # print(self.og_image.size)
-        
 	       
-        # Convert to JPEG if png
-        if imghdr.what(imgpath) == 'png':
-            self.og_image = util.png_to_jpeg(self.og_image)
+        
 
         self.image_array = np.array(self.edg_img)
         # Find edges
@@ -95,11 +102,11 @@ class Grid():
         else:
             self.pixels = int(longest*.013)
 
-
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
 
         # Crop the image if our pixels doesn't divide equally.  Most cases we always crop
+        #XXX Does this work for diamonds too?
         self.og_image = self.og_image.crop((0, 0, self.cols*self.pixels, self.rows*self.pixels))
 
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
@@ -130,12 +137,11 @@ class Grid():
 
     def best_shape(self, cropped_img):
         second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
-        circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        triangle,triangle_rms = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful)
-
+        circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        triangle,triangle_rms = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
@@ -216,7 +222,7 @@ class Grid():
                     else:
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
                         ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
-                        img = ccolor.draw()
+                        img = ccolor.draw(self.N)
 
                     self.canvas_img.paste(img, (x*self.N,y*self.N))
                     self.occupy(col,row,pix_w/pix,pix_h/pix)
@@ -246,10 +252,12 @@ class Grid():
     def save(self, path, dpi=300, is_continue=False):
         if self.is_diamond:
             diamond_img = self.restore_diamond()
-            if not is_continue:
+            if not is_continue: #xxx: remove?
                 diamond_img = self.crop_diamond(diamond_img)
 
+            diamond_img = util.mult_img_size(diamond_img,1/float(self.N))
             diamond_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))    
         else:
+            self.canvas_img = util.mult_img_size(self.canvas_img,1/float(self.N))
             self.canvas_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
 

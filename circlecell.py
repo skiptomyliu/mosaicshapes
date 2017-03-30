@@ -21,7 +21,7 @@ class CircleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         width,height = img.size
@@ -50,7 +50,7 @@ class CircleCell(Cell):
                 score = util.rmsdiff(img, cimg)
 
                 if score <= best_score:
-                    best_img = ccell.draw(N=2)
+                    best_img = ccell.draw(N=N)
                     best_score = score
 
             return (best_img, best_score)
@@ -58,8 +58,6 @@ class CircleCell(Cell):
     # return the perceived hue / luminance for now
     def draw(self, N=2):
         # super sample by 2x
-
-
         #XXX:  This may need double checking
         n_width, n_height = self.width*N, self.height*N
         n_cwidth, n_cheight = self.cwidth*N, self.cheight*N
