@@ -69,7 +69,7 @@ class TriangleCell(Cell):
     # return the perceived hue / luminance for now
     def draw(self, N=2):
         # pw = 4 #(self.width/len(self.colors))/2
-        n_width, n_height = self.width*N, self.height*N
+        n_width, n_height = int(self.width*N), int(self.height*N)
         shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
         pw = util.clamp_int(pw, 1, 10000)

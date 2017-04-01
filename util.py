@@ -30,13 +30,14 @@ def restrain_img_size(im, max_pix=1700):
     return im
 
 def mult_img_size(im, scale):
-    w,h = im.size[0]*scale, im.size[1]*scale
+    w,h = int(im.size[0]*scale), int(im.size[1]*scale)
     if scale > 1:
         im = im.resize((w,h), Image.ANTIALIAS)
     else:
         im.thumbnail((w,h), Image.ANTIALIAS)
 
     return im
+
 
 
 def enlarge_img(im, max_pix=9000):

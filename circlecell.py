@@ -59,8 +59,8 @@ class CircleCell(Cell):
     def draw(self, N=2):
         # super sample by 2x
         #XXX:  This may need double checking
-        n_width, n_height = self.width*N, self.height*N
-        n_cwidth, n_cheight = self.cwidth*N, self.cheight*N
+        n_width, n_height = int(self.width*N), int(self.height*N)
+        n_cwidth, n_cheight = int(self.cwidth*N), int(self.cheight*N)
         paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper, paper.mode)
 

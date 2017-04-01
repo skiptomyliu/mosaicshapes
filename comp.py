@@ -111,7 +111,7 @@ class CompColor(Cell):
 
     # Draw rect only
     def draw_rect(self, N):
-        n_width, n_height = self.width*N, self.height*N
+        n_width, n_height = int(self.width*N), int(self.height*N)
         paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper)
         
