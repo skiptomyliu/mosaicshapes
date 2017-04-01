@@ -42,7 +42,11 @@ class Grid():
         self.width, self.height = self.og_image.size
 
 
-        self.enlarge = util.clamp_int(enlarge, max(self.og_image.size[0], self.og_image.size[1]), 99999)
+        if enlarge > 0:
+            self.enlarge = enlarge
+        else:
+            self.enlarge = max(self.og_image.size[0], self.og_image.size[1])
+        # self.enlarge = util.clamp_int(enlarge, max(self.og_image.size[0], self.og_image.size[1]), 99999)
         # self.canvas_img = util.enlarge_img(self.og_image, self.enlarge) #XXX: dont actually enlarge
         # self.width, self.height = self.canvas_img.size 
         # print self.enlarge
@@ -80,22 +84,6 @@ class Grid():
             
         self.canvas_img = util.mult_img_size(self.og_image, self.N)
         self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(150))
-
-        # VIP images get resized to 9000, in addition we sharpen the image to preserve edges
-        # if enlarge:
-        #     self.og_image = util.enlarge_img(self.og_image, enlarge)
-        #     if self.is_diamond:
-        #         self.og_size = self.og_image.size
-        #         self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
-
-        #     self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(100)) #this needs dynamic tweaking
-        # else:
-            # if self.is_diamond:
-            #     self.og_size = self.og_image.size
-            #     self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
-            # self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(unsharp_radius, percent=200))
-
-        # print(self.og_image.size)
 
         self.image_array = np.array(self.edg_img)
         # Find edges
@@ -240,19 +228,16 @@ class Grid():
         # self.canvas_img.show()
 
 
-
     def crop_diamond(self, img, N=2):
         return img.crop((
-            int(self.pixels*1.5*N),
-            int(self.pixels*1.5*N), 
-            self.og_size[0] - int(self.pixels*1.5*N), 
-            self.og_size[1] - int(self.pixels*1.5*N),
+            int(self.pixels*N),
+            int(self.pixels*N), 
+            self.og_size[0] - int(self.pixels*N), 
+            self.og_size[1] - int(self.pixels*N),
             ))
 
     def crop_grid(self, img, N=2):
         return img.crop((0, 0, self.cols*self.pixels*N, self.rows*self.pixels*N))
-
-
 
     def restore_diamond(self):
         diamond_img = self.canvas_img.rotate(-45, expand=False, resample=Image.BICUBIC)
@@ -262,7 +247,6 @@ class Grid():
             self.og_size[0] + (self.canvas_img.size[0] - self.og_size[0])/2,
             self.og_size[1] + (self.canvas_img.size[1] - self.og_size[1])/2,
             ))
-
 
     def save(self, path, dpi=300, is_continue=False):
         if self.is_diamond:
@@ -278,6 +262,5 @@ class Grid():
             if not is_continue:
                 grid_img = self.crop_grid(grid_img, self.N)
             grid_img = util.restrain_img_size(grid_img, self.enlarge)
-            # self.canvas_img = util.mult_img_size(self.canvas_img,1/float(self.N))
             grid_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))
 
