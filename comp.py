@@ -73,76 +73,60 @@ class CompColor(Cell):
 
 
     # Draws a rect and then a circle inside rect
-    def draw_circle(self):
-        width = (self.width/len(self.colors))/random.randint(2,2) # line width of circles
+    def draw_circle(self, N):
+        n_width, n_height = self.width*N, self.height*N
+        pw = (n_width/len(self.colors))/random.randint(2,2) # line width of circles
         stretch = 0 
-        N=3 # super sample
-        rect_paper = Image.new('RGBA', (self.width*N, self.height*N))
+
+        rect_paper = Image.new('RGBA', (n_width, n_height))
         rect_canvas = ImageDraw.Draw(rect_paper, rect_paper.mode)
         
-        # if len(self.colors)>=3:
-            # self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            x = width*idx*N
-            y = width*idx*N
-            ex = (self.width-width*idx)*N
-            ey = (self.height-width*idx)*N
+            x = pw*idx
+            y = pw*idx
+            ex = (n_width-pw*idx)
+            ey = (n_height-pw*idx)
             rect_paper.paste(color, [x,y, ex, ey])
 
-        circle_paper = Image.new('RGBA', (self.width*N, self.height*N))
+        circle_paper = Image.new('RGBA', (n_width, n_height))
         circle_canvas = ImageDraw.Draw(circle_paper, circle_paper.mode)
 
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
 
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
-        # self.colors = list(reversed(self.colors))
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            x = (width*idx+stretch)*N + width/2*(len(self.base_color)-1)*N
-            y = width*idx*N #+ width*(len(self.base_color)-1.5)*N
-            ex = (self.width-width*idx-stretch)*N - width/2*(len(self.base_color)-1)*N
-            ey = (self.height-width*idx)*N #- width*(len(self.base_color)-1.5)*N
+            x = (pw*idx+stretch) + pw/2*(len(self.base_color)-1)
+            y = pw*idx #+ width*(len(self.base_color)-1.5)*N
+            ex = (n_width-pw*idx-stretch) - pw/2*(len(self.base_color)-1)
+            ey = (n_height-pw*idx) #- width*(len(self.base_color)-1.5)*N
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
         # circle_paper = circle_paper.rotate(45*random.randint(0, 6))
         circle_paper = circle_paper.rotate(random.randint(0, 359))
         rect_paper.paste(circle_paper,(0,0), circle_paper)
 
-        del rect_canvas
-        del circle_canvas
-        rect_paper.thumbnail((self.width, self.height)) 
+        # rect_paper.thumbnail((self.width, self.height)) 
         return rect_paper
 
     # Draw rect only
-    def draw_rect(self):
-        paper = Image.new('RGBA', (self.width, self.height))
+    def draw_rect(self, N):
+        n_width, n_height = int(self.width*N), int(self.height*N)
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper)
-
-        width = (self.width/len(self.colors))/2
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
+        
+        pw = (n_width/len(self.colors))/2
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            paper.paste(color, [width*idx,width*idx, self.width-width*idx, self.height-width*idx])
-        # paper.show()
+            paper.paste(color, [pw*idx, pw*idx, n_width-pw*idx, n_height-pw*idx])
 
         return paper
 
-
-    def draw(self):
-        if random.randrange(0,2):
-            shape = self.draw_circle()
+    def draw(self, N=2):
+        if random.getrandbits(1) and False: #XXX: Change to faster
+            shape = self.draw_circle(N)
         else:
-            shape = self.draw_rect()
+            shape = self.draw_rect(N)
 
         return shape
 

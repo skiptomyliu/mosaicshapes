@@ -25,55 +25,49 @@ class RectCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[base_color, second_color], [second_color, base_color]]
 
         width,height = img.size
-        best_rcell = None
+        best_img = None
         best_score = 10000
 
         w = width 
         h = height
 
         # XXX: will cause probs if image size is less than 10 pixels
-        for w in range(width-1, width):
-            for h in range(height-1, height):
+        # for w in range(width-1, width):
+            # for h in range(height-1, height):
+        for color_combo in color_combos:
+            # h = w
+            rcell = RectCell(size=(width,height), csize=(width,height), 
+                base_color=color_combo[0], second_color=color_combo[1], 
+                n=n, sn=sn, colorful=colorful)
 
-                for color_combo in color_combos:
-                    for i in range(2):
-                        h = w
-                        rcell = RectCell(size=(width,height), csize=(w,h), 
-                            base_color=color_combo[0], second_color=color_combo[1], 
-                            n=n, sn=sn, colorful=colorful)
+            cimg = rcell.draw(N=1)
+            score = util.rmsdiff(img, cimg)
+            if score <= best_score:
+                best_img = rcell.draw(N=N) #XXX:  Draw on return only
+                best_score = score
 
-                        cimg = rcell.draw()
-                        score = util.rmsdiff(img, cimg)
-                        if score <= best_score:
-                            best_rcell = rcell
-                            best_score = score
-
-        return best_rcell
+        return best_img, best_score
 
     # return the perceived hue / luminance for now
-    def draw(self):
-        paper = Image.new('RGBA', (self.width, self.height))
+    def draw(self, N=2):
+        n_width, n_height = int(self.width*N), int(self.height*N)
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper)
 
-        pw = 4#(self.width/len(self.colors))/3
-        shortest = self.width if self.width < self.height else self.height
+        # pw = 4 #(self.width/len(self.colors))/3
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-            
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
-
+        # print pw
+        # import pdb; pdb.set_trace()
         """
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx,pw*idx, self.width-pw*idx, self.height-pw*idx])
+            paper.paste(color, [pw*idx, pw*idx, n_width-pw*idx, n_height-pw*idx])
 
         """
         draw rect
@@ -86,8 +80,8 @@ class RectCell(Cell):
             # sy = int(round(len(self.colors)*pw/2))
             sy = int(round(len(self.colors_secondary)*pw))
             sy += (pw*idx)
-            ex = self.width - sx
-            ey = self.height - sy
+            ex = n_width - sx
+            ey = n_height - sy
             paper.paste(color, [sx, sy, ex, ey])
 
         return paper

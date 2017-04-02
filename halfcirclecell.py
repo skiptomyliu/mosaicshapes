@@ -20,12 +20,12 @@ class HalfCircleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         quads = [Direction.top, Direction.right, Direction.bottom, Direction.left]
 
-        best_hcell = None
+        best_img = None
         best_score = 10000
         w,h = img.size
         for quad in quads:
@@ -34,49 +34,45 @@ class HalfCircleCell(Cell):
                     base_color=color_combo[0], second_color=color_combo[1], 
                     shrink=0, n=n, sn=sn, direction=quad, colorful=colorful)
 
-                himg = hcell.draw()
+                himg = hcell.draw(N=1)
                 score = util.rmsdiff(img, himg)
                 if score <= best_score:
-                    best_hcell = hcell
+                    best_img = hcell.draw(N=N) #can be improved... draw on return only!!!!
                     best_score = score
 
-        return best_hcell
+        return best_img, best_score
 
-    def draw(self):
+    def draw(self, N=2):
         # super sample by 2x
-        N=3
-        paper = Image.new('RGBA', (self.width*N, self.height*N))
+        n_width, n_height = int(self.width*N), int(self.height*N)
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        shortest = self.width if self.width < self.height else self.height
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        pw = util.clamp_int(pw, 1, 10000)
 
         """
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx*N,pw*idx*N, (self.width-pw*idx)*N, (self.height-pw*idx)*N])
+            paper.paste(color, [pw*idx,pw*idx, (n_width-pw*idx), (n_height-pw*idx)])
 
         """
         draw pie slices
         """
-        x_offset = N*(pw*(len(self.colors_secondary))+self.shrink)
-        y_offset = N*(pw*(len(self.colors_secondary))+self.shrink)
+        x_offset = 0#len(self.colors_secondary)*pw#N*(pw*(len(self.colors_secondary))+self.shrink)
+        y_offset = x_offset #N*(pw*(len(self.colors_secondary))+self.shrink)
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            aidx = len(self.colors_secondary) + idx
+            aidx = 0#len(self.colors_secondary) + idx
             sdeg, edeg = (180, 0)
-            sx = aidx*N + pw*idx*N
-            ex = self.width*N
-            ex-= (pw*idx*N)
-            sy = aidx*N + pw*idx*N
-            ey = self.height*N 
-            ey-= pw*idx*N*2.5 + aidx*N*2
+            sx = aidx + pw*idx + x_offset
+            ex = n_width - x_offset
+            ex-= (pw*idx)
+            sy = aidx + pw*idx
+            ey = n_height
+            ey-= pw*idx*2.5 + aidx*2
             canvas.pieslice([sx,sy,ex,ey], sdeg, edeg, fill=color, outline=None)
 
         if self.direction == Direction.top:
@@ -89,7 +85,7 @@ class HalfCircleCell(Cell):
             paper = paper.rotate(90)
 
         del canvas
-        paper.thumbnail((self.width, self.height))
+        # paper.thumbnail((self.width, self.height))
 
         return paper
 

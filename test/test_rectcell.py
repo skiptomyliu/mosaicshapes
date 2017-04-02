@@ -42,7 +42,7 @@ class TestRectCell(unittest.TestCase):
 
     def test_draw(self):
         ccell = RectCell(size=(200,100), csize=(100,100), base_color=(100,100,100), 
-            second_color=(200,200,200), n=1, sn=2, colorful=False)
+            second_color=(200,200,200), n=2, sn=1, colorful=False)
         ccell.draw().show()
         ccell = RectCell(size=(200,200), csize=(200,200), base_color=(100,100,100), 
             second_color=(200,200,200), n=3, sn=2)

@@ -15,6 +15,12 @@ def rmsdiff(im1, im2):
 
     return rms
 
+def get_multi(im, min_size):
+    w,h = im.size
+    if w > h:
+        return float(min_size)/w
+    return float(min_size)/h
+
 def restrain_img_size(im, max_pix=1700):
     max_size = (max_pix, max_pix)
     w,h = im.size
@@ -23,8 +29,18 @@ def restrain_img_size(im, max_pix=1700):
 
     return im
 
+def mult_img_size(im, scale):
+    w,h = int(im.size[0]*scale), int(im.size[1]*scale)
+    if scale > 1:
+        im = im.resize((w,h), Image.ANTIALIAS)
+    else:
+        im.thumbnail((w,h), Image.ANTIALIAS)
+
+    return im
+
+
+
 def enlarge_img(im, max_pix=9000):
-    max_size = (max_pix, max_pix)
     w,h = im.size
     if w < max_pix and h < max_pix:
         if w > h:
@@ -118,8 +134,6 @@ def average_color(image, rect=None):
             g+=cg
             b+=cb
 
-    # if (0,0,0) == (r/area, g/area, b/area):
-
     return (r/area, g/area, b/area)
 
 
@@ -131,6 +145,7 @@ def adjacent_colors((r, g, b), d=DEG30): # Assumption: r, g, b in [0, 255]
 
     adjacent = [map(lambda x: int(round(x*255)), colorsys.hls_to_rgb(hi, l, s))
             for hi in h] # H'LS -> new RGB
+
 
     adjacent[0] = tuple(adjacent[0])
     adjacent[1] = tuple(adjacent[1])

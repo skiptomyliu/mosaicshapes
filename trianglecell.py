@@ -1,7 +1,7 @@
 
 
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 import numpy as np
 from colorpalette import ColorPalette
 import util
@@ -14,6 +14,8 @@ from cell import Cell, Quadrant
 - multiple boxes for grid again
 - choosing between triangle and pie slice should measure against "closeness" to og_image.
 
+
+xxx: 3/25, shrink is not implemented
 """
 
 class TriangleCell(Cell):
@@ -26,6 +28,7 @@ class TriangleCell(Cell):
 
         self.colors = Cell.gen_colors(base_color, n, colorful)
         self.colors_secondary = Cell.gen_colors(second_color,sn, colorful)
+
         self.quadrant = quadrant
         self.shrink = shrink
 
@@ -42,12 +45,12 @@ class TriangleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[second_color,base_color], [base_color, second_color]]
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 
         w,h=img.size
-        best_trect = None
+        best_img = None
         best_score = 10000
         for quad in quads:
             for color_combo in color_combos:
@@ -55,56 +58,62 @@ class TriangleCell(Cell):
                     base_color=color_combo[0], second_color=color_combo[1], 
                     shrink=0, n=n, sn=sn, quadrant=quad, colorful=colorful)
 
-                timg = trect.draw()
+                timg = trect.draw(N=1)
                 score = util.rmsdiff(img, timg)
                 if score <= best_score:
-                    best_trect = trect
+                    best_img = trect.draw(N=N)
                     best_score = score
 
-        return best_trect
+        return best_img, best_score
 
     # return the perceived hue / luminance for now
-    def draw(self):
-
-        N=2
+    def draw(self, N=2):
         # pw = 4 #(self.width/len(self.colors))/2
-        shortest = self.width if self.width < self.height else self.height
+        n_width, n_height = int(self.width*N), int(self.height*N)
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.5 * .5 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-        paper = Image.new('RGBA', (self.width*N, self.height*N))
+        pw = util.clamp_int(pw, 1, 10000)
+        # pw = 6
+        # print pw 
+        # import pdb; pdb.set_trace()
+        # pw = 1
+        # print pw
+        # import pdb; pdb.set_trace()
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper, paper.mode)
-
-        # if random.randrange(2):
-            # self.colors_secondary = list(reversed(self.colors_secondary))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
 
         """
         draw border square
         """
-        width = pw
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [width*idx*N, width*idx*N, (self.width-width*idx)*N, (self.height-width*idx)*N])
+            paper.paste(color, [pw*idx, pw*idx, (n_width-pw*idx), (n_height-pw*idx)])
 
         """
         draw triangles
         """
 
-        x_offset = pw*(len(self.colors_secondary))+self.shrink
-        y_offset = pw*(len(self.colors_secondary))+self.shrink
+        x_offset = pw*(len(self.colors_secondary))
+        y_offset = pw*(len(self.colors_secondary))
+
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            width,height = self.width-pw*idx, self.height-pw*idx
-            sx,sy = (pw*idx*pw), (pw*idx + y_offset)
+            width,height = n_width-pw*idx, n_height-pw*idx
+            sx = (pw*idx + x_offset)
+            sy = (pw*idx + y_offset)
 
-            sx = int(round(len(self.colors)*pw/2.0))
-            sx += (pw*idx)
-            ex = self.width - sx
-
-            coord = [((sx + pw*idx*(self.width/float(self.height))*1.5)*N, sy*N), (ex*N, sy*N), (ex*N, (height-sy-idx*pw*(self.height/self.width))*N)]
-
+            # sx = int(round(len(self.colors)*pw/2.0))
+            # sx += (pw*idx)
+            ex = n_width - sx
+            coord = [(sx + pw*idx), sy, 
+                    (ex, sy), 
+                    (ex, (height-sy-idx))]        
             canvas.polygon(coord, fill=color)
-        # import pdb; pdb.set_trace()
+
+            # paper.show()
+            # print coord
+            # import pdb; pdb.set_trace()
+
+        # paper=ImageOps.mirror(paper)
 
         if self.quadrant == Quadrant.top_right:
             pass
@@ -115,9 +124,8 @@ class TriangleCell(Cell):
         elif self.quadrant ==  Quadrant.bottom_left:
             paper = paper.rotate(180)
         
-        # import pdb; pdb.set_trace()
         del canvas
-        paper.thumbnail((self.width, self.height)) 
+        # paper.thumbnail((self.width, self.height)) 
 
         return paper
 

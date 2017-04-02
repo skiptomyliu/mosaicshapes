@@ -21,11 +21,11 @@ class CircleCell(Cell):
 
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True):
+    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
         color_combos = [[second_color,base_color], [base_color, second_color]]
 
         width,height = img.size
-        best_ccell = None
+        best_img = None
         best_score = 10000
 
         w = width
@@ -46,48 +46,46 @@ class CircleCell(Cell):
                     ccell = CircleCell(size=(width,height), csize=(width,d), 
                         base_color=color_combo[0], second_color=color_combo[1], 
                         n=n, sn=sn, colorful=colorful)
-                cimg = ccell.draw()
+                cimg = ccell.draw(N=1)
                 score = util.rmsdiff(img, cimg)
+
                 if score <= best_score:
-                    best_ccell = ccell
+                    best_img = ccell.draw(N=N)
                     best_score = score
 
-            return best_ccell
+            return (best_img, best_score)
 
     # return the perceived hue / luminance for now
-    def draw(self):
+    def draw(self, N=2):
         # super sample by 2x
-        N=3
-        paper = Image.new('RGBA', (self.width*N, self.height*N))
+        #XXX:  This may need double checking
+        n_width, n_height = int(self.width*N), int(self.height*N)
+        n_cwidth, n_cheight = int(self.cwidth*N), int(self.cheight*N)
+        paper = Image.new('RGBA', (n_width, n_height))
         canvas = ImageDraw.Draw(paper, paper.mode)
 
-        pw = 4 #(self.width/len(self.colors))/2
-        shortest = self.width if self.width < self.height else self.height
+        # pw = 4 #(self.width/len(self.colors))/2
+        shortest = n_width if n_width < n_height else n_height
         pw = int(round(.2 * shortest * 1/(len(self.colors) + len(self.colors_secondary))))
-
-        # if random.randrange(2):
-        #     self.colors = list(reversed(self.colors))
-
-        # if len(self.colors)>=3:
-        #     self.colors[1], self.colors[2] = self.colors[2], self.colors[1]
+        pw = util.clamp_int(pw, 1, 10000)
 
         """
         draw border square
         """
         for idx, color in enumerate(self.colors_secondary):
-            paper.paste(color, [pw*idx*N,pw*idx*N, (self.width-pw*idx)*N, (self.height-pw*idx)*N])
+            paper.paste(color, [pw*idx, pw*idx, n_width-pw*idx, n_height-pw*idx])
 
         """
         draw circles
         """
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            sx = (self.width-self.cwidth)/2
-            sy = (self.height-self.cheight)/2
-            canvas.ellipse([(sx + (pw*idx))*N, (sy+(pw*idx))*N, (sx+(self.cwidth-pw*idx))*N, (sy+(self.cheight-pw*idx))*N], fill=color)
+            sx = (n_width-n_cwidth)/2
+            sy = (n_height-n_cheight)/2
+            canvas.ellipse([(sx + (pw*idx)), (sy+(pw*idx)), (sx+(n_cwidth-pw*idx)), (sy+(n_cheight-pw*idx))], fill=color)
 
         del canvas
-        paper.thumbnail((self.width, self.height)) 
+        # paper.thumbnail((self.width, self.height)) 
 
         return paper
 
