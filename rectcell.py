@@ -47,10 +47,10 @@ class RectCell(Cell):
             cimg = rcell.draw(N=1)
             score = util.rmsdiff(img, cimg)
             if score <= best_score:
-                best_img = rcell.draw(N=N) #XXX:  Draw on return only
+                best_img = rcell#.draw(N=N) #XXX:  Draw on return only
                 best_score = score
 
-        return best_img, best_score
+        return best_img.draw(N=N), best_score
 
     # return the perceived hue / luminance for now
     def draw(self, N=2):

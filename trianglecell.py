@@ -61,10 +61,10 @@ class TriangleCell(Cell):
                 timg = trect.draw(N=1)
                 score = util.rmsdiff(img, timg)
                 if score <= best_score:
-                    best_img = trect.draw(N=N)
+                    best_img = trect#.draw(N=N)
                     best_score = score
 
-        return best_img, best_score
+        return best_img.draw(N=N), best_score
 
     # return the perceived hue / luminance for now
     def draw(self, N=2):

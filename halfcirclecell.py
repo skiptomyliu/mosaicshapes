@@ -37,10 +37,10 @@ class HalfCircleCell(Cell):
                 himg = hcell.draw(N=1)
                 score = util.rmsdiff(img, himg)
                 if score <= best_score:
-                    best_img = hcell.draw(N=N) #can be improved... draw on return only!!!!
+                    best_img = hcell#.draw(N=N) #can be improved... draw on return only!!!!
                     best_score = score
 
-        return best_img, best_score
+        return best_img.draw(N=N), best_score
 
     def draw(self, N=2):
         # super sample by 2x
