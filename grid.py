@@ -46,30 +46,32 @@ class Grid():
             self.enlarge = enlarge
         else:
             self.enlarge = max(self.og_image.size[0], self.og_image.size[1])
-        # self.enlarge = util.clamp_int(enlarge, max(self.og_image.size[0], self.og_image.size[1]), 99999)
-        # self.canvas_img = util.enlarge_img(self.og_image, self.enlarge) #XXX: dont actually enlarge
-        # self.width, self.height = self.canvas_img.size 
-        # print self.enlarge
 
         # Convert to JPEG if png
         if imghdr.what(imgpath) == 'png':
             self.og_image = util.png_to_jpeg(self.og_image)
 
+        # If our enlarge is less than the resolution of our input, we set working res
+        #  as the enlarge
+        if self.enlarge < max(self.og_image.size[0], self.og_image.size[1]):
+            working_res = self.enlarge
+
         if working_res:
-            print "*"*10
-            print "working res"
-            print "*"*10
-            print self.og_image
+            # print "*"*10
+            # print "working res"
+            # print "*"*10
+            # print self.og_image
             self.og_image = util.restrain_img_size(self.og_image, max_pix=working_res)
-            print self.og_image
+            # print self.og_image
+
+        
 
 
 
         # self.canvas_img = util.enlarge_img(self.og_image, self.enlarge*2) # dont actually enlarge, get size
         self.N = util.get_multi(self.og_image, self.enlarge*2)
-        print self.N
+        # print self.N
         # print self.canvas_img
-
         # print  self.width, self.height
         # self.og_image = self.og_image.convert("RGBA")
         if self.is_diamond:
@@ -230,10 +232,10 @@ class Grid():
 
     def crop_diamond(self, img, N=2):
         return img.crop((
-            int(self.pixels*N),
-            int(self.pixels*N), 
-            self.og_size[0] - int(self.pixels*N), 
-            self.og_size[1] - int(self.pixels*N),
+            int(self.pixels*1.5*N),
+            int(self.pixels*1.5*N), 
+            self.og_size[0] - int(self.pixels*1.5*N), 
+            self.og_size[1] - int(self.pixels*1.5*N),
             ))
 
     def crop_grid(self, img, N=2):
