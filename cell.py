@@ -1,10 +1,11 @@
 
 import util
 import numpy as np
+from numpy.random import randint
 from enum import Enum
 import abc
 import random
-from random import shuffle, randint
+from random import shuffle
 
 class Quadrant(Enum):
     top_left = 1
@@ -39,8 +40,10 @@ class Cell(object):
         complement_colors = [util.complement(c[0],c[1],c[2]) for c in adj_colors]
 
         # shuffle(complement_colors)
-        c1 = Cell.gen_colors_og(adj_colors[0], random.randint(1,1))
-        c2 = Cell.gen_colors_og(adj_colors[1], random.randint(1,1))
+        c1 = Cell.gen_colors_og(adj_colors[0], 1)
+        c2 = Cell.gen_colors_og(adj_colors[1], 1)
+        # c1 = Cell.gen_colors_og(adj_colors[0], random.randint(1,1))
+        # c2 = Cell.gen_colors_og(adj_colors[1], random.randint(1,1))
 
         # option for non complement
         all_colors = c1 + c2 #+ complement_colors
@@ -86,19 +89,9 @@ class Cell(object):
                 color = tuple(color.astype(int))
                 colors.append(color)
 
-            # if random.randrange(2):
-
-                
-            # if random.randrange(2):
-            #     colors = list(reversed(colors))
-            
-            # if len(colors)>=3:
-            #     colors[1], colors[2] = colors[2], colors[1]
-
 
             if not random.getrandbits(1):
                 shuffle(colors)
-                # colors = list(reversed(colors))
             else:
                 if len(colors)>=3:
                     colors[1], colors[2] = colors[2], colors[1]

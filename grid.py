@@ -106,9 +106,9 @@ class Grid():
         self.rows = (self.height/self.pixels)
 
         # Crop the image if our pixels doesn't divide equally.  Most cases we always crop
+        # will prevent out of bounds processing on cells
         #XXX Does this work for diamonds too?
         self.og_image = self.og_image.crop((0, 0, self.cols*self.pixels, self.rows*self.pixels))
-
         self.grid_status = np.zeros([self.width/self.pixels, self.height/self.pixels])
 
     # By default we occupy one cell at a time.  x_total is number of additional horizontal
