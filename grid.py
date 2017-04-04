@@ -10,9 +10,11 @@ from halfcirclecell import HalfCircleCell
 from skimage.color import rgb2grey
 from skimage import feature
 import numpy as np
+from numpy.random import randint
 from colorpalette import ColorPalette
 import random 
 import imghdr
+from gencolor import GenColor
 
 """
 
@@ -62,7 +64,7 @@ class Grid():
             # print "*"*10
             # print self.og_image
             self.og_image = util.restrain_img_size(self.og_image, max_pix=working_res)
-            # print self.og_image
+
 
         
 
@@ -71,8 +73,7 @@ class Grid():
         # self.canvas_img = util.enlarge_img(self.og_image, self.enlarge*2) # dont actually enlarge, get size
         self.N = util.get_multi(self.og_image, self.enlarge*2)
         # print self.N
-        # print self.canvas_img
-        # print  self.width, self.height
+
         # self.og_image = self.og_image.convert("RGBA")
         if self.is_diamond:
             self.og_size = self.og_image.size[0]*self.N, self.og_image.size[1]*self.N #self.canvas_img.size
@@ -137,9 +138,14 @@ class Grid():
 
     def best_shape(self, cropped_img):
         second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
+
+        base_colors = GenColor.gen_colors(base_color, 4, self.is_colorful)
+        second_colors = GenColor.gen_colors(second_color, 2, self.is_colorful)
+        
+
         circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
-        triangle,triangle_rms = TriangleCell.find_best(cropped_img, n=4, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         
@@ -168,9 +174,9 @@ class Grid():
                     pix_w, pix_h = (pix, pix)
 
                     # create rect coords:
-                    # if random.randint(0,50)==1:
+                    # if randint(0,50)==1:
                     #     pix_w, pix_h = (pix*2, pix*1)
-                    # elif random.randint(0,50)==1:
+                    # elif randint(0,50)==1:
                     #     pix_w, pix_h = (pix, pix*2)
                     # else:
                     #     pix_w, pix_h = (pix, pix)
@@ -188,7 +194,8 @@ class Grid():
 
                         # First find doubles
                         rect_coords2 = rect_coords[:]
-                        if random.randint(0,1):
+
+                        if randint(0,1):
                             """
                             vertical 
                             """
