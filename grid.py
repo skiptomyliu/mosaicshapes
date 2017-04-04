@@ -143,12 +143,16 @@ class Grid():
         second_colors = GenColor.gen_colors(second_color, 2, self.is_colorful)
         
 
-        circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
-        rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        circle,circle_rms = CircleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
+        rect,rect_rms = RectCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
+        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, base_color=base_colors, second_color=second_colors, N=self.N)
+
+        # circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        # rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         # pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
-        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        # halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
