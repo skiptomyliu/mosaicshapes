@@ -40,9 +40,8 @@ class GenColor(object):
         shuffle(all_colors)
 
         # all_colors.insert(randint(1,len(all_colors)-1), complement_colors[0])
-        if randint(0,100)>30:
-            all_colors.insert(randint(1,len(all_colors)-1), complement_colors[randint(0,1)])
-
+        if randint(0,101)>30:
+            all_colors.insert(randint(1,len(all_colors)), complement_colors[randint(0,2)])
 
         return all_colors
 

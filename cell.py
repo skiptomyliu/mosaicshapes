@@ -1,11 +1,11 @@
 
 import util
 import numpy as np
-from numpy.random import randint
+# from numpy.random import randint
 from enum import Enum
 import abc
 import random
-from random import shuffle
+from random import shuffle, randint
 
 class Quadrant(Enum):
     top_left = 1
@@ -59,7 +59,7 @@ class Cell(object):
         shuffle(all_colors)
 
         # all_colors.insert(randint(1,len(all_colors)-1), complement_colors[0])
-        if randint(0,100)>30:
+        if randint(0,101)>30:
             all_colors.insert(randint(1,len(all_colors)-1), complement_colors[randint(0,1)])
 
 

@@ -146,7 +146,8 @@ class Grid():
         circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
-        pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
+        pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
+        # pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         
         shapes = [circle, rect, triangle, pie, halfc]
@@ -195,7 +196,7 @@ class Grid():
                         # First find doubles
                         rect_coords2 = rect_coords[:]
 
-                        if randint(0,1):
+                        if randint(0,2): # 0 or 1
                             """
                             vertical 
                             """
