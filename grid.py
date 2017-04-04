@@ -75,6 +75,7 @@ class Grid():
         # print self.N
 
         # self.og_image = self.og_image.convert("RGBA")
+
         if self.is_diamond:
             self.og_size = self.og_image.size[0]*self.N, self.og_image.size[1]*self.N #self.canvas_img.size
             self.og_image = self.og_image.rotate(45, expand=True, resample=Image.BICUBIC)
@@ -147,13 +148,16 @@ class Grid():
         rect,rect_rms = RectCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
-        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, base_color=base_colors, second_color=second_colors, N=self.N)
+        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
 
+        # missing triangles
         # circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         # rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         # pie,pie_rms = PieSliceCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         # halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
-        
+        # triangle commented out missing
+
+        # Order matters!  shape and rms list must match same order
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
         shape = shapes[rms_list.index(min(rms_list))]

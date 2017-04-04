@@ -3,6 +3,7 @@
 import numpy as np
 from numpy.random import randint
 from random import shuffle
+import random
 import util
 
 class GenColor(object):
