@@ -23,7 +23,7 @@ class PieSliceCell(Cell):
     @staticmethod
     def find_best(img, base_colors=[], second_colors=[], N=2):
         color_combos = [[second_colors,base_colors], [base_colors, second_colors]]
-        color_combos = [[second_colors,base_colors]]
+        # color_combos = [[second_colors,base_colors]]
         
         quads = [Quadrant.top_left, Quadrant.top_right, Quadrant.bottom_left, Quadrant.bottom_right]
 

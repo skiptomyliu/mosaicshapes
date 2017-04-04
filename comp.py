@@ -75,7 +75,7 @@ class CompColor(Cell):
 
     # Draws a rect and then a circle inside rect
     def draw_circle(self, N):
-        n_width, n_height = self.width*N, self.height*N
+        n_width, n_height = int(self.width*N), int(self.height*N)
         # pw = (n_width/len(self.colors))/randint(2,2) # line width of circles
         pw = (n_width/len(self.colors))/2 # line width of circles
         stretch = 0 
@@ -105,7 +105,7 @@ class CompColor(Cell):
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
         # circle_paper = circle_paper.rotate(45*random.randint(0, 6))
-        circle_paper = circle_paper.rotate(randint(0, 359))
+        circle_paper = circle_paper.rotate(randint(0, 360))
         rect_paper.paste(circle_paper,(0,0), circle_paper)
 
         # rect_paper.thumbnail((self.width, self.height)) 
@@ -125,7 +125,7 @@ class CompColor(Cell):
         return paper
 
     def draw(self, N=2):
-        if random.getrandbits(1) and False: #XXX: Change to faster
+        if randint(0,2): #XXX: Change to faster
             shape = self.draw_circle(N)
         else:
             shape = self.draw_rect(N)

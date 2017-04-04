@@ -160,6 +160,7 @@ class Grid():
         # Order matters!  shape and rms list must match same order
         shapes = [circle, rect, triangle, pie, halfc]
         rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
+
         shape = shapes[rms_list.index(min(rms_list))]
 
         return shape
