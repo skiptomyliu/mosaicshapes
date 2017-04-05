@@ -143,7 +143,6 @@ class Grid():
         base_colors = GenColor.gen_colors(base_color, 4, self.is_colorful)
         second_colors = GenColor.gen_colors(second_color, 2, self.is_colorful)
         
-
         circle,circle_rms = CircleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         rect,rect_rms = RectCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
         triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
