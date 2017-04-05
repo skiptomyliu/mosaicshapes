@@ -63,17 +63,18 @@ class Grid():
             # print "working res"
             # print "*"*10
             # print self.og_image
-            self.og_image = util.restrain_img_size(self.og_image, max_pix=working_res)
-
-
-        
-
+            if working_res < self.og_image.size[0] and working_res < self.og_image.size[1]:
+                self.og_image = util.restrain_img_size(self.og_image, max_pix=working_res)                
+            else:
+                self.og_image = util.enlarge_img(self.og_image, max_pix=working_res)
+            
+            # print self.og_image
 
 
         # self.canvas_img = util.enlarge_img(self.og_image, self.enlarge*2) # dont actually enlarge, get size
         self.N = util.get_multi(self.og_image, self.enlarge*2)
         # print self.N
-
+        # print working_res
         # self.og_image = self.og_image.convert("RGBA")
 
         if self.is_diamond:
@@ -87,8 +88,7 @@ class Grid():
             self.og_size = self.width, self.height
             
         self.canvas_img = util.mult_img_size(self.og_image, self.N)
-        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(200))
-
+        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(2, percent=300))
         self.image_array = np.array(self.edg_img)
         # Find edges
         self.img_edges = feature.canny(rgb2grey(self.image_array), sigma=2) #, low_threshold=10, high_threshold=20)
@@ -140,15 +140,19 @@ class Grid():
     def best_shape(self, cropped_img):
         second_color,base_color = ColorPalette.quantize_img(cropped_img, 2)
 
-        base_colors = GenColor.gen_colors(base_color, 4, self.is_colorful)
-        second_colors = GenColor.gen_colors(second_color, 2, self.is_colorful)
-        
-        circle,circle_rms = CircleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
-        rect,rect_rms = RectCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
-        triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
-        pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
-        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, base_colors=base_colors, second_colors=second_colors, N=self.N)
+        base_colors_4 = GenColor.gen_colors(base_color, 4, self.is_colorful)
+        base_colors_3 = GenColor.gen_colors(base_color, 3, self.is_colorful)
+        base_colors_2 = GenColor.gen_colors(base_color, 2, self.is_colorful)
+    
+        # second_colors_3 = GenColor.gen_colors(second_color, 3, self.is_colorful)        
+        second_colors_2 = GenColor.gen_colors(second_color, 2, self.is_colorful)
 
+        
+        circle,circle_rms = CircleCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
+        rect,rect_rms = RectCell.find_best(cropped_img, base_colors=base_colors_2, second_colors=second_colors_2, N=self.N)
+        pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
+        halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
+        triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors_4, second_colors=second_colors_2, N=self.N)
         # missing triangles
         # circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         # rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)

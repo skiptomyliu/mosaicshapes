@@ -21,7 +21,7 @@ class HalfCircleCell(Cell):
     @staticmethod
     def find_best(img, base_colors=[], second_colors=[], N=2):
         color_combos = [[second_colors,base_colors], [base_colors, second_colors]]
-        color_combos = [[second_colors,base_colors]]
+        # color_combos = [[second_colors,base_colors]]
 
         quads = [Direction.top, Direction.right, Direction.bottom, Direction.left]
 
