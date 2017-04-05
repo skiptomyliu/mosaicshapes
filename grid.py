@@ -87,7 +87,7 @@ class Grid():
             self.og_size = self.width, self.height
             
         self.canvas_img = util.mult_img_size(self.og_image, self.N)
-        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(150))
+        self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(200))
 
         self.image_array = np.array(self.edg_img)
         # Find edges
