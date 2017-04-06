@@ -7,12 +7,12 @@ from math import sqrt
 import numpy as np
 
 def rmsdiff(im1, im2):
+    im1 = im1.convert("RGBA")
     im2 = im2.convert("RGBA")
     diff = ImageChops.difference(im1, im2)
     h = diff.histogram()
 
     blah = np.array(h, dtype=int)
-    # import pdb; pdb.set_trace()
     okay = (np.arange(1024)%256)**2
     rms = sqrt(np.sum(blah*okay)/float(im1.size[0] * im1.size[1]))
 
@@ -20,7 +20,6 @@ def rmsdiff(im1, im2):
     # sum_of_squares = sum(sq)
     # rms = sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
 
-    # print rms1,rms
     return rms
 
 def get_multi(im, min_size):

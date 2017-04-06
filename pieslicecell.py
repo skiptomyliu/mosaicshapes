@@ -71,18 +71,17 @@ class PieSliceCell(Cell):
         # self.shrink=3
 
         x_offset = (pw*(len(self.colors_secondary)/2)+self.shrink)
-        y_offset = x_offset #(pw*(len(self.colors_secondary)/2)+self.shrink)
+        y_offset = (pw*(len(self.colors_secondary)/2)+self.shrink)
         for idx, color in enumerate(self.colors):
-            pidx = pw*idx
             color = int(color[0]),int(color[1]),int(color[2])
             aidx = len(self.colors_secondary) + idx +1
             sdeg, edeg = (180, 270)
-            sx = pidx*1.5+x_offset#+(aidx*2*N)
+            sx = pw*idx*1.5+x_offset#+(aidx*2*N)
             ex = (n_width*2-pw*aidx)
-            ex-= (pidx*2)
-            sy = pidx+y_offset #+(aidx*2*N)
+            ex-= (pw*idx*2)
+            sy = pw*idx+y_offset #+(aidx*2*N)
             ey = (n_height*2-pw*aidx)
-            ey-= pidx*1.5
+            ey-= pw*idx*1.5
             canvas.pieslice([sx,sy,ex,ey], sdeg, edeg, fill=color, outline=None)
 
         if self.quadrant == Quadrant.top_right:

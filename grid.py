@@ -75,6 +75,7 @@ class Grid():
         self.N = util.get_multi(self.og_image, self.enlarge*2)
         # print self.N
         # print working_res
+        # self.og_image = self.og_image.convert("RGBA")
 
         if self.is_diamond:
             self.og_size = self.og_image.size[0]*self.N, self.og_image.size[1]*self.N #self.canvas_img.size
@@ -146,7 +147,7 @@ class Grid():
         # second_colors_3 = GenColor.gen_colors(second_color, 3, self.is_colorful)        
         second_colors_2 = GenColor.gen_colors(second_color, 2, self.is_colorful)
 
-        cropped_img = cropped_img.convert("RGBA")
+        
         circle,circle_rms = CircleCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
         rect,rect_rms = RectCell.find_best(cropped_img, base_colors=base_colors_2, second_colors=second_colors_2, N=self.N)
         pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
@@ -161,7 +162,7 @@ class Grid():
 
         # Order matters!  shape and rms list must match same order
         shapes = [circle, rect, triangle, pie, halfc]
-        rms_list = [circle_rms, rect_rms, triangle_rms, pie_rms, halfc_rms]
+        rms_list = [circle_rms, rect_rms, triangle_rms-10, pie_rms-10, halfc_rms]
 
         shape = shapes[rms_list.index(min(rms_list))]
 
@@ -203,7 +204,7 @@ class Grid():
                     # If pixel has edge:
                     if np.any(edges_seg) and len(np.where(edges_seg)[1]):
                         cropped_img = self.og_image.crop(rect_coords)
-                        cropped_img = cropped_img.convert("RGBA")
+
                         # First find doubles
                         rect_coords2 = rect_coords[:]
 
@@ -223,15 +224,18 @@ class Grid():
                             pix_w*=2
 
                         cropped_img2 = self.og_image.crop(rect_coords2)
-                        cropped_img2 = cropped_img2.convert("RGBA")
                         rms_v = util.rmsdiff(cropped_img, cropped_img2)
 
                         if rms_v < 40:
                             rect_coords3 = [rect_coords[0], rect_coords[1], rect_coords2[2], rect_coords2[3]]
                             big_crop_img = self.og_image.crop(rect_coords3)
+                            # shape = self.best_shape(big_crop_img)
+                            # img = shape.draw()
                             img = self.best_shape(big_crop_img)
                             
                         else:
+                            # shape = self.best_shape(cropped_img)
+                            # img = shape.draw()
                             img = self.best_shape(cropped_img)
                             pix_w,pix_h=pix,pix
 
