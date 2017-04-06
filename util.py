@@ -7,7 +7,6 @@ from math import sqrt
 import numpy as np
 
 def rmsdiff(im1, im2):
-    # im1 = im1.convert("RGBA")
     im2 = im2.convert("RGBA")
     diff = ImageChops.difference(im1, im2)
     h = diff.histogram()
