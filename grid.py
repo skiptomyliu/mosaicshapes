@@ -286,25 +286,32 @@ class Grid():
 
         diamond_img = self.canvas_img.rotate(-45, expand=False, resample=Image.BICUBIC)
         return diamond_img.crop((
-            (self.canvas_img.size[0] - self.og_size[0])/2 ,
-            (self.canvas_img.size[1] - self.og_size[1])/2 ,
+            (self.canvas_img.size[0] - self.og_size[0])/2,
+            (self.canvas_img.size[1] - self.og_size[1])/2,
             self.og_size[0] + (self.canvas_img.size[0] - self.og_size[0])/2,
             self.og_size[1] + (self.canvas_img.size[1] - self.og_size[1])/2,
             ))
 
     def save(self, path, dpi=300, is_continue=False):
         if self.is_diamond:
-            resize_scale = self.canvas_img.size[1]/float(self.target_length)
 
+            resize_scale = self.canvas_img.size[1]/float(self.target_length)
             diamond_img = util.mult_img_size(self.canvas_img, 1/resize_scale)
-            diamond_img = diamond_img.rotate(-45, expand=False)
+            diamond_img = diamond_img.rotate(-45, expand=False, resample=Image.BICUBIC)
 
             diamond_img = diamond_img.crop((
-                (diamond_img.size[0] - self.target_size[0])/2,
-                (diamond_img.size[1] - self.target_size[1])/2,
-                self.target_size[0] + (diamond_img.size[0] - self.target_size[0])/2,
-                self.target_size[1] + (diamond_img.size[1] - self.target_size[1])/2,
+                (diamond_img.size[0] - self.target_size[0])/2 + self.pixels,
+                (diamond_img.size[1] - self.target_size[1])/2 + self.pixels,
+                self.target_size[0] + (diamond_img.size[0] - self.target_size[0])/2 - self.pixels,
+                self.target_size[1] + (diamond_img.size[1] - self.target_size[1])/2 - self.pixels,
             ))
+            print self.pixels
+            # diamond_img = diamond_img.crop((
+            #     (diamond_img.size[0] - self.target_size[0])/2 ,
+            #     (diamond_img.size[1] - self.target_size[1])/2 ,
+            #     self.target_size[0] + (diamond_img.size[0] - self.target_size[0])/2,
+            #     self.target_size[1] + (diamond_img.size[1] - self.target_size[1])/2,
+            # ))
 
             # diamond_img = self.restore_diamond()
             # if not is_continue: #xxx: remove?
