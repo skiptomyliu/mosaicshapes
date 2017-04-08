@@ -5,12 +5,15 @@ from PIL import Image, ImageChops
 import functools
 from math import sqrt
 import numpy as np
+from itertools import chain 
 
 def rmsdiff(im1, im2):
     im1 = im1.convert("RGBA")
     im2 = im2.convert("RGBA")
+
     diff = ImageChops.difference(im1, im2)
     h = diff.histogram()
+
 
     blah = np.array(h, dtype=int)
     okay = (np.arange(1024)%256)**2

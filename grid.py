@@ -15,6 +15,7 @@ from colorpalette import ColorPalette
 import random 
 import imghdr
 from gencolor import GenColor
+import math
 
 """
 
@@ -44,6 +45,22 @@ class Grid():
         self.width, self.height = self.og_image.size
 
 
+
+        """
+        """
+        # multi = util.get_multi(self.og_image, enlarge)
+        # self.og_size2 = self.og_image.size[0]*multi, self.og_image.size[1]*multi
+        # print multi
+        # rotated_img = self.og_image.rotate(45, expand=True)
+
+        # rotated_size = self.og_size2[0], self.og_size2[1]
+        # # target_length = int(self.og_size2[0]*math.cos(45*math.pi/180) + self.og_size2[1]*math.sin(45*math.pi/180))+1
+        # target_length = int(self.og_size2[0]*math.cos(45*math.pi/180) + self.og_size2[1]*math.sin(45*math.pi/180))+1
+        # rotated_og = rotated_img.rotate(-45)
+
+        # import pdb; pdb.set_trace()
+        """
+        """
         if enlarge > 0:
             self.enlarge = enlarge
         else:
@@ -67,15 +84,15 @@ class Grid():
                 self.og_image = util.restrain_img_size(self.og_image, max_pix=working_res)                
             else:
                 self.og_image = util.enlarge_img(self.og_image, max_pix=working_res)
-            
-            # print self.og_image
 
 
-        # self.canvas_img = util.enlarge_img(self.og_image, self.enlarge*2) # dont actually enlarge, get size
         self.N = util.get_multi(self.og_image, self.enlarge*2)
-        # print self.N
-        # print working_res
-        # self.og_image = self.og_image.convert("RGBA")
+
+        multi = util.get_multi(self.og_image, self.enlarge)
+        t_size = multi*self.og_image.size[0], multi*self.og_image.size[1]
+        self.target_size = t_size
+        self.target_length = int(t_size[0]*math.cos(45*math.pi/180) + t_size[1]*math.sin(45*math.pi/180))+1
+
 
         if self.is_diamond:
             self.og_size = self.og_image.size[0]*self.N, self.og_image.size[1]*self.N #self.canvas_img.size
@@ -86,7 +103,8 @@ class Grid():
             # self.canvas_img = self.canvas_img.rotate(45, expand=True, resample=Image.BICUBIC)
         else:
             self.og_size = self.width, self.height
-            
+
+
         self.canvas_img = util.mult_img_size(self.og_image, self.N)
         self.edg_img = self.og_image.filter(ImageFilter.UnsharpMask(2, percent=300))
         self.image_array = np.array(self.edg_img)
@@ -153,6 +171,7 @@ class Grid():
         pie,pie_rms = PieSliceCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
         halfc,halfc_rms = HalfCircleCell.find_best(cropped_img, base_colors=base_colors_3, second_colors=second_colors_2, N=self.N)
         triangle,triangle_rms = TriangleCell.find_best(cropped_img, base_colors=base_colors_4, second_colors=second_colors_2, N=self.N)
+
         # missing triangles
         # circle,circle_rms = CircleCell.find_best(cropped_img, n=3, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
         # rect,rect_rms = RectCell.find_best(cropped_img, n=2, sn=2, base_color=base_color, second_color=second_color, colorful=self.is_colorful, N=self.N)
@@ -162,7 +181,7 @@ class Grid():
 
         # Order matters!  shape and rms list must match same order
         shapes = [circle, rect, triangle, pie, halfc]
-        rms_list = [circle_rms, rect_rms, triangle_rms-10, pie_rms-10, halfc_rms]
+        rms_list = [circle_rms, rect_rms, triangle_rms-2, pie_rms-2, halfc_rms]
 
         shape = shapes[rms_list.index(min(rms_list))]
 
@@ -262,6 +281,9 @@ class Grid():
         return img.crop((0, 0, self.cols*self.pixels*N, self.rows*self.pixels*N))
 
     def restore_diamond(self):
+
+        # target_length = int(self.og_size2[0]*math.cos(45*math.pi/180) + self.og_size2[1]*math.sin(45*math.pi/180))+1
+
         diamond_img = self.canvas_img.rotate(-45, expand=False, resample=Image.BICUBIC)
         return diamond_img.crop((
             (self.canvas_img.size[0] - self.og_size[0])/2 ,
@@ -272,11 +294,23 @@ class Grid():
 
     def save(self, path, dpi=300, is_continue=False):
         if self.is_diamond:
-            diamond_img = self.restore_diamond()
-            if not is_continue: #xxx: remove?
-                diamond_img = self.crop_diamond(diamond_img, self.N)#self.N)
+            resize_scale = self.canvas_img.size[1]/float(self.target_length)
 
-            diamond_img = util.restrain_img_size(diamond_img, self.enlarge)
+            diamond_img = util.mult_img_size(self.canvas_img, 1/resize_scale)
+            diamond_img = diamond_img.rotate(-45, expand=False)
+
+            diamond_img = diamond_img.crop((
+                (diamond_img.size[0] - self.target_size[0])/2,
+                (diamond_img.size[1] - self.target_size[1])/2,
+                self.target_size[0] + (diamond_img.size[0] - self.target_size[0])/2,
+                self.target_size[1] + (diamond_img.size[1] - self.target_size[1])/2,
+            ))
+
+            # diamond_img = self.restore_diamond()
+            # if not is_continue: #xxx: remove?
+                # diamond_img = self.crop_diamond(diamond_img, self.N)#self.N)
+
+            # diamond_img = util.restrain_img_size(diamond_img, self.enlarge)
             # diamond_img = util.mult_img_size(diamond_img,1/float(self.N))
             diamond_img.save(path, "jpeg", icc_profile=self.og_image.info.get('icc_profile'), quality=95, dpi=(dpi,dpi))    
         else:
