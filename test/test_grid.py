@@ -9,8 +9,8 @@ import cProfile
 
 class TestGrid(unittest.TestCase):
     def setUp(self):
-        self.grid = Grid("/Users/dean/Desktop/og/moi2.JPEG", pix_multi=.014, diamond=True, colorful=False, 
-            working_res=800, enlarge=1200)
+        self.grid = Grid("/Users/dean/Desktop/og/taiwan.jpg", pix_multi=.011, diamond=True, colorful=True, 
+            working_res=800, enlarge=1600)
        
     def tearDown(self):
         pass

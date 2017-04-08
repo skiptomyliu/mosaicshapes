@@ -296,6 +296,7 @@ class Grid():
         if self.is_diamond:
 
             resize_scale = self.canvas_img.size[1]/float(self.target_length)
+            print resize_scale
             diamond_img = util.mult_img_size(self.canvas_img, 1/resize_scale)
             diamond_img = diamond_img.rotate(-45, expand=False, resample=Image.BICUBIC)
 
