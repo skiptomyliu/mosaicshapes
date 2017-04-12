@@ -104,11 +104,9 @@ class CompColor(Cell):
             ey = (n_height-pw*idx) #- width*(len(self.base_color)-1.5)*N
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
-        # circle_paper = circle_paper.rotate(45*random.randint(0, 6))
         circle_paper = circle_paper.rotate(randint(0, 360))
         rect_paper.paste(circle_paper,(0,0), circle_paper)
 
-        # rect_paper.thumbnail((self.width, self.height)) 
         return rect_paper
 
     # Draw rect only
@@ -125,7 +123,7 @@ class CompColor(Cell):
         return paper
 
     def draw(self, N=2):
-        if randint(0,2): #XXX: Change to faster
+        if randint(0,2): 
             shape = self.draw_circle(N)
         else:
             shape = self.draw_rect(N)
