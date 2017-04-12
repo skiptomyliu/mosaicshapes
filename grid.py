@@ -180,8 +180,8 @@ class Grid():
         # triangle commented out missing
 
         # Order matters!  shape and rms list must match same order
-        shapes = [circle, rect, triangle, pie, halfc]
-        rms_list = [circle_rms, rect_rms, triangle_rms-2, pie_rms-2, halfc_rms]
+        shapes = [circle, rect, pie, halfc, triangle]
+        rms_list = [circle_rms, rect_rms, pie_rms, halfc_rms, triangle_rms]
 
         shape = shapes[rms_list.index(min(rms_list))]
 
@@ -260,7 +260,9 @@ class Grid():
 
                     else:
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
-                        ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
+                        base_colors = GenColor.gen_colors(og_color, randint(3,5), self.is_colorful)
+                        ccolor = CompColor(size=(pix_w, pix_h), base_colors=base_colors)
+                        # ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
                         img = ccolor.draw(self.N)
 
                     self.canvas_img.paste(img, (int(x*self.N),int(y*self.N)))
