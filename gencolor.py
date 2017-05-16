@@ -6,14 +6,41 @@ from random import shuffle
 import random
 import util
 
+class ColorType(object):
+    kNORMAL = 0
+    kCOLORFUL = 1
+    kANALOGOUS = 2
+
 class GenColor(object):
 
     @staticmethod
-    def gen_colors(base_color, n, colorful=True):
-        if colorful:
+    def gen_colors(base_color, n, colorful=ColorType.kNORMAL):
+        if colorful == ColorType.kCOLORFUL:
             return GenColor.gen_colorful(base_color, n)
-        else:
+        elif colorful == ColorType.kNORMAL:
             return GenColor.gen_colors_og(base_color, n)
+        elif colorful == ColorType.kANALOGOUS:
+            return GenColor.gen_analogous(base_color, n)
+
+
+    #XXX: todo another analogous color palette
+    @staticmethod
+    def gen_analogous(base_color, n):
+        r,g,b = base_color
+        adj_colors = util.adjacent_colors(base_color, d=20/360.0)
+
+        c1 = GenColor.gen_colors_og(adj_colors[0], 1)
+        c2 = GenColor.gen_colors_og(adj_colors[1], 1)
+
+        all_colors = c1 + c2 
+
+        if n==1:
+            all_colors.append(base_color)
+
+        all_colors.append(base_color)
+        shuffle(all_colors)
+
+        return all_colors
 
     @staticmethod
     def gen_colorful(base_color, n):
@@ -41,8 +68,9 @@ class GenColor(object):
         shuffle(all_colors)
 
         # all_colors.insert(randint(1,len(all_colors)-1), complement_colors[0])
+        # Add 30% complement colors
         if randint(0,101)>30:
-            all_colors.insert(randint(1,len(all_colors)), complement_colors[randint(0,2)])
+            all_colors.insert(randint(1, len(all_colors)), complement_colors[randint(0,2)])
 
         return all_colors
 
@@ -60,7 +88,6 @@ class GenColor(object):
 
             r,g,b = base_color
             quad = 1 if util.luminance(r,g,b) > 100 else 0
-
 
             for i in range(-n/2+quad, n/2+quad):
                 color = np.asarray(base_color) + (i)*distance/float(n)

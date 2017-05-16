@@ -3,13 +3,15 @@
 import unittest
 from grid import Grid
 
+from gencolor import ColorType
 import profile
 import cProfile
 
 
+
 class TestGrid(unittest.TestCase):
     def setUp(self):
-        self.grid = Grid("/Users/dean/Desktop/og/bo.jpg", pix_multi=.014, diamond=True, colorful=True, 
+        self.grid = Grid("/Users/dean/Desktop/og/bo.jpg", pix_multi=.014, diamond=True, colorful=ColorType.kANALOGOUS, 
             working_res=1600, enlarge=1600)
        
     def tearDown(self):

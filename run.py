@@ -6,9 +6,9 @@ import util
 import math
 from multiprocessing.dummy import Pool as ThreadPool 
 
-def create_reg_images(photo_path, pix_multi, diamond, colorful, working_res, enlarge, pool, output_path):
+def create_reg_images(photo_path, pix_multi, diamond, color, working_res, enlarge, pool, output_path):
 
-    grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond, colorful=colorful, 
+    grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond, colorful=color, 
         working_res=working_res, enlarge=enlarge)
     # XXX: enforce minimum image size
     total_updates = 20
@@ -36,8 +36,11 @@ def create_reg_images(photo_path, pix_multi, diamond, colorful, working_res, enl
     except (KeyboardInterrupt, SystemExit):
         pool.terminate()
 
-    # grid.save(output_path)
+    grid.save(output_path)
 
+    #
+    #
+    
     # print 100
     # grid.grid_start_end(0, grid.rows)
     # grid.save(output_path)
@@ -56,8 +59,10 @@ def main():
                     help='Photo path')
     parser.add_argument("-d", "--diamond", default=False, action='store_true', 
         help="Use diamond grid instead of squares")
-    parser.add_argument("-c", "--colorful", default=False, action='store_true', 
-        help="Use diamond grid instead of squares")
+    parser.add_argument("-c", "--color", default=False, 
+        action='store', choices = ["0","1","2"], help="Specify color values")
+    parser.add_argument("-a", "--analogous", default=False, action='store_true', 
+        help="Use analogous color")
     parser.add_argument("-r", "--working_res", default=0, required=False, type=int, 
         help="Resolution to sample from")
     parser.add_argument("-e", "--enlarge", default=0, required=False, type=int, 
@@ -71,7 +76,7 @@ def main():
     if args.photos:
         photo_path = args.photos[0]
         # try:
-        create_reg_images(photo_path, args.multi, args.diamond, args.colorful, 
+        create_reg_images(photo_path, args.multi, args.diamond, args.color, 
                 args.working_res, args.enlarge, args.pool, args.out)
         # except Exception as e:
             # print e
