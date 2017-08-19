@@ -1,37 +1,19 @@
 
-import util
+
 import numpy as np
-# from numpy.random import randint
-from enum import Enum
-import abc
+from numpy.random import randint
+from random import shuffle
 import random
-from random import shuffle, randint
+import util
 
-class Quadrant(Enum):
-    top_left = 1
-    top_right = 2
-    bottom_right = 3
-    bottom_left = 4
-
-
-class Direction(Enum):
-    top = 1
-    right = 2
-    bottom = 3
-    left = 4
-
-class Cell(object):
-    __metaclass__ = abc.ABCMeta
-
-    def __init__(self):
-        print "I am init"
+class GenColor(object):
 
     @staticmethod
     def gen_colors(base_color, n, colorful=True):
         if colorful:
-            return Cell.gen_colorful(base_color, n)
+            return GenColor.gen_colorful(base_color, n)
         else:
-            return Cell.gen_colors_og(base_color, n)
+            return GenColor.gen_colors_og(base_color, n)
 
     @staticmethod
     def gen_colorful(base_color, n):
@@ -40,10 +22,10 @@ class Cell(object):
         complement_colors = [util.complement(c[0],c[1],c[2]) for c in adj_colors]
 
         # shuffle(complement_colors)
-        c1 = Cell.gen_colors_og(adj_colors[0], 1)
-        c2 = Cell.gen_colors_og(adj_colors[1], 1)
-        # c1 = Cell.gen_colors_og(adj_colors[0], random.randint(1,1))
-        # c2 = Cell.gen_colors_og(adj_colors[1], random.randint(1,1))
+        c1 = GenColor.gen_colors_og(adj_colors[0], 1)
+        c2 = GenColor.gen_colors_og(adj_colors[1], 1)
+        # c1 = GenColor.gen_colors_og(adj_colors[0], random.randint(1,1))
+        # c2 = GenColor.gen_colors_og(adj_colors[1], random.randint(1,1))
 
         # option for non complement
         all_colors = c1 + c2 #+ complement_colors
@@ -60,8 +42,7 @@ class Cell(object):
 
         # all_colors.insert(randint(1,len(all_colors)-1), complement_colors[0])
         if randint(0,101)>30:
-            all_colors.insert(randint(1,len(all_colors)-1), complement_colors[randint(0,1)])
-
+            all_colors.insert(randint(1,len(all_colors)), complement_colors[randint(0,2)])
 
         return all_colors
 
@@ -97,13 +78,3 @@ class Cell(object):
                     colors[1], colors[2] = colors[2], colors[1]
 
         return colors
-
-    @abc.abstractmethod
-    def find_best(self):
-        return
-    
-    @abc.abstractmethod
-    def draw(self):
-        return
-
-    

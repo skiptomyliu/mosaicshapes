@@ -8,21 +8,19 @@ from cell import Cell
 
 class CircleCell(Cell):
     def __init__(self, size=(200,200), csize=(200,200), 
-        base_color=(0,0,0), second_color=(0,0,0), n=4, sn=1, colorful=True):
+        base_colors=[], second_colors=[]):
 
         self.width = size[0]
         self.height = size[1]
         self.cwidth = csize[0]
         self.cheight = csize[1]
-        self.base_color = base_color
 
-        self.colors = Cell.gen_colors(base_color, n, colorful)
-        self.colors_secondary = Cell.gen_colors(second_color,sn, colorful)
-
+        self.colors = base_colors # Cell.gen_colors(base_color, n, colorful)
+        self.colors_secondary = second_colors # Cell.gen_colors(second_color,sn, colorful)
 
     @staticmethod
-    def find_best(img, n=2, sn=2, base_color=(0,0,0), second_color=(0,0,0), colorful=True, N=2):
-        color_combos = [[second_color,base_color], [base_color, second_color]]
+    def find_best(img, n=2, sn=2, base_colors=[], second_colors=[], colorful=True, N=2):
+        color_combos = [[second_colors,base_colors], [base_colors, second_colors]]
 
         width,height = img.size
         best_img = None
@@ -40,20 +38,19 @@ class CircleCell(Cell):
             for color_combo in color_combos:
                 if height > width:
                     ccell = CircleCell(size=(width,height), csize=(d,height), 
-                        base_color=color_combo[0], second_color=color_combo[1], 
-                        n=n, sn=sn, colorful=colorful)
+                        base_colors=color_combo[0], second_colors=color_combo[1])
                 else:
                     ccell = CircleCell(size=(width,height), csize=(width,d), 
-                        base_color=color_combo[0], second_color=color_combo[1], 
-                        n=n, sn=sn, colorful=colorful)
+                        base_colors=color_combo[0], second_colors=color_combo[1])
+
                 cimg = ccell.draw(N=1)
                 score = util.rmsdiff(img, cimg)
 
                 if score <= best_score:
-                    best_img = ccell.draw(N=N)
+                    best_img = ccell 
                     best_score = score
 
-            return (best_img, best_score)
+            return (best_img.draw(N=N), best_score)
 
     # return the perceived hue / luminance for now
     def draw(self, N=2):

@@ -3,15 +3,25 @@ import colorsys
 import math, operator
 from PIL import Image, ImageChops
 import functools
+from math import sqrt
+import numpy as np
+from itertools import chain 
 
 def rmsdiff(im1, im2):
     im1 = im1.convert("RGBA")
     im2 = im2.convert("RGBA")
+
     diff = ImageChops.difference(im1, im2)
     h = diff.histogram()
-    sq = [value*((idx%256)**2) for idx, value in enumerate(h)]
-    sum_of_squares = sum(sq)
-    rms = math.sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
+
+
+    blah = np.array(h, dtype=int)
+    okay = (np.arange(1024)%256)**2
+    rms = sqrt(np.sum(blah*okay)/float(im1.size[0] * im1.size[1]))
+
+    # sq = [value*((idx%256)**2) for idx, value in enumerate(h)]
+    # sum_of_squares = sum(sq)
+    # rms = sqrt(sum_of_squares/float(im1.size[0] * im1.size[1]))
 
     return rms
 
