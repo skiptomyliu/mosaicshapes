@@ -5,11 +5,12 @@ import argparse
 import util
 import math
 
-def create_reg_images(photo_path, pix_multi, diamond, color, 
+
+def create_reg_images(photo_path, pix_multi, diamond, color,
                       working_res, enlarge, pool, output_path):
 
-    grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond, colorful=color,
-                working_res=working_res, enlarge=enlarge)
+    grid = Grid(photo_path, pix=0, pix_multi=pix_multi, diamond=diamond,
+                colorful=color, working_res=working_res, enlarge=enlarge)
 
     total_updates = 20
     step_size = util.clamp_int(int(math.ceil(grid.rows/(1.0*total_updates))), 1, 10000)
@@ -22,7 +23,7 @@ def create_reg_images(photo_path, pix_multi, diamond, color,
         s_index = step_size*i
         e_index = s_index + step_size
         todos.append((s_index, e_index, output_path))
-        
+
         is_continue = False if e_index >= grid.rows else True
         if not is_continue:
             break
@@ -40,7 +41,6 @@ def create_reg_images(photo_path, pix_multi, diamond, color,
 
     #
     #
-    
     # print 100in
     # grid.grid_start_end(0, grid.rows)
     # grid.save(output_path)
@@ -51,6 +51,7 @@ def create_reg_images(photo_path, pix_multi, diamond, color,
     #     grid.grid_start_end(s_index, e_index)
     #     grid.save(output_path)
     #     print 100
+
 
 def main():
     parser = argparse.ArgumentParser(description='Mosaic photos')
@@ -76,12 +77,8 @@ def main():
 
     if args.photos:
         photo_path = args.photos[0]
-        # try:
         create_reg_images(photo_path, args.multi, args.diamond, args.color,
                           args.working_res, args.enlarge, args.pool, args.out)
-        # except Exception as e:
-            # print e
-            # return 1
     return 0
 
 
