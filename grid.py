@@ -21,12 +21,10 @@ import math
 """
 
 - diamond grid instead of square grid
-- multi-color cells 
+- multi-color cells
 - pieslice bottom needs to be moved up a little
 
-
-
-x pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count 
+x pixelwidth (pw) to use needs to be automated dependent on image size and n, sn count
 x - circle stretching needs to be fixed on 2x1 cells
 x Need to supersample drawing triangles ... needs anti alias
 x triangle drawing on 2x2 bleeds over
