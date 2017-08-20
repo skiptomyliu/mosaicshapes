@@ -1,7 +1,6 @@
 
 import util
 import numpy as np
-# from numpy.random import randint
 from enum import Enum
 import abc
 import random

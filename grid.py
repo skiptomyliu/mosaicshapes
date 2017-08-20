@@ -34,8 +34,8 @@ x - 2x1 rectcell is not centered
 
 
 class Grid():
-    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, colorful=True, unsharp_radius=2, 
-        working_res=0, enlarge=0):
+    def __init__(self, imgpath, pix=0, pix_multi=-1, diamond=True, 
+                 colorful=True, unsharp_radius=2, working_res=0, enlarge=0):
 
         self.N = 2
         self.is_diamond = diamond
