@@ -23,16 +23,11 @@ import util
 
 
 class CompColor(Cell):
-    def __init__(self, size=(200,200), base_color=(0,0,0), n=4, colorful=True):
+    def __init__(self, size=(200,200), base_colors=[]):
         self.width = size[0]
         self.height = size[1]
-        self.base_color = base_color
-        self.colors = []
-        # self.colors = CompColor.gen_colors_c(base_color, random.randint(2,n+1))
-        # self.colors = CompColor.gen_colors(base_color, random.randint(2,n+1))
-
-        s=3 #xxx: this was set to 2 before
-        self.colors = Cell.gen_colors(base_color, randint(s,n+1), colorful)
+        self.colors = base_colors
+       
 
     @staticmethod
     def find_best(img, n=2, sn=2):
@@ -98,9 +93,14 @@ class CompColor(Cell):
 
         for idx, color in enumerate(self.colors):
             color = int(color[0]),int(color[1]),int(color[2])
-            x = (pw*idx+stretch) + pw/2*(len(self.base_color)-1)
+            # x = (pw*idx+stretch) + pw/2*(len(self.base_color)-1)
+            # x = (pw*idx+stretch) + pw/2*(len(self.colors)-1)
+            x = (pw*idx+stretch) + pw/2*(3-1)
+
             y = pw*idx #+ width*(len(self.base_color)-1.5)*N
-            ex = (n_width-pw*idx-stretch) - pw/2*(len(self.base_color)-1)
+            # ex = (n_width-pw*idx-stretch) - pw/2*(len(self.base_color)-1)
+            # ex = (n_width-pw*idx-stretch) - pw/2*(len(self.colors)-1)
+            ex = (n_width-pw*idx-stretch) - pw/2*(3-1)
             ey = (n_height-pw*idx) #- width*(len(self.base_color)-1.5)*N
             circle_canvas.ellipse([x, y, ex, ey], fill=color)
 
