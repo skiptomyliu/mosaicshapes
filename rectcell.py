@@ -1,6 +1,5 @@
 
 
-
 from PIL import Image, ImageDraw
 import random
 import util
@@ -8,31 +7,31 @@ from cell import Cell
 
 
 """
-XXX: ciwdth and cheight not currently utilized 
+XXX: ciwdth and cheight not currently utilized
 """
+
+
 class RectCell(Cell):
-    def __init__(self, size=(200,200), csize=(200,200), 
-        base_colors=[], second_colors=[]):
+    def __init__(self, size=(200, 200), csize=(200, 200),
+                 base_colors=[], second_colors=[]):
 
         self.width = size[0]
         self.height = size[1]
         self.cwidth = csize[0]
         self.cheight = csize[1]
 
-
-        self.colors = base_colors #Cell.gen_colors(base_color, n, colorful)
-        self.colors_secondary = second_colors #Cell.gen_colors(second_color,sn, colorful)
-
+        self.colors = base_colors
+        self.colors_secondary = second_colors
 
     @staticmethod
     def find_best(img, n=2, sn=2, base_colors=[], second_colors=[], N=2):
         color_combos = [[base_colors, second_colors], [second_colors, base_colors]]
 
-        width,height = img.size
+        width, height = img.size
         best_img = None
         best_score = 10000
 
-        w = width 
+        w = width
         h = height
 
         # XXX: will cause probs if image size is less than 10 pixels
@@ -40,8 +39,8 @@ class RectCell(Cell):
             # for h in range(height-1, height):
         for color_combo in color_combos:
             # h = w
-            rcell = RectCell(size=(width,height), csize=(width,height), 
-                base_colors=color_combo[0], second_colors=color_combo[1])
+            rcell = RectCell(size=(width, height), csize=(width, height),
+                             base_colors=color_combo[0], second_colors=color_combo[1])
 
             cimg = rcell.draw(N=1)
             score = util.rmsdiff(img, cimg)
@@ -72,11 +71,9 @@ class RectCell(Cell):
         draw rect
         """
         for idx, color in enumerate(self.colors):
-            color = int(color[0]),int(color[1]),int(color[2])
+            color = int(color[0]), int(color[1]), int(color[2])
             sx = int(round((len(self.colors_secondary))*pw))
-            # sx = int(round(len(self.colors)*pw/2))
             sx += (pw*idx)
-            # sy = int(round(len(self.colors)*pw/2))
             sy = int(round(len(self.colors_secondary)*pw))
             sy += (pw*idx)
             ex = n_width - sx
@@ -84,10 +81,3 @@ class RectCell(Cell):
             paper.paste(color, [sx, sy, ex, ey])
 
         return paper
-
-
-
-
-
-
-
