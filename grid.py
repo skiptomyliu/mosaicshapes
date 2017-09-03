@@ -1,7 +1,7 @@
 
 
 from PIL import Image, ImageFilter
-from comp import CompColor
+from shapes.comp import CompColor
 from shapes.trianglecell import TriangleCell
 from shapes.circlecell import CircleCell
 from shapes.rectcell import RectCell
