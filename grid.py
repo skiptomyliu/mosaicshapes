@@ -2,11 +2,11 @@
 
 from PIL import Image, ImageFilter
 from comp import CompColor
-from trianglecell import TriangleCell
-from circlecell import CircleCell
-from rectcell import RectCell
-from pieslicecell import PieSliceCell
-from halfcirclecell import HalfCircleCell
+from shapes.trianglecell import TriangleCell
+from shapes.circlecell import CircleCell
+from shapes.rectcell import RectCell
+from shapes.pieslicecell import PieSliceCell
+from shapes.halfcirclecell import HalfCircleCell
 from skimage.color import rgb2grey
 from skimage import feature
 import util
