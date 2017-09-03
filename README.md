@@ -1,7 +1,7 @@
 # Mosaic Shapes
 
 ![Alt text](/examples/cranston.JPEG "Bryan Cranston")
-![Alt text](/examples/cranston.JPEG "Bryan Cranston")
+![Alt text](/examples/trooper.JPEG "Storm Trooper")
 
 ```python run.py ~/Desktop/og/bo.jpg -e 2000 -d -c 1; open /tmp/out.JPEG```
 
