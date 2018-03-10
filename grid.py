@@ -59,10 +59,6 @@ class Grid():
             working_res = self.enlarge
 
         if working_res:
-            # print "*"*10
-            # print "working res"
-            # print "*"*10
-            # print self.og_image
             if working_res < self.og_image.size[0] and working_res < self.og_image.size[1]:
                 self.og_image = util.restrain_img_size(self.og_image, max_pix=working_res)
             else:
@@ -100,12 +96,6 @@ class Grid():
         self.cols = (self.width/self.pixels)
         self.rows = (self.height/self.pixels)
 
-        # print self.og_image.size
-        # print "N: " + str(self.N)
-        # print "multi: " + str(multi)
-        # print self.pixels, self.cols, self.rows
-        # import pdb; pdb.set_trace()
-
         # Crop the image if our pixels doesn't divide equally.  Most cases we always crop
         # will prevent out of bounds processing on cells
         # XXX Does this work for diamonds too?
@@ -126,8 +116,8 @@ class Grid():
 
     def get_slope(self, img_seg):
         # if len(img_seg[img_seg==True]) > len(img_seg[img_seg==False])/50:
-        if len(img_seg[img_seg==True]):
-            x, y = np.where(img_seg==True)
+        if len(img_seg[img_seg is True]):
+            x, y = np.where(img_seg is True)
 
             slope, _ = np.polyfit(x, y, 1)
 
@@ -142,8 +132,7 @@ class Grid():
         base_colors_4 = GenColor.gen_colors(base_color, 4, self.is_colorful)
         base_colors_3 = GenColor.gen_colors(base_color, 3, self.is_colorful)
         base_colors_2 = GenColor.gen_colors(base_color, 2, self.is_colorful)
-    
-        # second_colors_3 = GenColor.gen_colors(second_color, 3, self.is_colorful)    
+        # second_colors_3 = GenColor.gen_colors(second_color, 3, self.is_colorful)
         second_colors_2 = GenColor.gen_colors(second_color, 2, self.is_colorful)
 
         circle, circle_rms = CircleCell.find_best(cropped_img,
@@ -251,8 +240,6 @@ class Grid():
                             img = self.best_shape(big_crop_img)
 
                         else:
-                            # shape = self.best_shape(cropped_img)
-                            # img = shape.draw()
                             img = self.best_shape(cropped_img)
                             pix_w, pix_h = pix, pix
 
@@ -260,7 +247,6 @@ class Grid():
                         og_color = util.average_color_img(self.og_image.crop(rect_coords))
                         base_colors = GenColor.gen_colors(og_color, randint(3, 5), self.is_colorful)
                         ccolor = CompColor(size=(pix_w, pix_h), base_colors=base_colors)
-                        # ccolor = CompColor(size=(pix_w, pix_h), base_color=og_color, n=4, colorful=self.is_colorful)
                         img = ccolor.draw(self.N)
 
                     self.canvas_img.paste(img, (int(x*self.N), int(y*self.N)))
