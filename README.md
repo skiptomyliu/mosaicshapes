@@ -6,7 +6,7 @@
 
 Note: I am planning on converting this to Go in the near future, thus this repo will be largely unmaintained.
 
-```python run.py ~/Desktop/og/bo.jpg -e 2000 -d -c 1; open /tmp/out.JPEG```
+```python run.py ./input/bryan.jpg -e 2000 -d -c 1; open /tmp/out.JPEG```
 
 ```
 (shapes4) guppy:shapes dean$ python run.py -h
