@@ -1,10 +1,7 @@
 # Mosaic Shapes
 
+<img src="/examples/mosaic1.jpeg" height=390> <img src="/examples/mosaic2.jpeg" height=390> <img src="/examples/mosaic3.jpeg" height=390>
 
-![Alt text](/examples/cranston.JPEG "Bryan Cranston")
-![Alt text](/examples/trooper.JPEG "Storm Trooper")
-
-Note: I am planning on converting this to Go in the near future, thus this repo will be largely unmaintained.
 
 ```python run.py ./input/bryan.jpg -e 2000 -d -c 1; open /tmp/out.JPEG```
 
